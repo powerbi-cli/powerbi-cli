@@ -2,6 +2,29 @@
 
 Home of the Power BI CLI
 
+## Prerequisits
+
+-   NodeJS v8+, LTS release advised: [download](https://nodejs.org).
+-   [Optional] Azure CLI v2+ for easier login [installation](docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
+
+## Installing
+
+Open a cmd/bash/powershell prompt and type to install the `powerbi-cli`:
+
+`npm i -g @powerbi-cl/powerbi-cli`
+
+## Usage
+
+To use the `powerbi-cli` type
+
+`pbicli [command] --[options]`
+
+For availablecommands and options:
+
+`pbicli --help`
+
+For more information see [documentation]()[Under development]
+
 ## Contributing
 
 There are many ways in which you can participate in the project, for example:
