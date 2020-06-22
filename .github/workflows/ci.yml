@@ -8,18 +8,18 @@ on:
 
 jobs:
   test:
-    name: Test on node ${{ matrix.node_version }} and ${{ matrix.os }}
+    name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        node-version: [8, 10, 12]
+        node-version: [10, 12]
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node_version }}
+      - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: ${{ matrix.node-version }}
       - name: npm test
         run: |
           npm test
@@ -33,6 +33,8 @@ jobs:
   build:
     name: Build and package
     runs-on: ubuntu-latest
+    needs: [test]
+    if: ${{ github.event_name == 'push' && github.ref == 'live' }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 12

@@ -11,7 +11,7 @@
         "test:coverage": "nyc npm run test:unit",
         "test:tslint": "eslint . --ext ts",
         "test:unit": "mocha",
-        "test": "npm run build && npm run test:tslint && npm run test:unit && npm run test:coverage"
+        "test": "npm install && npm run build && npm run test:tslint && npm run test:unit && npm run test:coverage"
     },
     "bin": {
         "pbicli": "./bin/pbicli.js"
