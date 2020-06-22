@@ -1,0 +1,6 @@
+{
+    "authentication": {
+        "location": "temp",
+        "tempFile": "accesstoken.key"
+    }
+}
