@@ -19,9 +19,18 @@ Open a cmd/bash/powershell prompt and type to install the `powerbi-cli`:
 
 To use the `powerbi-cli` type
 
-`pbicli [command] --[options]`
+`pbicli [command] [options]`
 
-For availablecommands and options:
+To login to the Power BI REST API use:
+
+`pbicli login [options]`
+
+Recommended login is leverage the `Azure CLI` login flow via:
+
+-   `az login`
+-   `pbicli login --azurecli`
+
+For all available commands and options:
 
 `pbicli --help`
 
