@@ -1,4 +1,4 @@
-![Build and test](https://github.com/powerbi-cli/powerbi-cli/workflows/Build%20and%20test/badge.svg)
+[![Build and test](https://github.com/powerbi-cli/powerbi-cli/workflows/Build%20and%20test/badge.svg?branch=live)](https://github.com/powerbi-cli/powerbi-cli/actions?query=workflow%3A%22Build+and+test%22+branch%3Alive)
 
 # Power BI CLI
 
