@@ -35,7 +35,7 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { historyAction } from "./history";
+import { historyAction } from "./listhistory";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
