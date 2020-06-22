@@ -1,6 +1,8 @@
+![Build and test](https://github.com/powerbi-cli/powerbi-cli/workflows/Build%20and%20test/badge.svg)
+
 # Power BI CLI
 
-Home of the Power BI CLI
+Home of the Power BI CLI, a multiplatform CLI (command line interface) for interacting with the Power BI REST APIs written in NodeJS.
 
 ## Prerequisits
 
@@ -11,7 +13,7 @@ Home of the Power BI CLI
 
 Open a cmd/bash/powershell prompt and type to install the `powerbi-cli`:
 
-`npm i -g @powerbi-cl/powerbi-cli`
+`npm i -g @powerbi-cli/powerbi-cli`
 
 ## Usage
 
