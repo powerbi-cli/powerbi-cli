@@ -63,7 +63,7 @@ export class ModuleCommand extends Command {
             .on("option:-v", () => this.showVersion())
             .on("option:-o", (value: string | null) => {
                 this.outputFormat = this.validateOutput(value);
-                if (this.outputFormat) {
+                if (this.outputFormat === undefined) {
                     this.errorMsg = `error: unknown output value '${value}'`;
                     this.showHelpOrError(false);
                     this._exit(1, "pbicli.unknownOutputValue", this.errorMsg);
