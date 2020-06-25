@@ -67,6 +67,8 @@ modules.forEach((module: string) => {
     program.addCommand(require(`./${module}/index`).getCommands());
 });
 
+program.addGlobalOptions();
+
 inquirerCommandPrompt.setConfig({
     history: {
         save: true,
