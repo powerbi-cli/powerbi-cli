@@ -36,6 +36,7 @@ export enum OutputType {
     tsv = "tsv",
     yml = "yml",
     raw = "raw",
+    unknown = "",
 }
 
 export function formatAndPrintOutput(

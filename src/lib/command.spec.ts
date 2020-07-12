@@ -176,7 +176,7 @@ describe("command.ts", () => {
             cmd.addGlobalOptions();
             process.env.PBICLI_interactive = "true";
             expect(cmd.parse(["-o", "error"], { from: "user" })).to.not.throw;
-            expect(cmd.outputFormat).to.equal("undefined");
+            expect(cmd.outputFormat).to.equal(OutputType.unknown);
             expect(drawHeaderMock.callCount).to.equal(0);
             expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(0);

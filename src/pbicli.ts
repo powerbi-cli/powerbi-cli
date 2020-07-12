@@ -36,6 +36,7 @@ import inquirerCommandPrompt from "inquirer-command-prompt";
 import { drawHeader } from "./lib/header";
 import { ModuleCommand } from "./lib/command";
 import { green } from "chalk";
+import { checkVersion } from "./lib/version";
 
 const questions = [
     {
@@ -125,11 +126,15 @@ if (args?.length === 2) {
     prompt();
 } else {
     // Commandline mode
-    args = fixHelpOptions(args, false);
-    program.parseAsync(args).catch((err) => {
-        program.errorMessage = err;
-        program.showHelpOrError(true);
-    });
+    const process = async () => {
+        await checkVersion(args);
+        args = fixHelpOptions(args, false);
+        await program.parseAsync(args).catch((err) => {
+            program.errorMessage = err;
+            program.showHelpOrError(true);
+        });
+    };
+    process();
 }
 
 function fixHelpOptions(args: string[], interactive: boolean): string[] {
