@@ -32,7 +32,7 @@ import { yellow } from "chalk";
 
 import { verbose } from "./logging";
 
-export const currentVersion = "0.8.0";
+export const currentVersion = "0.9.1";
 const versionUrl = "https://powerbicli.azureedge.net/version.json";
 
 interface version {
@@ -40,7 +40,7 @@ interface version {
 }
 
 export async function checkVersion(args: string[]): Promise<void> {
-    if (!args.some((arg: string) => arg.indexOf("-v") !== -1)) return;
+    if (!args.some((arg: string) => arg === "-v" || arg === "--version")) return;
     try {
         const latestVersion: version = await getVersion();
         if (gt(latestVersion.version, currentVersion))
