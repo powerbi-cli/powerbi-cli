@@ -40,7 +40,7 @@ interface version {
 }
 
 export async function checkVersion(args: string[]): Promise<void> {
-    if (!args.some((arg: string) => arg === "-v" || arg === "--version")) return;
+    if (!args.some((arg: string) => arg === "version")) return;
     try {
         const latestVersion: version = await getVersion();
         if (gt(latestVersion.version, currentVersion))

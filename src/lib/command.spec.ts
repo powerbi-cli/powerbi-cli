@@ -114,20 +114,11 @@ describe("command.ts", () => {
             expect(infoMock.callCount).to.equal(1);
             expect(errorMock.callCount).to.equal(1);
         });
-        it("-h, --help", () => {
-            const cmd = new ModuleCommand("new");
-            cmd.addGlobalOptions();
-            cmd.helpPrompt = "true";
-            expect(cmd.parse(["-h"], { from: "user" })).to.not.throw;
-            expect(drawHeaderMock.callCount).to.equal(1);
-            expect(drawFooterMock.callCount).to.equal(1);
-            expect(infoMock.callCount).to.equal(1);
-        });
-        it("-v, --version", () => {
+        it("version", () => {
             const cmd = new ModuleCommand("new");
             cmd.addGlobalOptions();
             process.env.PBICLI_interactive = "true";
-            expect(cmd.parse(["-v"], { from: "user" })).to.not.throw;
+            expect(cmd.parse(["version"], { from: "user" })).to.not.throw;
             expect(drawFooterMock.callCount).to.equal(1);
             expect(infoMock.callCount).to.equal(1);
         });

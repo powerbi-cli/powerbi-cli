@@ -63,7 +63,6 @@ export class ModuleCommand extends Command {
             .option("--verbose", "Increase logging verbosity to show all logs")
             .option("--help -h", "Show this help message and exit")
             .on("option:-h", () => this.outputHelp())
-            .on("option:-v", () => this.showVersion())
             .on("option:-o", (value: string | null) => {
                 this.outputFormat = this.validateOutput(value);
                 if (this.outputFormat === OutputType.unknown) {
