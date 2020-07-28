@@ -51,13 +51,17 @@ export class ModuleCommand extends Command {
     }
 
     public addGlobalOptions(): void {
+        this.addCommand(
+            new ModuleCommand("version")
+                .description("Show the version of this Power BI CLI")
+                .action(() => this.showVersion())
+        );
         this.option("--output -o [output]", "Output format. Allowed values: json, tsv, yml. Default: json")
             .option("--output-file <file>", "Save response payload to a file")
             .option("--query <query>", "JMESPath query string")
             .option("--debug", "Increase logging verbosity to show debug logs")
             .option("--verbose", "Increase logging verbosity to show all logs")
             .option("--help -h", "Show this help message and exit")
-            .version(currentVersion, "--version -v", "Show the version of this Power BI CLI")
             .on("option:-h", () => this.outputHelp())
             .on("option:-v", () => this.showVersion())
             .on("option:-o", (value: string | null) => {
