@@ -33,19 +33,12 @@ import { startExportAction } from "./start";
 
 export function getCommands(): ModuleCommand {
     const downloadCommand = new ModuleCommand("download")
-        .description("Get the exported Power BI report")
+        .description("Download the exported Power BI report")
         .action(downloadExportAction)
         .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--export <export>", "ID of the Power BI report export");
     downloadCommand.addGlobalOptions();
-    const statusCommand = new ModuleCommand("Status")
-        .description("Get the status of a Power BI report export")
-        .action(showExportAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
-        .option("--report -r <report>", "Name or ID of the Power BI report")
-        .option("--export <export>", "ID of the Power BI report export");
-    statusCommand.addGlobalOptions();
     const startCommand = new ModuleCommand("start")
         .description("Start a Power BI report export")
         .action(startExportAction)
@@ -61,6 +54,13 @@ export function getCommands(): ModuleCommand {
         .option("--config <data>", "String with additional export config in JSON format")
         .option("--config-file <file>", "File with additional export config in JSON format");
     startCommand.addGlobalOptions();
+    const statusCommand = new ModuleCommand("status")
+        .description("Get the status of a Power BI report export")
+        .action(showExportAction)
+        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--report -r <report>", "Name or ID of the Power BI report")
+        .option("--export <export>", "ID of the Power BI report export");
+    statusCommand.addGlobalOptions();
     const parameterCommand = new ModuleCommand("export")
         .description("Manages the Power BI report experts")
         .addCommand(downloadCommand)

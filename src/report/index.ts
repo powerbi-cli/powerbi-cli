@@ -37,18 +37,6 @@ import { updateAction } from "./update";
 import { getCommands as getExportCommands } from "./export/index";
 
 export function getCommands(): ModuleCommand {
-    const datasourceCommand = new ModuleCommand("datasource")
-        .description("Datasources a Power BI report from a group")
-        .action(datasourceAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
-        .option("--report -r <report>", "Name or ID of the Power BI report");
-    datasourceCommand.addGlobalOptions();
-    const deleteCommand = new ModuleCommand("delete")
-        .description("Deletes a Power BI report from a group")
-        .action(deleteAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
-        .option("--report -r <report>", "Name or ID of the Power BI report");
-    deleteCommand.addGlobalOptions();
     const cloneCommand = new ModuleCommand("clone")
         .description("Clones a Power BI report from a group")
         .action(cloneAction)
@@ -64,6 +52,18 @@ export function getCommands(): ModuleCommand {
             "ID of the Power BI group for the cloned report. If not provided, the same group is used and if [workspaceId] is not provided 'My workspace' is used"
         );
     cloneCommand.addGlobalOptions();
+    const datasourceCommand = new ModuleCommand("datasource")
+        .description("Datasources of a Power BI report from a group")
+        .action(datasourceAction)
+        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--report -r <report>", "Name or ID of the Power BI report");
+    datasourceCommand.addGlobalOptions();
+    const deleteCommand = new ModuleCommand("delete")
+        .description("Deletes a Power BI report from a group")
+        .action(deleteAction)
+        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--report -r <report>", "Name or ID of the Power BI report");
+    deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .description("List Power BI reports in a group")
         .action(listshowAction)
@@ -90,12 +90,12 @@ export function getCommands(): ModuleCommand {
         .option("--report -r <report>", "Name or ID of the Power BI report");
     showCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
-        .description("Update a Power BI report to a dataset")
+        .description("Updates a Power BI report with to a dataset")
         .action(updateAction)
         .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
-        .option("--source-report <report>", "ID of the source Power BI report")
-        .option("--source-group <group>", "ID of the source Power BI group");
+        .option("--source-group <group>", "ID of the source Power BI group")
+        .option("--source-report <report>", "ID of the source Power BI report");
     updateCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("report")
         .description("Manage Power BI reports")
