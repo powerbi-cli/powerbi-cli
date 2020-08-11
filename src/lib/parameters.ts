@@ -38,6 +38,7 @@ import {
     getGatewayID,
     getGatewayDatasourceID,
     getImportID,
+    getAdminGroupInfo,
 } from "./helpers";
 
 export interface Parameter {
@@ -53,6 +54,20 @@ export async function validateGroupId(group: string | undefined, isRequired: boo
     return validateParameter({
         name: group,
         isName: () => getGroupID(group as string),
+        missing: "error: missing option '--group'",
+        isRequired,
+    });
+}
+
+export async function validateAdminGroupId(
+    group: string | undefined,
+    isRequired: boolean,
+    filterDeleted: boolean
+): Promise<string | undefined> {
+    return validateParameter({
+        name: group,
+        isName: () => getAdminGroupInfo(group as string, filterDeleted).then((result) => Promise.resolve(result[0])),
+        isId: () => getAdminGroupInfo(group as string, filterDeleted).then((result) => Promise.resolve(result[1])),
         missing: "error: missing option '--group'",
         isRequired,
     });

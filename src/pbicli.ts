@@ -49,6 +49,7 @@ const questions = [
 ];
 
 const modules: string[] = [
+    "admin",
     "app",
     "dashboard",
     "dataflow",

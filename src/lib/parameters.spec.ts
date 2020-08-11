@@ -46,6 +46,7 @@ import {
     validateGatewayId,
     validateGatewayDatasourceId,
     validateImportId,
+    validateAdminGroupId,
 } from "./parameters";
 
 chai.use(chaiAsPromise);
@@ -129,6 +130,29 @@ describe("parameters.ts", () => {
                 isRequired: true,
             };
             validateParameter(parameter).should.eventually.be.equal("group");
+        });
+    });
+    describe("validateAdminGroupId()", () => {
+        let mockGetGroupId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetGroupId = ImportMock.mockFunction(helpers, "getAdminGroupInfo").resolves([uuid, "name"]);
+        });
+        afterEach(() => {
+            mockGetGroupId.restore();
+        });
+        it("group, required", () => {
+            validateAdminGroupId("group", true, true).should.eventually.be.equal(uuid);
+            expect(mockGetGroupId.callCount).equal(1);
+        });
+        it("empty group, required", () => {
+            validateAdminGroupId(undefined, true, true).should.eventually.be.rejectedWith(
+                "error: missing option '--group'"
+            );
+            expect(mockGetGroupId.callCount).equal(0);
+        });
+        it("empty group, not required", () => {
+            validateAdminGroupId(undefined, false, true).should.eventually.be.equal(undefined);
+            expect(mockGetGroupId.callCount).equal(0);
         });
     });
     describe("validateGroupId()", () => {

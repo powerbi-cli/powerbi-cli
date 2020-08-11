@@ -28,9 +28,11 @@
 
 import { RequestPrepareOptions } from "@azure/ms-rest-js";
 import jmespath from "jmespath";
+import { stringify, ParsedUrlQueryInput } from "querystring";
 
 import { executeRestCall } from "./rest";
 import { rootUrl } from "./api";
+import { checkUUID } from "./validate";
 
 export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];
@@ -47,6 +49,34 @@ export const datasetNamingConflict = datasetNamingConflictPBIX
     .concat(datasetNamingConflictDF)
     .filter((v, i, s) => s.indexOf(v) === i)
     .sort();
+export const expandAdminGroups = ["dashboards", "datasets", "dataflows", "reports", "users", "workbooks"];
+
+export function getAdminGroupInfo(name: string, filterDeleted: boolean): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+        const query: ParsedUrlQueryInput = { $top: 1 };
+        name = name.replace(/['"]+/g, "");
+        if (checkUUID(name)) {
+            query["$filter"] = `id eq '${name}'`;
+        } else {
+            query["$filter"] = `name eq '${name}'`;
+        }
+        if (filterDeleted) query["$filter"] += " and state eq 'Deleted'";
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/admin/groups?${stringify(query)}`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    resolve([(response as any)[0].id, (response as any)[0].name]);
+                } catch {
+                    reject(`No group found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
 
 export function getGroupID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {

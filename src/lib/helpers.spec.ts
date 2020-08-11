@@ -44,6 +44,7 @@ import {
     getReportID,
     getGatewayDatasourceID,
     getImportID,
+    getAdminGroupInfo,
 } from "./helpers";
 
 chai.use(chaiAsPromise);
@@ -61,6 +62,26 @@ describe("helpers.ts", () => {
     afterEach(() => {
         executeRestCallMock.restore();
     });
+    describe("getAdminGroupInfo()", () => {
+        it("group found ", () => {
+            executeRestCallMock.resolves([{ id: uuid, name: "name" }]);
+            getAdminGroupInfo("groupName", true).then((result: string[]) => {
+                expect(result[0]).to.equal(uuid);
+                expect(result[1]).to.equal("name");
+            });
+        });
+        it("group not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getAdminGroupInfo("groupName", true)).eventually.to.rejectedWith(
+                "No group found with name 'groupName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getAdminGroupInfo("groupName", true)).eventually.to.rejected;
+        });
+    });
+
     describe("getGroupID()", () => {
         it("group found ", () => {
             executeRestCallMock.resolves([{ id: uuid }]);
