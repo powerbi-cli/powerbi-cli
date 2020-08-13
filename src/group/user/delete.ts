@@ -35,9 +35,9 @@ export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, true);
+    const groupId = await validateGroupId(options.W, true);
     if (!(options.email || options.identifier)) throw "error: missing option '--email' or '--identifier'";
-    debug(`Revokes access of a user to a the Power BI group: ${groupId}`);
+    debug(`Revokes access of a user to a the Power BI workspace: ${groupId}`);
     const request: APICall = {
         method: "DELETE",
         url: `/groups/${groupId}/users/${options.email || options.identifier}`,

@@ -34,13 +34,13 @@ export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
         .description("List the parameters of a Power BI dataset")
         .action(listParameterAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     listCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Update the parameters of a Power BI dataset")
         .action(updateParameterAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--parameter <data>", "String with the parameters in JSON format")
         .option("--parameter-file <file>", "File with the parameters in JSON format");

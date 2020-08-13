@@ -35,7 +35,7 @@ import { validateGroupId, validateReportId } from "../lib/parameters";
 export async function rebindAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.targetDataset === undefined) throw "error: missing option '--target-dataset'";
     const datasetId = options.targetDataset;

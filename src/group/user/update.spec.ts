@@ -46,17 +46,17 @@ describe("group/user/update.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         email: "email",
     };
     const incorrectTypeOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         email: "email",
         accessRight: "App",
         principalType: "Viewer",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         email: "email",
         accessRight: "App",
         principalType: "Admin",
@@ -74,7 +74,7 @@ describe("group/user/update.ts", () => {
     });
     describe("updateUserAction()", () => {
         it("update with --help", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
@@ -103,7 +103,7 @@ describe("group/user/update.ts", () => {
             });
         });
         it("update with missing options", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateParameterMock.onFirstCall().rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -118,7 +118,7 @@ describe("group/user/update.ts", () => {
             });
         });
         it("update with incorrect type options", (done) => {
-            validateGroupIdMock.resolves(incorrectTypeOptions.G);
+            validateGroupIdMock.resolves(incorrectTypeOptions.W);
             validateParameterMock.onFirstCall().resolves(incorrectTypeOptions.accessRight);
             validateParameterMock.onSecondCall().rejects();
             executeAPICallMock.resolves(true);
@@ -134,7 +134,7 @@ describe("group/user/update.ts", () => {
             });
         });
         it("update with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateParameterMock.onFirstCall().resolves(allOptions.accessRight);
             validateParameterMock.onSecondCall().resolves(allOptions.principalType);
             executeAPICallMock.resolves(true);

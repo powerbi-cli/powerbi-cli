@@ -46,10 +46,10 @@ describe("dataflow/datasource.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         F: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
@@ -65,7 +65,7 @@ describe("dataflow/datasource.ts", () => {
     });
     describe("datasourceAction()", () => {
         it("datasource with --help", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDataflowIdMock.resolves(allOptions.F);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -95,7 +95,7 @@ describe("dataflow/datasource.ts", () => {
             });
         });
         it("datasource with no dataflow options", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateDataflowIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -110,7 +110,7 @@ describe("dataflow/datasource.ts", () => {
             });
         });
         it("datasource with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDataflowIdMock.resolves(allOptions.F);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {

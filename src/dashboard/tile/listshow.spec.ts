@@ -47,14 +47,14 @@ describe("dashboard/tile/listshow.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const twoOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         T: "tileName",
     };
@@ -107,7 +107,7 @@ describe("dashboard/tile/listshow.ts", () => {
             });
         });
         it("list with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateDashboardIdMock.rejects();
             validateDashboardTileIdMock.rejects();
             executeAPICallMock.resolves(true);
@@ -124,7 +124,7 @@ describe("dashboard/tile/listshow.ts", () => {
             });
         });
         it("list with two options", (done) => {
-            validateGroupIdMock.resolves(twoOptions.G);
+            validateGroupIdMock.resolves(twoOptions.W);
             validateDashboardIdMock.resolves(twoOptions.D);
             validateDashboardTileIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
@@ -141,7 +141,7 @@ describe("dashboard/tile/listshow.ts", () => {
             });
         });
         it("list with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDashboardIdMock.resolves(allOptions.D);
             validateDashboardTileIdMock.resolves(allOptions.T);
             executeAPICallMock.resolves(true);
@@ -175,7 +175,7 @@ describe("dashboard/tile/listshow.ts", () => {
             });
         });
         it("show with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateDashboardIdMock.rejects();
             validateDashboardTileIdMock.rejects();
             executeAPICallMock.resolves(true);
@@ -192,7 +192,7 @@ describe("dashboard/tile/listshow.ts", () => {
             });
         });
         it("show with two options", (done) => {
-            validateGroupIdMock.resolves(twoOptions.G);
+            validateGroupIdMock.resolves(twoOptions.W);
             validateDashboardIdMock.resolves(twoOptions.D);
             validateDashboardTileIdMock.rejects();
             executeAPICallMock.resolves(true);
@@ -209,7 +209,7 @@ describe("dashboard/tile/listshow.ts", () => {
             });
         });
         it("show with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDashboardIdMock.resolves(allOptions.D);
             validateDashboardTileIdMock.resolves(allOptions.T);
             executeAPICallMock.resolves(true);

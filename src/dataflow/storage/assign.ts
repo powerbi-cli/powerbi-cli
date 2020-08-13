@@ -35,7 +35,7 @@ import { validateGroupId } from "../../lib/parameters";
 export async function assignAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, true);
+    const groupId = await validateGroupId(options.W, true);
     debug(`Assign a Power BI dataflow storage account in group (${groupId})`);
     const request: APICall = {
         method: "POST",

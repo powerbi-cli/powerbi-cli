@@ -35,7 +35,7 @@ import { getGroupUrl } from "../../lib/helpers";
 export async function cloneAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const dashboardId = await validateDashboardId(groupId as string, options.D, true);
     const tileId = await validateDashboardTileId(groupId as string, dashboardId as string, options.T, true);
     if (options.destDashboard === undefined) throw "error: missing option '--dest-dashboard'";

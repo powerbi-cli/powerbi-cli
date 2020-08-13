@@ -36,12 +36,12 @@ export function getCommands(): ModuleCommand {
     const createCommand = new ModuleCommand("create")
         .description("Creates a Power BI group")
         .action(createAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group");
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     createCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
         .description("Delete a Power BI group")
         .action(deleteAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group");
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .description("List Power BI groups the user has access to")
@@ -50,10 +50,10 @@ export function getCommands(): ModuleCommand {
     const showCommand = new ModuleCommand("show")
         .description("Get detials of a Power BI group")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group");
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     showCommand.addGlobalOptions();
-    const groupCommand = new ModuleCommand("group")
-        .description("Manage Power BI groups")
+    const groupCommand = new ModuleCommand("workspace")
+        .description("Manage Power BI workspaces")
         .addCommand(createCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)

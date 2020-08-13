@@ -42,7 +42,7 @@ export function getCommands(): ModuleCommand {
     const deleteCommand = new ModuleCommand("delete")
         .description("Deletes a Power BI dataflow from a group")
         .action(deleteAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")

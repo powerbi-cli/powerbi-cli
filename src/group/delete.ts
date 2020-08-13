@@ -34,8 +34,8 @@ import { validateGroupId } from "../lib/parameters";
 export async function deleteAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, true);
-    debug(`Deletes a Power BI group with id: ${groupId}`);
+    const groupId = await validateGroupId(options.W, true);
+    debug(`Deletes a Power BI workspace with id: ${groupId}`);
     const request: APICall = {
         method: "DELETE",
         url: `/groups/${groupId}`,

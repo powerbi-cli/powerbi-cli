@@ -37,7 +37,7 @@ export async function updateAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.refreshSchedule === undefined && options.refreshScheduleFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";

@@ -50,36 +50,36 @@ describe("report/export/start.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const twoOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const pbixOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         format: "pbix",
     };
     const pptxOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         format: "pptx",
     };
     const xlsxOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         format: "pptx",
         config: "",
     };
     const xlsxOptionsFile = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         format: "pptx",
         configFile: "",
     };
     const zipOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         format: "zip",
     };
@@ -134,7 +134,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateReportIdMock.rejects();
             validateAllowedValues.rejects();
             executeAPICallMock.resolves(true);
@@ -151,7 +151,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with two options", (done) => {
-            validateGroupIdMock.resolves(twoOptions.G);
+            validateGroupIdMock.resolves(twoOptions.W);
             validateReportIdMock.resolves(twoOptions.R);
             validateAllowedValues.rejects();
             executeAPICallMock.resolves(true);
@@ -168,7 +168,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with PBIX options", (done) => {
-            validateGroupIdMock.resolves(pbixOptions.G);
+            validateGroupIdMock.resolves(pbixOptions.W);
             validateReportIdMock.resolves(pbixOptions.R);
             validateAllowedValues.resolves("PBIX");
             executeAPICallMock.resolves(true);
@@ -185,7 +185,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with PPTX options", (done) => {
-            validateGroupIdMock.resolves(pptxOptions.G);
+            validateGroupIdMock.resolves(pptxOptions.W);
             validateReportIdMock.resolves(pptxOptions.R);
             validateAllowedValues.resolves("PPTX");
             executeAPICallMock.resolves(true);
@@ -202,7 +202,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with XLSX options", (done) => {
-            validateGroupIdMock.resolves(xlsxOptions.G);
+            validateGroupIdMock.resolves(xlsxOptions.W);
             validateReportIdMock.resolves(xlsxOptions.R);
             validateAllowedValues.resolves("XLSX");
             executeAPICallMock.resolves(true);
@@ -219,7 +219,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with XLSX options and config file", (done) => {
-            validateGroupIdMock.resolves(xlsxOptionsFile.G);
+            validateGroupIdMock.resolves(xlsxOptionsFile.W);
             validateReportIdMock.resolves(xlsxOptionsFile.R);
             validateAllowedValues.resolves("XLSX");
             executeAPICallMock.resolves(true);
@@ -236,7 +236,7 @@ describe("report/export/start.ts", () => {
             });
         });
         it("start with ZIP options", (done) => {
-            validateGroupIdMock.resolves(pbixOptions.G);
+            validateGroupIdMock.resolves(pbixOptions.W);
             validateReportIdMock.resolves(pbixOptions.R);
             validateAllowedValues.rejects();
             executeAPICallMock.resolves(true);

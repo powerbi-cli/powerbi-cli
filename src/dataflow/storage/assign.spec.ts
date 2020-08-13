@@ -45,7 +45,7 @@ describe("dataflow/refresh/assign.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
@@ -84,7 +84,7 @@ describe("dataflow/refresh/assign.ts", () => {
             });
         });
         it("assign with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "assign",

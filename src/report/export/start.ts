@@ -37,7 +37,7 @@ import { OutputType } from "../../lib/output";
 export async function startExportAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.format === undefined) throw "error: missing option '--format'";
     const format = await validateAllowedValues((options.format as string).toUpperCase(), allowedExportFormat);

@@ -40,7 +40,7 @@ export function getCommands(): ModuleCommand {
     const cloneCommand = new ModuleCommand("clone")
         .description("Clones a Power BI report from a group")
         .action(cloneAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--name <name>", "Name of the new Power BI report")
         .option(
@@ -55,44 +55,47 @@ export function getCommands(): ModuleCommand {
     const datasourceCommand = new ModuleCommand("datasource")
         .description("Datasources of a Power BI report from a group")
         .action(datasourceAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report");
     datasourceCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
         .description("Deletes a Power BI report from a group")
         .action(deleteAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report");
     deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .description("List Power BI reports in a group")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'");
+        .option(
+            "--workspace -w <name>",
+            "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'"
+        );
     listCommand.addGlobalOptions();
     const pageCommand = new ModuleCommand("page")
         .description("Get the details of a Power BI report page")
         .action(pageAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--page-name <name>", "Name of the Power BI report page");
     pageCommand.addGlobalOptions();
     const rebindCommand = new ModuleCommand("rebind")
         .description("Rebind a Power BI report to a dataset")
         .action(rebindAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--target-dataset <dataset>", "ID of the new Power BI dataset for the rebound report");
     rebindCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI report")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report");
     showCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Updates a Power BI report with to a dataset")
         .action(updateAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--source-group <group>", "ID of the source Power BI group")
         .option("--source-report <report>", "ID of the source Power BI report");

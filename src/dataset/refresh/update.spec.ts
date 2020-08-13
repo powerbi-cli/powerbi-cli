@@ -49,19 +49,19 @@ describe("dataset/refresh/update.ts", () => {
     let readFileSyncMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
         refreshSchedule: "",
     };
     const allFileOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
         refreshScheduleFile: "",
     };
@@ -125,7 +125,7 @@ describe("dataset/refresh/update.ts", () => {
             });
         });
         it("update with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateDatasetIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -140,7 +140,7 @@ describe("dataset/refresh/update.ts", () => {
             });
         });
         it("update with missing options", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateDatasetIdMock.resolves(missingOptions.D);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -155,7 +155,7 @@ describe("dataset/refresh/update.ts", () => {
             });
         });
         it("update with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
             readFileSyncMock.returns("");
@@ -172,7 +172,7 @@ describe("dataset/refresh/update.ts", () => {
             });
         });
         it("update with all options (file)", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
             readFileSyncMock.returns("");

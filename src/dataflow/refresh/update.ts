@@ -36,7 +36,7 @@ import { validateGroupId, validateDataflowId } from "../../lib/parameters";
 export async function updateAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, true);
+    const groupId = await validateGroupId(options.W, true);
     const dataflowId = await validateDataflowId(groupId as string, options.F, true);
     if (options.refreshSchedule === undefined && options.refreshScheduleFile === undefined)
         throw "error: missing option '--refresh-schedule' or '--refresh-schedule-file'";

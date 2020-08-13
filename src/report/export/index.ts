@@ -35,14 +35,14 @@ export function getCommands(): ModuleCommand {
     const downloadCommand = new ModuleCommand("download")
         .description("Download the exported Power BI report")
         .action(downloadExportAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--export <export>", "ID of the Power BI report export");
     downloadCommand.addGlobalOptions();
     const startCommand = new ModuleCommand("start")
         .description("Start a Power BI report export")
         .action(startExportAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option(
             "--format <format>",
@@ -57,7 +57,7 @@ export function getCommands(): ModuleCommand {
     const statusCommand = new ModuleCommand("status")
         .description("Get the status of a Power BI report export")
         .action(showExportAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report")
         .option("--export <export>", "ID of the Power BI report export");
     statusCommand.addGlobalOptions();

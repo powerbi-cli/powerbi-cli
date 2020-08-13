@@ -40,30 +40,33 @@ export function getCommands(): ModuleCommand {
     const deleteCommand = new ModuleCommand("delete")
         .description("Deletes a Power BI dataset from a group")
         .action(deleteAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .description("List Power BI datasets in a group")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'");
+        .option(
+            "--workspace -w <name>",
+            "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'"
+        );
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI dataset")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     showCommand.addGlobalOptions();
     const setOwnerCommand = new ModuleCommand("set-owner")
         .description("Set the owner of a Power BI dataset to the current user / service principal")
         .action(setOwnerAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     setOwnerCommand.addGlobalOptions();
     const dataflowCommand = new ModuleCommand("dataflow")
         .description("Get the dataflows uplinks of a Power BI dataset")
         .action(dataflowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     dataflowCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("dataset")

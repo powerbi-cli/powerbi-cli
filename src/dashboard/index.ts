@@ -35,17 +35,20 @@ export function getCommands(): ModuleCommand {
     const createCommand = new ModuleCommand("create")
         .description("Create a Power BI dashboard")
         .action(createAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name of the Power BI dashboard");
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
         .description("List Power BI dashboards in a group")
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'");
+        .option(
+            "--workspace -w <name>",
+            "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'"
+        );
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI dashboard")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name or ID of the Power BI dashboard");
     showCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dashboard")

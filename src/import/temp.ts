@@ -35,7 +35,7 @@ import { getGroupUrl } from "../lib/helpers";
 export async function tempAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/imports/createTemporaryUploadLocation`,

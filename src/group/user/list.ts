@@ -35,8 +35,8 @@ export async function listUserAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, false);
-    debug(`Returns a list of users that have access to the Power BI group: ${options.G}`);
+    const groupId = await validateGroupId(options.W, false);
+    debug(`Returns a list of users that have access to the Power BI workspace: ${options.W}`);
     const request: APICall = {
         method: "GET",
         url: `/groups/${groupId}/users`,

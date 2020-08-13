@@ -47,14 +47,14 @@ describe("dataset/gateway/update.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
         gatewayId: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
@@ -107,7 +107,7 @@ describe("dataset/gateway/update.ts", () => {
             });
         });
         it("update with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateDatasetIdMock.rejects();
             validateParameterMock.rejects();
             executeAPICallMock.resolves(true);
@@ -124,7 +124,7 @@ describe("dataset/gateway/update.ts", () => {
             });
         });
         it("update with missing options", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateDatasetIdMock.resolves(missingOptions.D);
             validateParameterMock.rejects();
             executeAPICallMock.resolves(true);
@@ -141,7 +141,7 @@ describe("dataset/gateway/update.ts", () => {
             });
         });
         it("update with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             validateParameterMock.resolves(allOptions.gatewayId);
             executeAPICallMock.resolves(true);
