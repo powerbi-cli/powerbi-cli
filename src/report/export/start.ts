@@ -44,7 +44,9 @@ export async function startExportAction(cmd: ModuleCommand): Promise<void> {
     const isPbix = pbiDownloads.some((f) => f === format);
     const isPbiExport = pbiExports.some((f) => f === format);
     const config = options.config || (options.configFile === undefined ? undefined : readFileSync(options.configFile));
-    debug(`Start the export of a Power BI report (${reportId}) in group (${groupId || "my"}) to format (${format})`);
+    debug(
+        `Start the export of a Power BI report (${reportId}) in workspace (${groupId || "my"}) to format (${format})`
+    );
     const request: APICall = {
         method: isPbix ? "GET" : "POST",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/${isPbix ? "Export" : "ExportTo"}`,

@@ -40,7 +40,7 @@ export async function showExportAction(cmd: ModuleCommand): Promise<void> {
     if (options.export === undefined) throw "error: missing option '--export'";
     const exportId = options.export;
 
-    debug(`Get the export status of a Power BI report (${reportId}) in group (${groupId || "my"})`);
+    debug(`Get the export status of a Power BI report (${reportId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "GET",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/exports/${exportId}`,

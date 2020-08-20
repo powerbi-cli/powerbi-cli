@@ -39,7 +39,7 @@ export async function rebindAction(cmd: ModuleCommand): Promise<void> {
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.targetDataset === undefined) throw "error: missing option '--target-dataset'";
     const datasetId = options.targetDataset;
-    debug(`Rebind Power BI report (${reportId}) in group ${groupId}`);
+    debug(`Rebind Power BI report (${reportId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/Rebind`,

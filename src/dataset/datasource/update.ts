@@ -42,7 +42,7 @@ export async function updateDatasourceAction(cmd: ModuleCommand): Promise<void> 
     if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
     const updateDetails = options.updateDetails || readFileSync(options.updateDetailsFile);
-    debug(`Update the parameters of a Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Update the parameters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/datasets/${datasetId}/Default.UpdateDatasources`,

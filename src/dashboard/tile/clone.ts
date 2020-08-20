@@ -39,7 +39,7 @@ export async function cloneAction(cmd: ModuleCommand): Promise<void> {
     const dashboardId = await validateDashboardId(groupId as string, options.D, true);
     const tileId = await validateDashboardTileId(groupId as string, dashboardId as string, options.T, true);
     if (options.destDashboard === undefined) throw "error: missing option '--dest-dashboard'";
-    debug(`Clone a Power BI dashboard tile (${tileId}) in group (${groupId || "my"}) with name (${options.D})`);
+    debug(`Clone a Power BI dashboard tile (${tileId}) in workspace (${groupId || "my"}) with name (${options.D})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/dashboards/${dashboardId}/tiles/${tileId}/Clone`,

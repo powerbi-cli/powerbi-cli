@@ -42,7 +42,7 @@ export async function cloneAction(cmd: ModuleCommand): Promise<void> {
     const targetModelId = options.targetDataset;
     const targetWorkspaceId =
         options.targetGroup === true ? "00000000-0000-0000-0000-000000000000" : options.targetGroup;
-    debug(`Clone Power BI report (${reportId}) in group ${groupId}`);
+    debug(`Clone Power BI report (${reportId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/Clone`,

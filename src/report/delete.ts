@@ -37,7 +37,7 @@ export async function deleteAction(cmd: ModuleCommand): Promise<void> {
     if (options.H) return;
     const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
-    debug(`Delete Power BI report (${reportId}) in group ${groupId}`);
+    debug(`Delete Power BI report (${reportId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "DELETE",
         url: `${getGroupUrl(groupId)}/reports/${reportId}`,

@@ -37,7 +37,7 @@ export async function listshowAction(cmd: ModuleCommand): Promise<void> {
     if (options.H) return;
     const groupId = await validateGroupId(options.W, true);
     const dataflowId = await validateDataflowId(groupId as string, options.F, cmd.name() === "show");
-    debug(`Retrieves Power BI dataflows of the group (${groupId})`);
+    debug(`Retrieves Power BI dataflows of the workspace (${groupId})`);
     const request: APICall = {
         method: "GET",
         url: `${getGroupUrl(groupId)}/dataflows${dataflowId ? `/${dataflowId}` : ""}`,

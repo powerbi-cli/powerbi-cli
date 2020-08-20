@@ -42,7 +42,7 @@ export async function updateParameterAction(cmd: ModuleCommand): Promise<void> {
     if (options.parameter === undefined && options.parameterFile === undefined)
         throw "error: missing option '--parameter' or '--parameter-file'";
     const parameters = options.parameter || readFileSync(options.parameterFile);
-    debug(`Update the parameters of a Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Update the parameters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/datasets/${datasetId}/Default.UpdateParameters`,

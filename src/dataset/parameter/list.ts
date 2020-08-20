@@ -38,7 +38,7 @@ export async function listParameterAction(cmd: ModuleCommand): Promise<void> {
 
     const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
-    debug(`Get the paramaters of a Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Get the paramaters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "GET",
         url: `${getGroupUrl(groupId)}/datasets/${datasetId}/parameters`,

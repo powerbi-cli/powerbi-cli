@@ -41,7 +41,7 @@ export async function updateAction(cmd: ModuleCommand): Promise<void> {
     if (options.sourceGroup === undefined) throw "error: missing option '--source-group'";
     const sourceReportId = options.sourceReport;
     const sourceWorkspaceId = options.sourceGroup;
-    debug(`Update Power BI report (${reportId}) in group ${groupId}`);
+    debug(`Update Power BI report (${reportId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/UpdateReportContent`,

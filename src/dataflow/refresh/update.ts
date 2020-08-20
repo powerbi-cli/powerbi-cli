@@ -41,7 +41,7 @@ export async function updateAction(cmd: ModuleCommand): Promise<void> {
     if (options.refreshSchedule === undefined && options.refreshScheduleFile === undefined)
         throw "error: missing option '--refresh-schedule' or '--refresh-schedule-file'";
     const refreshSchedule = options.refreshSchedule || readFileSync(options.refreshScheduleFile);
-    debug(`Update the refresch schedule of a Power BI dataflow (${dataflowId}) in group (${groupId})`);
+    debug(`Update the refresch schedule of a Power BI dataflow (${dataflowId}) in workspace (${groupId})`);
     const request: APICall = {
         method: "PATCH",
         url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}/refreshSchedule`,

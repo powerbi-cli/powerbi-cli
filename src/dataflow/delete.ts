@@ -37,7 +37,7 @@ export async function deleteAction(cmd: ModuleCommand): Promise<void> {
     if (options.H) return;
     const groupId = await validateGroupId(options.W, true);
     const dataflowId = await validateDataflowId(groupId as string, options.F, true);
-    debug(`Delete Power BI dataflow (${dataflowId}) in group ${groupId}`);
+    debug(`Delete Power BI dataflow (${dataflowId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "DELETE",
         url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}`,

@@ -36,7 +36,7 @@ export async function assignAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
     const groupId = await validateGroupId(options.W, true);
-    debug(`Assign a Power BI dataflow storage account in group (${groupId})`);
+    debug(`Assign a Power BI dataflow storage account in workspace (${groupId})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/AssignToDataflowStorage`,

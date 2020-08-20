@@ -37,7 +37,7 @@ export async function startAction(cmd: ModuleCommand): Promise<void> {
     if (options.H) return;
     const groupId = await validateGroupId(options.W, true);
     const dataflowId = await validateDataflowId(groupId as string, options.F, true);
-    debug(`Start a refresh of a Power BI dataflow (${dataflowId}) in group (${groupId})`);
+    debug(`Start a refresh of a Power BI dataflow (${dataflowId}) in workspace (${groupId})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}/refreshes`,
