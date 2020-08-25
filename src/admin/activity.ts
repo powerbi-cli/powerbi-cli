@@ -26,28 +26,36 @@
 
 "use strict";
 
-import { ModuleCommand } from "../../lib/command";
-import { debug } from "../../lib/logging";
-import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { stringify, ParsedUrlQueryInput } from "querystring";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+import { ModuleCommand } from "../lib/command";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
+
+export async function activityAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
+    const filter = options.filter;
+    const date = options.date;
+    const startTime: string = options.startTime || "00:00:00";
+    const endTime: string = options.endTime || "23:59:59.999";
+    const token = options.continuationToken;
+    if (!token && !date) {
+        throw "error: missing option '--continuation-token' or '--date'";
     }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    const query: ParsedUrlQueryInput = {};
+    if (date) {
+        const startDate = new Date(`${date}T${(startTime + ":00:00").substr(0, 8)}Z`);
+        const endDate = new Date(`${date}T${(endTime + ":00:00.000").substr(0, 12)}Z`);
+        query["startDateTime"] = `'${startDate.toISOString()}'`;
+        query["endDateTime"] = `'${endDate.toISOString()}'`;
+    }
+    if (filter) query["$filter"] = filter;
+    if (token) query["continuationToken"] = token;
+    debug(`Returns a list of audit activity events for a tenant`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
+        method: "GET",
+        url: `/admin/activityevents?${stringify(query)}`,
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

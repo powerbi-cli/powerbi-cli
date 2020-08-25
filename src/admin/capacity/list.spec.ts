@@ -35,81 +35,83 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { deleteUserAction } from "./deleteUser";
+import { listAction } from "./list";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/deleteUser.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("admin/capacity/list.ts", () => {
+    let validateAllowedValuesMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+    const expandOptions = {
+        expand: "tenantKey",
     };
-    const allOptions = {
-        W: "name",
-        user: "user@contoso.com",
+    const expandErrorOptions = {
+        expand: "NotValid",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
+        validateAllowedValuesMock = ImportMock.mockFunction(parameters, "validateAllowedValues");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
+        validateAllowedValuesMock.restore();
         executeAPICallMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("listAction()", () => {
+        it("list with --help", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "list",
                 opts: () => helpOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            listAction(cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("list with no options", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "list",
                 opts: () => emptyOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("update with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => groupOptions,
-            };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("deleteUser with 'group' and 'user' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => allOptions,
-            };
-            deleteUserAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("list with 'expand' options", (done) => {
+            validateAllowedValuesMock.resolves(expandOptions.expand);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "list",
+                opts: () => expandOptions,
+            };
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request?.url?.indexOf("expand=tenantKey")).to.greaterThan(-1);
+                expect(validateAllowedValuesMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("list with incorrect 'expand' options", (done) => {
+            validateAllowedValuesMock.rejects(undefined);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "list",
+                opts: () => expandErrorOptions,
+            };
+            listAction(cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateAllowedValuesMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });

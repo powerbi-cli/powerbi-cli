@@ -29,25 +29,26 @@
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+export async function addAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    const name = options.name;
+    if (!name) throw "error: missing option '--name'";
+    const keyVaultKeyIdentifier = options.keyVaultURI;
+    if (!keyVaultKeyIdentifier) throw "error: missing option '--keyVaultURI'";
+    const activate = options.active || false;
+    const isDefault = options.default || false;
+    debug(`Adds an encryption key for Power BI workspaces assigned to a capacity`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
+        method: "POST",
+        url: `/admin/tenantKeys`,
+        body: {
+            name,
+            keyVaultKeyIdentifier,
+            activate,
+            isDefault,
+        },
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

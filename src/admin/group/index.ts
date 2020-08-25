@@ -37,7 +37,7 @@ export function getCommands(): ModuleCommand {
     const addUserCommand = new ModuleCommand("add")
         .description("Grants user permissions to the specified workspace")
         .action(addUserAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--email <email>", "Email address of the user")
         .option("--identifier <identifier>", "Identifier of the principal")
         .option("--access-right <right>", `Access right. Allowed values: ${accessRights.join(", ")}`)
@@ -46,7 +46,7 @@ export function getCommands(): ModuleCommand {
     const deleteUserCommand = new ModuleCommand("delete")
         .description("Removes user permissions to the specified workspace")
         .action(deleteUserAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--user <UPN>", "The user principal name (UPN) of the user to remove");
     deleteUserCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
@@ -65,19 +65,19 @@ export function getCommands(): ModuleCommand {
     const restoreCommand = new ModuleCommand("restore")
         .description("Restores a deleted workspace")
         .action(restoreAction)
-        .option("--group -g <name>", "Name or ID of the deleted Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--owner <email>", "The email address of the owner of the group to be restored")
         .option("--name [name]", "The optional new name of the group to be restored");
     restoreCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Updates the specified workspace properties")
         .action(restoreAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--update-details <data>", "String with the update details in JSON format")
         .option("--update-details-file <file>", "File with the update details in JSON format");
     updateCommand.addGlobalOptions();
-    const appCommand = new ModuleCommand("group")
-        .description("Manage groups as admin")
+    const appCommand = new ModuleCommand("workspace")
+        .description("Manage workspaces as admin")
         .addCommand(addUserCommand)
         .addCommand(deleteUserCommand)
         .addCommand(listCommand)

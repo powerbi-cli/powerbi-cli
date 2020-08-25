@@ -32,120 +32,119 @@ import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
 import { ModuleCommand } from "../../lib/command";
-import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { addUserAction } from "./addUser";
+import { addAction } from "./add";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/addUser.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
-    let validateParameterMock: SinonStub<unknown[], unknown>;
+describe("admin/key/add.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const missingOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        email: "email",
+    const missingKVOptions = {
+        name: "key",
     };
-    const incorrectTypeOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        email: "email",
-        accessRight: "App",
-        principalType: "Viewer",
+    const correctOptions = {
+        name: "key",
+        keyVaultURI: "uri",
+    };
+    const defaultOptions = {
+        name: "key",
+        keyVaultURI: "uri",
+        default: true,
     };
     const allOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        email: "email",
-        accessRight: "App",
-        principalType: "Admin",
+        name: "key",
+        keyVaultURI: "uri",
+        default: true,
+        active: true,
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
-        validateParameterMock = ImportMock.mockFunction(parameters, "validateParameter");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
-        validateParameterMock.restore();
         executeAPICallMock.restore();
     });
-    describe("addUserAction()", () => {
+    describe("addAction()", () => {
         it("add user with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
-            validateParameterMock.resolves(true);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "add",
                 opts: () => helpOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
-                expect(validateParameterMock.callCount).to.equal(0);
+            addAction(cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("add user with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
-            validateParameterMock.resolves(true);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "add",
                 opts: () => emptyOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(validateParameterMock.callCount).to.equal(0);
+            addAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("add user with missing options", (done) => {
-            validateAdminGroupIdMock.resolves(missingOptions.W);
-            validateParameterMock.onFirstCall().rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "add",
-                opts: () => missingOptions,
+                opts: () => missingKVOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(validateParameterMock.callCount).to.equal(1);
+            addAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("add user with incorrect type options", (done) => {
-            validateAdminGroupIdMock.resolves(incorrectTypeOptions.W);
-            validateParameterMock.onFirstCall().resolves(incorrectTypeOptions.accessRight);
-            validateParameterMock.onSecondCall().rejects();
+        it("add user with minimal options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "add",
-                opts: () => incorrectTypeOptions,
+                opts: () => correctOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(validateParameterMock.callCount).to.equal(2);
-                expect(executeAPICallMock.callCount).to.equal(0);
+            addAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request.body.name.indexOf(correctOptions.name)).to.greaterThan(-1);
+                expect(request.body.keyVaultKeyIdentifier.indexOf(correctOptions.keyVaultURI)).to.greaterThan(-1);
+                expect(request.body.activate).to.equal(false);
+                expect(request.body.isDefault).to.equal(false);
+                expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("add user with options", (done) => {
-            validateAdminGroupIdMock.resolves(allOptions.W);
-            validateParameterMock.onFirstCall().resolves(allOptions.accessRight);
-            validateParameterMock.onSecondCall().resolves(allOptions.principalType);
+        it("add user with default options", (done) => {
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "add",
+                opts: () => defaultOptions,
+            };
+            addAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request.body.name.indexOf(defaultOptions.name)).to.greaterThan(-1);
+                expect(request.body.keyVaultKeyIdentifier.indexOf(defaultOptions.keyVaultURI)).to.greaterThan(-1);
+                expect(request.body.activate).to.equal(false);
+                expect(request.body.isDefault).to.equal(true);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("add user with all options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "add",
                 opts: () => allOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(validateParameterMock.callCount).to.equal(2);
+            addAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request.body.name.indexOf(allOptions.name)).to.greaterThan(-1);
+                expect(request.body.keyVaultKeyIdentifier.indexOf(allOptions.keyVaultURI)).to.greaterThan(-1);
+                expect(request.body.activate).to.equal(true);
+                expect(request.body.isDefault).to.equal(true);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

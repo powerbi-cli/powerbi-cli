@@ -29,25 +29,32 @@
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
+import { validateCapacityId, validateAdminGroupId } from "../../lib/parameters";
 import { checkUUID } from "../../lib/validate";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+export async function assignAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
+    let workspacesToAssign: string[] = [];
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
+    const targetCapacityObjectId = await validateCapacityId(options.C, true);
+    if (!options.W) throw "error: missing option '--workspace'";
+    const workspaces = options.W.split(",");
+    if (!checkUUID(workspaces[0])) {
+        workspaces.forEach(async (workspace: string) => {
+            const workspaceId = await validateAdminGroupId(workspace, true, "Active");
+            workspacesToAssign.push(workspaceId as string);
+        });
     } else {
-        groupId = options.W;
+        workspacesToAssign = workspaces;
     }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    debug(`Assigns the provided workspaces to the specified capacity`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
+        method: "POST",
+        url: "/admin/capacities/AssignWorkspaces",
+        body: {
+            targetCapacityObjectId,
+            workspacesToAssign,
+        },
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

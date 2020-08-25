@@ -50,8 +50,12 @@ export const datasetNamingConflict = datasetNamingConflictPBIX
     .filter((v, i, s) => s.indexOf(v) === i)
     .sort();
 export const expandAdminGroups = ["dashboards", "datasets", "dataflows", "reports", "users", "workbooks"];
+export const expandCapacity = ["tenantKey"];
+export const expandAdminDashboards = ["tiles"];
+export const expandAdminImports = ["datasets", "reports"];
+export const expandAdminRefreshes = ["capacity", "workspace"];
 
-export function getAdminGroupInfo(name: string, filterDeleted: boolean): Promise<string[]> {
+export function getAdminGroupInfo(name: string, filterState: string | undefined = undefined): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
         const query: ParsedUrlQueryInput = { $top: 1 };
         name = name.replace(/['"]+/g, "");
@@ -60,7 +64,7 @@ export function getAdminGroupInfo(name: string, filterDeleted: boolean): Promise
         } else {
             query["$filter"] = `name eq '${name}'`;
         }
-        if (filterDeleted) query["$filter"] += " and state eq 'Deleted'";
+        if (filterState) query["$filter"] += ` and state eq '${filterState}'`;
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
             url: `${rootUrl}/admin/groups?${stringify(query)}`,
@@ -71,7 +75,56 @@ export function getAdminGroupInfo(name: string, filterDeleted: boolean): Promise
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     resolve([(response as any)[0].id, (response as any)[0].name]);
                 } catch {
-                    reject(`No group found with name '${name}'`);
+                    let errorMsg = `No workspace found with name '${name}'`;
+                    if (filterState) errorMsg += ` and state '${filterState}'`;
+                    reject(errorMsg);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getAdminObjectInfo(
+    name: string,
+    objectType: string,
+    lookupName: string,
+    returnName: string | undefined = "id"
+): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const query: ParsedUrlQueryInput = { $top: 1 };
+        name = name.replace(/['"]+/g, "");
+        query["$filter"] = `${lookupName} eq '${name}'`;
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/admin/${objectType}?${stringify(query)}`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    resolve((response as any)[0][returnName]);
+                } catch {
+                    reject(`No ${objectType} found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getCapacityID(name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/admin/capacities`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No capacity found with name '${name}'`);
                 }
             })
             .catch((err) => reject(err));
@@ -91,7 +144,7 @@ export function getGroupID(name: string): Promise<string> {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     resolve((response as any)[0].id);
                 } catch {
-                    reject(`No group found with name '${name}'`);
+                    reject(`No workspace found with name '${name}'`);
                 }
             })
             .catch((err) => reject(err));

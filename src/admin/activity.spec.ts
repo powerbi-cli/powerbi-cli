@@ -31,108 +31,109 @@ import chai from "chai";
 import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
-import { ModuleCommand } from "../../lib/command";
-import * as parameters from "../../lib/parameters";
-import * as api from "../../lib/api";
+import { ModuleCommand } from "../lib/command";
+import * as api from "../lib/api";
 
-import { restoreAction } from "./restore";
+import { activityAction } from "./activity";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/restore.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("admin/activity.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+    const filterOptions = {
+        filter: "filter",
     };
-    const groupOwnerOptions = {
-        W: "name",
-        owner: "owner@contoso.com",
+    const dateOptions = {
+        date: "1900-01-01",
     };
-    const allOptions = {
-        W: "name",
-        owner: "owner@contoso.com",
-        name: "other",
+    const dateTimeOptions = {
+        date: "1900-01-01",
+        startTime: 22,
+        endTime: 23,
+    };
+    const tokenOptions = {
+        continuationToken: "token",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("restoreAction()", () => {
-        it("restore with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("activityAction()", () => {
+        it("activity with --help", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
+                name: () => "activity",
                 opts: () => helpOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            activityAction(cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("restore with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("activity with no options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
+                name: () => "activity",
                 opts: () => emptyOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            activityAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("restore with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("activity with 'filterOptions' options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
-                opts: () => groupOptions,
+                name: () => "activity",
+                opts: () => filterOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            activityAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("restore with 'group' and 'owner' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
+        it("activity with 'dateOptions' options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
-                opts: () => groupOwnerOptions,
+                name: () => "activity",
+                opts: () => dateOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).then(() => {
+            activityAction(cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
-                expect(request?.body.name).to.equal(groupOwnerOptions.W);
-                expect(request?.body.emailAddress).to.equal(groupOwnerOptions.owner);
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+                expect(request?.url?.indexOf("startDateTime='1900-01-01T00%3A00%3A00.000Z'")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("endDateTime='1900-01-01T23%3A59%3A59.999Z'")).to.greaterThan(-1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("restore with 'group', 'owner' and 'name' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
+        it("activity with 'dateTimeOptions' options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
-                opts: () => allOptions,
+                name: () => "activity",
+                opts: () => dateTimeOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).then(() => {
+            activityAction(cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
-                expect(request?.body.name).to.equal(allOptions.name);
-                expect(request?.body.emailAddress).to.equal(allOptions.owner);
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+                expect(request?.url?.indexOf("startDateTime='1900-01-01T22%3A00%3A00.000Z'")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("endDateTime='1900-01-01T23%3A00%3A00.000Z'")).to.greaterThan(-1);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("activity with 'tokenOptions' options", (done) => {
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "activity",
+                opts: () => tokenOptions,
+            };
+            activityAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request?.url?.indexOf("continuationToken=token")).to.greaterThan(-1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

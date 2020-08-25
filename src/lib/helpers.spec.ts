@@ -45,6 +45,8 @@ import {
     getGatewayDatasourceID,
     getImportID,
     getAdminGroupInfo,
+    getCapacityID,
+    getAdminObjectInfo,
 } from "./helpers";
 
 chai.use(chaiAsPromise);
@@ -65,23 +67,40 @@ describe("helpers.ts", () => {
     describe("getAdminGroupInfo()", () => {
         it("group found ", () => {
             executeRestCallMock.resolves([{ id: uuid, name: "name" }]);
-            getAdminGroupInfo("groupName", true).then((result: string[]) => {
+            getAdminGroupInfo("groupName", "Deleted").then((result: string[]) => {
                 expect(result[0]).to.equal(uuid);
                 expect(result[1]).to.equal("name");
             });
         });
         it("group not found", () => {
             executeRestCallMock.resolves([]);
-            expect(getAdminGroupInfo("groupName", true)).eventually.to.rejectedWith(
-                "No group found with name 'groupName'"
+            expect(getAdminGroupInfo("groupName", "Deleted")).eventually.to.rejectedWith(
+                "No workspace found with name 'groupName' and state 'Deleted'"
             );
         });
         it("exception in executeRestCall", () => {
             executeRestCallMock.rejects();
-            expect(getAdminGroupInfo("groupName", true)).eventually.to.rejected;
+            expect(getAdminGroupInfo("groupName", "Deleted")).eventually.to.rejected;
         });
     });
-
+    describe("getAdminObjectInfo()", () => {
+        it("object found ", () => {
+            executeRestCallMock.resolves([{ id: uuid }]);
+            getAdminObjectInfo("reportName", "report", "name").then((result: string) => {
+                expect(result).to.equal(uuid);
+            });
+        });
+        it("object not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getAdminObjectInfo("datasetName", "dataset", "name")).eventually.to.rejectedWith(
+                "No dataset found with name 'datasetName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getAdminObjectInfo("dataflowName", "dataflow", "name")).eventually.to.rejected;
+        });
+    });
     describe("getGroupID()", () => {
         it("group found ", () => {
             executeRestCallMock.resolves([{ id: uuid }]);
@@ -89,11 +108,26 @@ describe("helpers.ts", () => {
         });
         it("group not found", () => {
             executeRestCallMock.resolves([]);
-            expect(getGroupID("groupName")).eventually.to.rejectedWith("No group found with name 'groupName'");
+            expect(getGroupID("groupName")).eventually.to.rejectedWith("No workspace found with name 'groupName'");
         });
         it("exception in executeRestCall", () => {
             executeRestCallMock.rejects();
             expect(getGroupID("groupName")).eventually.to.rejected;
+        });
+    });
+
+    describe("getCapacityID()", () => {
+        it("capacity found ", () => {
+            executeRestCallMock.resolves([{ displayName: "capacity", id: uuid }]);
+            expect(getCapacityID("capacity")).eventually.to.equal(uuid);
+        });
+        it("capacity not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getCapacityID("capacity")).eventually.to.rejectedWith("No capacity found with name 'capacity'");
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getCapacityID("capacity")).eventually.to.rejected;
         });
     });
 

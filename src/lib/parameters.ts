@@ -39,6 +39,8 @@ import {
     getGatewayDatasourceID,
     getImportID,
     getAdminGroupInfo,
+    getCapacityID,
+    getAdminObjectInfo,
 } from "./helpers";
 
 export interface Parameter {
@@ -54,7 +56,7 @@ export async function validateGroupId(group: string | undefined, isRequired: boo
     return validateParameter({
         name: group,
         isName: () => getGroupID(group as string),
-        missing: "error: missing option '--group'",
+        missing: "error: missing option '--workspace'",
         isRequired,
     });
 }
@@ -62,13 +64,40 @@ export async function validateGroupId(group: string | undefined, isRequired: boo
 export async function validateAdminGroupId(
     group: string | undefined,
     isRequired: boolean,
-    filterDeleted: boolean
+    filterState: string | undefined = undefined
 ): Promise<string | undefined> {
     return validateParameter({
         name: group,
-        isName: () => getAdminGroupInfo(group as string, filterDeleted).then((result) => Promise.resolve(result[0])),
-        isId: () => getAdminGroupInfo(group as string, filterDeleted).then((result) => Promise.resolve(result[1])),
-        missing: "error: missing option '--group'",
+        isName: () => getAdminGroupInfo(group as string, filterState).then((result) => Promise.resolve(result[0])),
+        isId: () => getAdminGroupInfo(group as string, filterState).then((result) => Promise.resolve(result[1])),
+        missing: "error: missing option '--workspace'",
+        isRequired,
+    });
+}
+
+export async function validateAdminObjectId(
+    objectName: string | undefined,
+    isRequired: boolean,
+    objectType: string,
+    lookupName: string,
+    returnName: string | undefined = "id"
+): Promise<string | undefined> {
+    return validateParameter({
+        name: objectName,
+        isName: () => getAdminObjectInfo(objectName as string, `${objectType}s`, lookupName, returnName),
+        missing: `error: missing option '--${objectType}'`,
+        isRequired,
+    });
+}
+
+export async function validateCapacityId(
+    capacity: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    return validateParameter({
+        name: capacity,
+        isName: () => getCapacityID(capacity as string),
+        missing: "error: missing option '--capacity'",
         isRequired,
     });
 }

@@ -35,80 +35,93 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { deleteUserAction } from "./deleteUser";
+import { upstreamAction } from "./upstream";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/deleteUser.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("admin/dataflow/upstream.ts", () => {
+    let validateGroupIdMock: SinonStub<unknown[], unknown>;
+    let validateAdminObjectIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+    const missingOptions = {
+        W: "workplace",
     };
     const allOptions = {
-        W: "name",
-        user: "user@contoso.com",
+        W: "workplace",
+        D: "dataflow",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
+        validateGroupIdMock = ImportMock.mockFunction(parameters, "validateGroupId");
+        validateAdminObjectIdMock = ImportMock.mockFunction(parameters, "validateAdminObjectId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
+        validateGroupIdMock.restore();
+        validateAdminObjectIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("upstreamAction()", () => {
+        it("upstream with --help", (done) => {
+            validateGroupIdMock.resolves(undefined);
+            validateAdminObjectIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "upstream",
                 opts: () => helpOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            upstreamAction(cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateGroupIdMock.callCount).to.equal(0);
+                expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("upstream with no options", (done) => {
+            validateGroupIdMock.rejects(undefined);
+            validateAdminObjectIdMock.rejects(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "upstream",
                 opts: () => emptyOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            upstreamAction(cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("upstream with missing options", (done) => {
+            validateGroupIdMock.resolves("uuid");
+            validateAdminObjectIdMock.rejects(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => groupOptions,
+                name: () => "upstream",
+                opts: () => missingOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            upstreamAction(cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("deleteUser with 'group' and 'user' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
+        it("upstream with options", (done) => {
+            validateGroupIdMock.resolves("uuid");
+            validateAdminObjectIdMock.resolves("uuid");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "upstream",
                 opts: () => allOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            upstreamAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request?.url?.indexOf("groups/uuid/")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("dataflows/uuid/")).to.greaterThan(-1);
+                expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

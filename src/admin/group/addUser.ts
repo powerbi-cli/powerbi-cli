@@ -37,11 +37,11 @@ export async function addUserAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
     let groupId;
-    const groupLookup = await validateAdminGroupId(options.G, true, false);
+    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
     if (checkUUID(groupLookup as string)) {
         groupId = groupLookup;
     } else {
-        groupId = options.G;
+        groupId = options.W;
     }
     if (!(options.email || options.identifier)) throw "error: missing option '--email' or '--identifier'";
     const accessRight = await validateParameter({

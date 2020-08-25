@@ -35,104 +35,109 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { restoreAction } from "./restore";
+import { listAction } from "./list";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/restore.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("admin/dashboard/list.ts", () => {
+    let validateAllowedValuesMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+    const topOptions = {
+        top: 1,
     };
-    const groupOwnerOptions = {
-        W: "name",
-        owner: "owner@contoso.com",
+    const topskipOptions = {
+        top: 1,
+        skip: 1,
     };
-    const allOptions = {
-        W: "name",
-        owner: "owner@contoso.com",
-        name: "other",
+    const topskipErrorOptions = {
+        top: "NA",
+        skip: 1,
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
+        validateAllowedValuesMock = ImportMock.mockFunction(parameters, "validateAllowedValues");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
+        validateAllowedValuesMock.restore();
         executeAPICallMock.restore();
     });
-    describe("restoreAction()", () => {
-        it("restore with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("listAction()", () => {
+        it("list with --help", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
+                name: () => "list",
                 opts: () => helpOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            listAction(cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("restore with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("list with no options", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
+                name: () => "list",
                 opts: () => emptyOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("restore with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "restore",
-                opts: () => groupOptions,
-            };
-            restoreAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("restore with 'group' and 'owner' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "restore",
-                opts: () => groupOwnerOptions,
-            };
-            restoreAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
-                expect(request?.body.name).to.equal(groupOwnerOptions.W);
-                expect(request?.body.emailAddress).to.equal(groupOwnerOptions.owner);
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+                expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("restore with 'group', 'owner' and 'name' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
+        it("list with 'top' options", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "restore",
-                opts: () => allOptions,
+                name: () => "list",
+                opts: () => topOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
-                expect(request?.body.name).to.equal(allOptions.name);
-                expect(request?.body.emailAddress).to.equal(allOptions.owner);
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+                expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("list with 'top' and 'skip' options", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "list",
+                opts: () => topskipOptions,
+            };
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("list with 'top' and 'skip' options with error", (done) => {
+            validateAllowedValuesMock.resolves(undefined);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "list",
+                opts: () => topskipErrorOptions,
+            };
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
+                expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
+                expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

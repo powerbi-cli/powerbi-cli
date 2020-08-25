@@ -36,12 +36,12 @@ export async function restoreAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
     let groupId, groupName;
-    const groupLookup = await validateAdminGroupId(options.G, true, true);
+    const groupLookup = await validateAdminGroupId(options.W, true, "Deleted");
     if (checkUUID(groupLookup as string)) {
         groupId = groupLookup;
-        groupName = options.G;
+        groupName = options.W;
     } else {
-        groupId = options.G;
+        groupId = options.W;
         groupName = groupLookup;
     }
     const emailAddress = options.owner;

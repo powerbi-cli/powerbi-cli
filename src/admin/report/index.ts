@@ -27,28 +27,18 @@
 "use strict";
 
 import { ModuleCommand } from "../../lib/command";
-import { debug } from "../../lib/logging";
-import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { listAction } from "./list";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
-    if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
-    const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
-        containsValue: false,
-    };
-    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
+export function getCommands(): ModuleCommand {
+    const listCommand = new ModuleCommand("list")
+        .description("Returns a list of reports for the organization")
+        .action(listAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
+        .option("--filter <filter>", "Filters the results based on a boolean condition")
+        .option("--top <number>", "Returns only the first <number> results. Default: 5000")
+        .option("--skip <number>", "Skips the first <number> results");
+    listCommand.addGlobalOptions();
+    const appCommand = new ModuleCommand("report").description("Manage reports as admin").addCommand(listCommand);
+    appCommand.addGlobalOptions();
+    return appCommand;
 }

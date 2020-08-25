@@ -38,11 +38,11 @@ export async function updateAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
     let groupId;
-    const groupLookup = await validateAdminGroupId(options.G, true, false);
+    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
     if (checkUUID(groupLookup as string)) {
         groupId = groupLookup;
     } else {
-        groupId = options.G;
+        groupId = options.W;
     }
     if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";

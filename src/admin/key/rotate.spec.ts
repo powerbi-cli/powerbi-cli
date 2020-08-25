@@ -32,83 +32,74 @@ import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
 import { ModuleCommand } from "../../lib/command";
-import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { deleteUserAction } from "./deleteUser";
+import { rotateAction } from "./rotate";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/deleteUser.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("admin/key/rotate.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+    const missingKVOptions = {
+        key: "uuid",
     };
-    const allOptions = {
-        W: "name",
-        user: "user@contoso.com",
+    const correctOptions = {
+        key: "uuid",
+        keyVaultURI: "uri",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("rotateAction()", () => {
+        it("rotate user with --help", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "rotate",
                 opts: () => helpOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            rotateAction(cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("rotate user with no options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "rotate",
                 opts: () => emptyOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            rotateAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("rotate user with missing options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => groupOptions,
+                name: () => "rotate",
+                opts: () => missingKVOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            rotateAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("deleteUser with 'group' and 'user' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
+        it("rotate user with minimal options", (done) => {
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => allOptions,
+                name: () => "rotate",
+                opts: () => correctOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            rotateAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request.url?.indexOf(correctOptions.key)).to.greaterThan(-1);
+                expect(request.body.keyVaultKeyIdentifier.indexOf(correctOptions.keyVaultURI)).to.greaterThan(-1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

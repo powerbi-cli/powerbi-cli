@@ -35,80 +35,87 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { deleteUserAction } from "./deleteUser";
+import { assignAction } from "./assign";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/deleteUser.ts", () => {
+describe("admin/capacity/assign.ts", () => {
+    let validateCapacityIdMock: SinonStub<unknown[], unknown>;
     let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+    const noWorkspaceOptions = {
+        C: "capacity",
     };
     const allOptions = {
-        W: "name",
-        user: "user@contoso.com",
+        C: "capacity",
+        W: "62b72ecd-65de-4b3e-9b3e-4db2d8c3571b",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
+        validateCapacityIdMock = ImportMock.mockFunction(parameters, "validateCapacityId");
         validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
+        validateCapacityIdMock.restore();
         validateAdminGroupIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("assignAction()", () => {
+        it("assign with --help", (done) => {
+            validateCapacityIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "assign",
                 opts: () => helpOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).finally(() => {
+            assignAction(cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateCapacityIdMock.callCount).to.equal(0);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("assign with no options", (done) => {
+            validateCapacityIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "assign",
                 opts: () => emptyOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            assignAction(cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("assign with missing options", (done) => {
+            validateCapacityIdMock.resolves(noWorkspaceOptions.C);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => groupOptions,
+                name: () => "assign",
+                opts: () => noWorkspaceOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            assignAction(cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("deleteUser with 'group' and 'user' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
+        it("assign with correct options", (done) => {
+            validateCapacityIdMock.resolves(noWorkspaceOptions.C);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "assign",
                 opts: () => allOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            assignAction(cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

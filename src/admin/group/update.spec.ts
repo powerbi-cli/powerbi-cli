@@ -48,14 +48,14 @@ describe("admin/group/update.ts", () => {
     let readFileSyncMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const groupOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const detailsOptions = {
-        G: "name",
+        W: "name",
         updateDetails: {},
     };
     const fileOptions = {
-        G: "name",
+        W: "name",
         updateDetailsFile: "file.json",
     };
     const helpOptions = { H: true };

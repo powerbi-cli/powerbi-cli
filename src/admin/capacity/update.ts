@@ -29,25 +29,21 @@
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { validateCapacityId } from "../../lib/parameters";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+export async function updateAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    const targetCapacityObjectId = await validateCapacityId(options.C, true);
+    if (!options.tenantKey) throw "error: missing option '--tenant-key'";
+    const tenantKeyId = options.tenantKey;
+    debug(`Changes the specific capacity information.`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
+        method: "PATCH",
+        url: `/admin/capacities/${targetCapacityObjectId}`,
+        body: {
+            tenantKeyId,
+        },
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

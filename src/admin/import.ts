@@ -26,28 +26,28 @@
 
 "use strict";
 
-import { ModuleCommand } from "../../lib/command";
-import { debug } from "../../lib/logging";
-import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { stringify, ParsedUrlQueryInput } from "querystring";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+import { ModuleCommand } from "../lib/command";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
+import { validateAllowedValues } from "../lib/parameters";
+import { expandAdminImports } from "../lib/helpers";
+
+export async function importAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    const filter = options.filter;
+    const expand = options.expand;
+    const top = Number.parseInt(options.top) || 5000;
+    const skip = Number.parseInt(options.skip) || 0;
+    const query: ParsedUrlQueryInput = { $top: top, $skip: skip };
+    if (expand) query["$expand"] = await validateAllowedValues(expand, expandAdminImports);
+    if (filter) query["$filter"] = filter;
+    debug(`Returns a list of imports for the organization`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
+        method: "GET",
+        url: `/admin/imports?${stringify(query)}`,
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

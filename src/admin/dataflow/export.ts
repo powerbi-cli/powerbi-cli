@@ -29,25 +29,16 @@
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { validateAdminObjectId } from "../../lib/parameters";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+export async function exportAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    const dataflowId = await validateAdminObjectId(options.D, true, "dataflow", "name", "objectId");
+    debug(`Retrieve a Power BI dataflow definition as admin`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
+        method: "GET",
+        url: `/admin/dataflows/${dataflowId}/export`,
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

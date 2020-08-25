@@ -35,80 +35,65 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { deleteUserAction } from "./deleteUser";
+import { datasourceAction } from "./datasource";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/deleteUser.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("admin/dataflow/datasource.ts", () => {
+    let validateAdminObjectIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-    };
     const allOptions = {
-        W: "name",
-        user: "user@contoso.com",
+        D: "dataflow",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
+        validateAdminObjectIdMock = ImportMock.mockFunction(parameters, "validateAdminObjectId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
+        validateAdminObjectIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("datasourceAction()", () => {
+        it("datasource with --help", (done) => {
+            validateAdminObjectIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "datasource",
                 opts: () => helpOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            datasourceAction(cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("datasource with no options", (done) => {
+            validateAdminObjectIdMock.rejects(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "datasource",
                 opts: () => emptyOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            datasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("datasource with options", (done) => {
+            validateAdminObjectIdMock.resolves("uuid");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "delete",
-                opts: () => groupOptions,
-            };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("deleteUser with 'group' and 'user' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "delete",
+                name: () => "datasource",
                 opts: () => allOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            datasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+                const request = executeAPICallMock.args[0][0] as api.APICall;
+                expect(request?.url?.indexOf("uuid")).to.greaterThan(-1);
+                expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

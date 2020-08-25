@@ -26,29 +26,30 @@
 
 "use strict";
 
+import { stringify, ParsedUrlQueryInput } from "querystring";
+
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { expandAdminDashboards, getGroupUrl } from "../../lib/helpers";
+import { validateAllowedValues, validateGroupId } from "../../lib/parameters";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
+export async function listAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.user === undefined) throw "error: missing option '--user'";
-    const user = options.user;
-    debug(`Removes user permissions to the specified workspace`);
+    const groupId = await validateGroupId(options.W, false);
+    const filter = options.filter;
+    const expand = options.expand;
+    const top = Number.parseInt(options.top) || 5000;
+    const skip = Number.parseInt(options.skip) || 0;
+    const query: ParsedUrlQueryInput = { $top: top, $skip: skip };
+    if (expand && !groupId) query["$expand"] = await validateAllowedValues(expand, expandAdminDashboards);
+    if (filter) query["$filter"] = filter;
+    debug(`Retrieve Power BI dashboards as admin`);
     const request: APICall = {
-        method: "DELETE",
-        url: `/admin/groups/${groupId}/users/${user}`,
-        containsValue: false,
+        method: "GET",
+        url: `/admin${getGroupUrl(groupId)}/dashboards?${stringify(query)}`,
+        containsValue: true,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }
