@@ -54,10 +54,11 @@ const modules: string[] = [
     "dashboard",
     "dataflow",
     "dataset",
+    "feature",
     "gateway",
-    "group",
     "import",
     "report",
+    "group",
     "login",
     "logout",
 ];
