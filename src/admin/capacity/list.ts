@@ -40,7 +40,7 @@ export async function listAction(cmd: ModuleCommand): Promise<void> {
     const expand = options.expand;
     const query: ParsedUrlQueryInput = {};
     if (expand) query["$expand"] = await validateAllowedValues(expand, expandCapacity);
-    debug(`Retrieve Power BI groups as admin`);
+    debug(`Returns a list of capacities for the organization`);
     const request: APICall = {
         method: "GET",
         url: `/admin/capacities?${stringify(query)}`,
