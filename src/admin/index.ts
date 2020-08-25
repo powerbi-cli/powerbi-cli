@@ -36,7 +36,7 @@ import { getCommands as getGroupCommands } from "./group/index";
 import { getCommands as getKeyCommands } from "./key/index";
 import { activityAction } from "./activity";
 import { importAction } from "./import";
-import { expandAdminImports, expandAdminRefreshes } from "../lib/helpers";
+import { expandAdminImports, expandRefreshes } from "../lib/helpers";
 import { refreshAction } from "./refresh";
 
 export function getCommands(): ModuleCommand {
@@ -78,7 +78,7 @@ export function getCommands(): ModuleCommand {
         .option("--refreshableId <refreshId>", "The refreshable id")
         .option(
             "--expand <entity>",
-            `Expands related entities inline, receives a comma-separated list of data types. Allowed values: ${expandAdminRefreshes.join(
+            `Expands related entities inline, receives a comma-separated list of data types. Allowed values: ${expandRefreshes.join(
                 ", "
             )}`
         )

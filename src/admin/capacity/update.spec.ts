@@ -41,7 +41,7 @@ chai.use(chaiAsPromise);
 const expect = chai.expect;
 
 describe("admin/capacity/assign.ts", () => {
-    let validateCapacityIdMock: SinonStub<unknown[], unknown>;
+    let validateAdminCapacityIdMock: SinonStub<unknown[], unknown>;
     let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
@@ -54,67 +54,67 @@ describe("admin/capacity/assign.ts", () => {
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateCapacityIdMock = ImportMock.mockFunction(parameters, "validateCapacityId");
+        validateAdminCapacityIdMock = ImportMock.mockFunction(parameters, "validateAdminCapacityId");
         validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateCapacityIdMock.restore();
+        validateAdminCapacityIdMock.restore();
         validateAdminGroupIdMock.restore();
         executeAPICallMock.restore();
     });
     describe("assignAction()", () => {
         it("assign with --help", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "assign",
                 opts: () => helpOptions,
             };
             assignAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateCapacityIdMock.callCount).to.equal(0);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(0);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("assign with no options", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "assign",
                 opts: () => emptyOptions,
             };
             assignAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("assign with missing options", (done) => {
-            validateCapacityIdMock.resolves(noWorkspaceOptions.C);
+            validateAdminCapacityIdMock.resolves(noWorkspaceOptions.C);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "assign",
                 opts: () => noWorkspaceOptions,
             };
             assignAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("assign with correct options", (done) => {
-            validateCapacityIdMock.resolves(noWorkspaceOptions.C);
+            validateAdminCapacityIdMock.resolves(noWorkspaceOptions.C);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "assign",
                 opts: () => allOptions,
             };
             assignAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

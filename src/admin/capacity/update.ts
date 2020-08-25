@@ -29,12 +29,12 @@
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateCapacityId } from "../../lib/parameters";
+import { validateAdminCapacityId } from "../../lib/parameters";
 
 export async function updateAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const targetCapacityObjectId = await validateCapacityId(options.C, true);
+    const targetCapacityObjectId = await validateAdminCapacityId(options.C, true);
     if (!options.tenantKey) throw "error: missing option '--tenant-key'";
     const tenantKeyId = options.tenantKey;
     debug(`Changes the specific capacity information.`);

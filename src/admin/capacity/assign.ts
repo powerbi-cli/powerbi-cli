@@ -29,14 +29,14 @@
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateCapacityId, validateAdminGroupId } from "../../lib/parameters";
+import { validateAdminCapacityId, validateAdminGroupId } from "../../lib/parameters";
 import { checkUUID } from "../../lib/validate";
 
 export async function assignAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     let workspacesToAssign: string[] = [];
     if (options.H) return;
-    const targetCapacityObjectId = await validateCapacityId(options.C, true);
+    const targetCapacityObjectId = await validateAdminCapacityId(options.C, true);
     if (!options.W) throw "error: missing option '--workspace'";
     const workspaces = options.W.split(",");
     if (!checkUUID(workspaces[0])) {

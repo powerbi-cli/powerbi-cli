@@ -31,23 +31,22 @@ import { stringify, ParsedUrlQueryInput } from "querystring";
 import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
-import { validateAllowedValues, validateCapacityId } from "../lib/parameters";
-import { expandAdminRefreshes } from "../lib/helpers";
+import { validateAllowedValues, validateAdminCapacityId } from "../lib/parameters";
+import { expandRefreshes } from "../lib/helpers";
 
 export async function refreshAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const capacityId = await validateCapacityId(options.C, false);
+    const capacityId = await validateAdminCapacityId(options.C, false);
     const refreshableId = options.refreshableId;
     const filter = options.filter;
     const expand = options.expand;
     const top = Number.parseInt(options.top) || 5000;
     const skip = Number.parseInt(options.skip) || 0;
     const query: ParsedUrlQueryInput = refreshableId ? {} : { $top: top, $skip: skip };
-    if (expand)
-        query["$expand"] = (await validateAllowedValues(expand, expandAdminRefreshes)).replace("workspace", "group"); // Only groups is supported at this time by API
+    if (expand) query["$expand"] = (await validateAllowedValues(expand, expandRefreshes)).replace("workspace", "group"); // Only groups is supported at this time by API
     if (filter && refreshableId) query["$filter"] = filter;
-    debug(`Returns a list of imports for the organization`);
+    debug(`Returns a list of refreshes for the organization`);
     const request: APICall = {
         method: "GET",
         url: `/admin/capacities${capacityId ? "/" + capacityId : ""}/refreshables${

@@ -41,7 +41,7 @@ chai.use(chaiAsPromise);
 const expect = chai.expect;
 
 describe("admin/refresh.ts", () => {
-    let validateCapacityIdMock: SinonStub<unknown[], unknown>;
+    let validateAdminCapacityIdMock: SinonStub<unknown[], unknown>;
     let validateAllowedValuesMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
@@ -59,7 +59,7 @@ describe("admin/refresh.ts", () => {
     const expandOptions = {
         top: 1,
         skip: 1,
-        expand: "datasets",
+        expand: "workspaces",
     };
     const expandErrorOptions = {
         top: 1,
@@ -75,18 +75,18 @@ describe("admin/refresh.ts", () => {
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateCapacityIdMock = ImportMock.mockFunction(parameters, "validateCapacityId");
+        validateAdminCapacityIdMock = ImportMock.mockFunction(parameters, "validateAdminCapacityId");
         validateAllowedValuesMock = ImportMock.mockFunction(parameters, "validateAllowedValues");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
-        validateCapacityIdMock.restore();
+        validateAdminCapacityIdMock.restore();
         validateAllowedValuesMock.restore();
         executeAPICallMock.restore();
     });
     describe("refreshAction()", () => {
         it("refresh with --help", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -94,14 +94,14 @@ describe("admin/refresh.ts", () => {
                 opts: () => helpOptions,
             };
             refreshAction(cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateCapacityIdMock.callCount).to.equal(0);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(0);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("refresh with no options", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -112,14 +112,14 @@ describe("admin/refresh.ts", () => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("refresh with 'top' options", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -130,14 +130,14 @@ describe("admin/refresh.ts", () => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("refresh with 'top' and 'skip' options", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -148,14 +148,14 @@ describe("admin/refresh.ts", () => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("refresh with 'top' and 'skip' options with error", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -166,14 +166,14 @@ describe("admin/refresh.ts", () => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("refresh with 'top', 'skip' and 'expand' options", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.resolves(expandOptions.expand);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -184,15 +184,15 @@ describe("admin/refresh.ts", () => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
-                expect(request?.url?.indexOf("expand=datasets")).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(request?.url?.indexOf("expand=groups")).to.greaterThan(-1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("refresh with 'top', 'skip' and incorrect 'expand' options", (done) => {
-            validateCapacityIdMock.resolves(undefined);
+            validateAdminCapacityIdMock.resolves(undefined);
             validateAllowedValuesMock.rejects(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -200,14 +200,14 @@ describe("admin/refresh.ts", () => {
                 opts: () => expandErrorOptions,
             };
             refreshAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("refresh with 'capacity' options", (done) => {
-            validateCapacityIdMock.resolves("uuid");
+            validateAdminCapacityIdMock.resolves("uuid");
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -217,14 +217,14 @@ describe("admin/refresh.ts", () => {
             refreshAction(cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid/")).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("refresh with 'capacity' and 'refeshableId' options", (done) => {
-            validateCapacityIdMock.resolves("uuid");
+            validateAdminCapacityIdMock.resolves("uuid");
             validateAllowedValuesMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -235,7 +235,7 @@ describe("admin/refresh.ts", () => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid/")).to.greaterThan(-1);
                 expect(request?.url?.indexOf(`/${allOptions.refreshableId}`)).to.greaterThan(-1);
-                expect(validateCapacityIdMock.callCount).to.equal(1);
+                expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
