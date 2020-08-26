@@ -43,7 +43,7 @@ export async function listAction(cmd: ModuleCommand): Promise<void> {
     const top = Number.parseInt(options.top) || 5000;
     const skip = Number.parseInt(options.skip) || 0;
     const query: ParsedUrlQueryInput = { $top: top, $skip: skip };
-    if (expand && !groupId) query["$expand"] = await validateAllowedValues(expand, expandAdminDashboards);
+    if (expand && !groupId) query["$expand"] = await validateAllowedValues(expand, expandAdminDashboards, true);
     if (filter) query["$filter"] = filter;
     debug(`Retrieve Power BI dashboards as admin`);
     const request: APICall = {

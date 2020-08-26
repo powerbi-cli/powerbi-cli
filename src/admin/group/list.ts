@@ -42,7 +42,7 @@ export async function listAction(cmd: ModuleCommand): Promise<void> {
     const top = Number.parseInt(options.top) || 5000;
     const skip = Number.parseInt(options.skip) || 0;
     const query: ParsedUrlQueryInput = { $top: top, $skip: skip };
-    if (expand) query["$expand"] = await validateAllowedValues(expand, expandAdminGroups);
+    if (expand) query["$expand"] = await validateAllowedValues(expand, expandAdminGroups, true);
     if (filter) query["$filter"] = filter;
     debug(`Retrieve Power BI groups as admin`);
     const request: APICall = {

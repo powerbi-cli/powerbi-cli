@@ -44,7 +44,8 @@ export async function refreshAction(cmd: ModuleCommand): Promise<void> {
     const top = Number.parseInt(options.top) || 5000;
     const skip = Number.parseInt(options.skip) || 0;
     const query: ParsedUrlQueryInput = refreshableId ? {} : { $top: top, $skip: skip };
-    if (expand) query["$expand"] = (await validateAllowedValues(expand, expandRefreshes)).replace("workspace", "group"); // Only groups is supported at this time by API
+    if (expand)
+        query["$expand"] = (await validateAllowedValues(expand, expandRefreshes, true)).replace("workspace", "group"); // Only groups is supported at this time by API
     if (filter && refreshableId) query["$filter"] = filter;
     debug(`Returns a list of refreshes for the organization`);
     const request: APICall = {

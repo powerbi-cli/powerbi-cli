@@ -42,7 +42,7 @@ export async function importAction(cmd: ModuleCommand): Promise<void> {
     const top = Number.parseInt(options.top) || 5000;
     const skip = Number.parseInt(options.skip) || 0;
     const query: ParsedUrlQueryInput = { $top: top, $skip: skip };
-    if (expand) query["$expand"] = await validateAllowedValues(expand, expandAdminImports);
+    if (expand) query["$expand"] = await validateAllowedValues(expand, expandAdminImports, true);
     if (filter) query["$filter"] = filter;
     debug(`Returns a list of imports for the organization`);
     const request: APICall = {
