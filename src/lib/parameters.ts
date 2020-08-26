@@ -31,6 +31,7 @@ import {
     getGroupID,
     getDatasetID,
     getAppID,
+    getCapacityID,
     getDashboardID,
     getDashboardTileID,
     getDataflowID,
@@ -39,7 +40,7 @@ import {
     getGatewayDatasourceID,
     getImportID,
     getAdminGroupInfo,
-    getCapacityID,
+    getAdminCapacityID,
     getAdminObjectInfo,
 } from "./helpers";
 
@@ -86,6 +87,18 @@ export async function validateAdminObjectId(
         name: objectName,
         isName: () => getAdminObjectInfo(objectName as string, `${objectType}s`, lookupName, returnName),
         missing: `error: missing option '--${objectType}'`,
+        isRequired,
+    });
+}
+
+export async function validateAdminCapacityId(
+    capacity: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    return validateParameter({
+        name: capacity,
+        isName: () => getAdminCapacityID(capacity as string),
+        missing: "error: missing option '--capacity'",
         isRequired,
     });
 }
@@ -243,12 +256,27 @@ export async function validateParameter(parameter: Parameter): Promise<string | 
     });
 }
 
-export function validateAllowedValues(value: string, allowedValues: string[]): Promise<string> {
+export function validateAllowedValues(value: string, allowedValues: string[], multiSelect = false): Promise<string> {
     return new Promise((resolve, reject) => {
-        if (allowedValues.some((allowedValue: string) => allowedValue === value)) {
-            resolve(value);
+        if (multiSelect) {
+            const values = value.split(",");
+            if (values.length === values.filter((value: string) => allowedValues.indexOf(value.trim()) > -1).length) {
+                resolve(value);
+            } else {
+                reject(
+                    `error: at least one incorrect option in '${value}'. Allowed values: ${allowedValues.join(", ")}`
+                );
+            }
         } else {
-            reject(`error: incorrect option '${value}'. Allowed values: ${allowedValues.join(", ")}`);
+            if (allowedValues.some((allowedValue: string) => allowedValue === value)) {
+                resolve(value);
+            } else {
+                reject(`error: incorrect option '${value}'. Allowed values: ${allowedValues.join(", ")}`);
+            }
         }
     });
+}
+
+export function capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
 }

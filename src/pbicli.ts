@@ -51,6 +51,7 @@ const questions = [
 const modules: string[] = [
     "admin",
     "app",
+    "capacity",
     "dashboard",
     "dataflow",
     "dataset",

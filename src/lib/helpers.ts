@@ -53,7 +53,8 @@ export const expandAdminGroups = ["dashboards", "datasets", "dataflows", "report
 export const expandCapacity = ["tenantKey"];
 export const expandAdminDashboards = ["tiles"];
 export const expandAdminImports = ["datasets", "reports"];
-export const expandAdminRefreshes = ["capacity", "workspace"];
+export const expandRefreshes = ["capacity", "workspace"];
+export const workloadState = ["enabled", "disabled"];
 
 export function getAdminGroupInfo(name: string, filterState: string | undefined = undefined): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
@@ -111,11 +112,31 @@ export function getAdminObjectInfo(
     });
 }
 
-export function getCapacityID(name: string): Promise<string> {
+export function getAdminCapacityID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
             url: `${rootUrl}/admin/capacities`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No capacity found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getCapacityID(name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/capacities`,
         };
         executeRestCall(lookUpRequest, true)
             .then((response: string) => {

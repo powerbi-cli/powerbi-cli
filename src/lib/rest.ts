@@ -35,7 +35,7 @@ import FormData from "form-data";
 import { getAccessToken } from "./auth";
 import { debug } from "./logging";
 
-const silentMethods: string[] = ["DELETE", "PUT", "POST"];
+const silentMethods: string[] = ["DELETE", "PUT", "POST", "PATCH"];
 
 export function executeRestCall(request: RequestPrepareOptions, containsValue: boolean): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {

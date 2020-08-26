@@ -39,6 +39,7 @@ import {
     validateParameter,
     validateDatasetId,
     validateAppId,
+    validateCapacityId,
     validateDashboardId,
     validateDashboardTileId,
     validateDataflowId,
@@ -47,8 +48,9 @@ import {
     validateGatewayDatasourceId,
     validateImportId,
     validateAdminGroupId,
-    validateCapacityId,
+    validateAdminCapacityId,
     validateAdminObjectId,
+    capitalize,
 } from "./parameters";
 
 chai.use(chaiAsPromise);
@@ -67,6 +69,14 @@ describe("parameters.ts", () => {
         });
         it("incorrect value 3", () => {
             validateAllowedValues("string 3", allowedValues).should.be.rejected;
+        });
+        it("correct value 1 & 2", () => {
+            validateAllowedValues("string 1, string 2", allowedValues, true).should.eventually.be.equal(
+                "string 1, string 2"
+            );
+        });
+        it("incorrect value 1 & 3", () => {
+            validateAllowedValues("string 1, string 3", allowedValues, true).should.be.rejected;
         });
     });
 
@@ -178,6 +188,29 @@ describe("parameters.ts", () => {
         it("empty object, not required", () => {
             validateAdminObjectId(undefined, false, "dataflow", "name").should.eventually.be.equal(undefined);
             expect(mockGetWorkspaceId.callCount).equal(0);
+        });
+    });
+    describe("validateAdminCapacityId()", () => {
+        let mockGetAdminCapacityId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetAdminCapacityId = ImportMock.mockFunction(helpers, "getAdminCapacityID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetAdminCapacityId.restore();
+        });
+        it("capacity, required", () => {
+            validateAdminCapacityId("capacity", true).should.eventually.be.equal(uuid);
+            expect(mockGetAdminCapacityId.callCount).equal(1);
+        });
+        it("empty capacity, required", () => {
+            validateAdminCapacityId(undefined, true).should.eventually.be.rejectedWith(
+                "error: missing option '--capacity'"
+            );
+            expect(mockGetAdminCapacityId.callCount).equal(0);
+        });
+        it("empty capacity, not required", () => {
+            validateAdminCapacityId(undefined, false).should.eventually.be.equal(undefined);
+            expect(mockGetAdminCapacityId.callCount).equal(0);
         });
     });
     describe("validateCapacityId()", () => {
@@ -445,6 +478,11 @@ describe("parameters.ts", () => {
                 "error: missing option '--import'"
             );
             expect(mockGetImportId.callCount).equal(0);
+        });
+    });
+    describe("capitalize()", () => {
+        it("string 1", () => {
+            expect(capitalize("string 1")).to.equal("String 1");
         });
     });
 });

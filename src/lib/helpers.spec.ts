@@ -35,6 +35,7 @@ import {
     getGroupID,
     getDatasetID,
     getAppID,
+    getCapacityID,
     getGatewayID,
     getAppContentID,
     getAppDashboardTileID,
@@ -45,7 +46,7 @@ import {
     getGatewayDatasourceID,
     getImportID,
     getAdminGroupInfo,
-    getCapacityID,
+    getAdminCapacityID,
     getAdminObjectInfo,
 } from "./helpers";
 
@@ -99,6 +100,20 @@ describe("helpers.ts", () => {
         it("exception in executeRestCall", () => {
             executeRestCallMock.rejects();
             expect(getAdminObjectInfo("dataflowName", "dataflow", "name")).eventually.to.rejected;
+        });
+    });
+    describe("getAdminCapacityID()", () => {
+        it("capacity found ", () => {
+            executeRestCallMock.resolves([{ displayName: "capacity", id: uuid }]);
+            expect(getAdminCapacityID("capacity")).eventually.to.equal(uuid);
+        });
+        it("capacity not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getAdminCapacityID("capacity")).eventually.to.rejectedWith("No capacity found with name 'capacity'");
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getAdminCapacityID("capacity")).eventually.to.rejected;
         });
     });
     describe("getGroupID()", () => {
