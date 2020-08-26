@@ -137,15 +137,27 @@ export class ModuleCommand extends Command {
     }
 
     private showUnknownOption(operand: string): void {
-        this.errorMsg = `error: unknown option '${operand}'. Run 'pbicli --help for more information'`;
+        const args = this.getAllArgs(this as ModuleCommand);
+        const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
+        this.errorMsg = `error: unknown option '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
         this.showHelpOrError(true);
         this._exit(1, "pbicli.unknownOption", this.errorMsg);
     }
 
     private showUnknownCommand(operand: string): void {
-        this.errorMsg = `error: unknown command '${operand}'. Run 'pbicli --help for more information'`;
+        const args = this.getAllArgs(this as ModuleCommand);
+        const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
+        this.errorMsg = `error: unknown command '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
         this.showHelpOrError(true);
         this._exit(1, "pbicli.unknownCommand", this.errorMsg);
+    }
+
+    private getAllArgs(command: ModuleCommand): string[] {
+        if (!command.parent) {
+            return command.args;
+        } else {
+            return this.getAllArgs(command.parent);
+        }
     }
 
     public set helpPrompt(value: string | undefined) {
