@@ -65,10 +65,10 @@ export function getCommands(): ModuleCommand {
         .action(createAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--file <file>", "Path to the RDL file")
-        .option("--name <name>", "The display name of the dataset with file extension. Default the file name is used")
+        .option("--name <name>", "The display name of the report with file extension. Default the file name is used")
         .option(
             "--conflict <option>",
-            `Option to resolve a dataset name conflict. Allowed values: ${datasetNamingConflictRDL.join(", ")}`
+            `Option to resolve a report name conflict. Allowed values: ${datasetNamingConflictRDL.join(", ")}`
         );
     rdlCommand.addGlobalOptions();
     const dataflowCommand = new ModuleCommand("dataflow")
@@ -78,7 +78,7 @@ export function getCommands(): ModuleCommand {
         .option("--file <file>", "Path to the dataflow JSON file")
         .option(
             "--conflict <option>",
-            `Option to resolve a dataset name conflict. Allowed values: ${datasetNamingConflictDF.join(", ")}`
+            `Option to resolve a dataflow name conflict. Allowed values: ${datasetNamingConflictDF.join(", ")}`
         );
     dataflowCommand.addGlobalOptions();
     // const xlsxCommand = new ModuleCommand("xlsx")
@@ -103,13 +103,16 @@ export function getCommands(): ModuleCommand {
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI import")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--import -i <import>", "Name or ID of the Power BI import");
     showCommand.addGlobalOptions();
     const tempCommand = new ModuleCommand("temp")
         .description("Creates a temporaty upload location for a Power BI report")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group");
+        .option(
+            "--workspace -w <name>",
+            "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'"
+        );
     tempCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("import")
         .description("Manage Power BI imports")

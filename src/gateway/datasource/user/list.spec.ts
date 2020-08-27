@@ -35,12 +35,12 @@ import { ModuleCommand } from "../../../lib/command";
 import * as parameters from "../../../lib/parameters";
 import * as api from "../../../lib/api";
 
-import { showAction } from "./show";
+import { listAction } from "./list";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("gateway/datasource/show.ts", () => {
+describe("gateway/datasource/list.ts", () => {
     let validateGatewayIdMock: SinonStub<unknown[], unknown>;
     let validateGatewayDatasourceIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
@@ -63,7 +63,7 @@ describe("gateway/datasource/show.ts", () => {
         validateGatewayDatasourceIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("showAction()", () => {
+    describe("listAction()", () => {
         it("show with --help", (done) => {
             validateGatewayDatasourceIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
@@ -71,7 +71,7 @@ describe("gateway/datasource/show.ts", () => {
                 name: () => "show",
                 opts: () => helpOptions,
             };
-            showAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listAction(cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(0);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -86,7 +86,7 @@ describe("gateway/datasource/show.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            showAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -101,7 +101,7 @@ describe("gateway/datasource/show.ts", () => {
                 name: () => "show",
                 opts: () => missingOptions,
             };
-            showAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listAction(cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -116,7 +116,7 @@ describe("gateway/datasource/show.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            showAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
