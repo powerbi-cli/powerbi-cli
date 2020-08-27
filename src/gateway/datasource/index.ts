@@ -60,7 +60,7 @@ export function getCommands(): ModuleCommand {
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway");
     showCommand.addGlobalOptions();
     const statusCommand = new ModuleCommand("status")
-        .description("Get the detail of a datasource of a Power BI gateway")
+        .description("Get the status details of a datasource of a Power BI gateway")
         .action(statusAction)
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway")
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway");

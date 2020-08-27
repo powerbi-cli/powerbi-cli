@@ -28,13 +28,13 @@
 
 import { ModuleCommand } from "../../../lib/command";
 import { addAction } from "./add";
-import { showAction } from "./show";
+import { listAction } from "./list";
 import { deleteAction } from "./delete";
 import { principalTypes, accessRightsDataSource } from "../../../lib/helpers";
 
 export function getCommands(): ModuleCommand {
     const addCommand = new ModuleCommand("add")
-        .description("Create a datasource at a Power BI gateway")
+        .description("Add user to a datasource of a Power BI gateway")
         .action(addAction)
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway")
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway")
@@ -44,24 +44,24 @@ export function getCommands(): ModuleCommand {
         .option("--principal-type <type>", `Type of pricipal. Allowed values: ${principalTypes.join(", ")}`);
     addCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
-        .description("Deletes a datasource at a Power BI gateway")
+        .description("Delete user from the datasource of a Power BI gateway")
         .action(deleteAction)
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway")
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway")
         .option("--email <email>", "Email address of the user")
         .option("--identifier <identifier>", "Identifier of the principal");
     deleteCommand.addGlobalOptions();
-    const showCommand = new ModuleCommand("show")
-        .description("Get the detail of a datasource of a Power BI gateway")
-        .action(showAction)
+    const listCommand = new ModuleCommand("list")
+        .description("Retrieve users for the datasource of a Power BI gateway")
+        .action(listAction)
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway")
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway");
-    showCommand.addGlobalOptions();
-    const gatewayCommand = new ModuleCommand("datasource")
-        .description("Manage datasources of a Power BI gateway")
+    listCommand.addGlobalOptions();
+    const gatewayCommand = new ModuleCommand("user")
+        .description("Manage datasources users of a Power BI gateway")
         .addCommand(addCommand)
         .addCommand(deleteCommand)
-        .addCommand(showCommand);
+        .addCommand(listCommand);
     gatewayCommand.addGlobalOptions();
     return gatewayCommand;
 }

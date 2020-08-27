@@ -31,6 +31,12 @@ import { updateAction } from "./update";
 import { startAction } from "./start";
 
 export function getCommands(): ModuleCommand {
+    const startCommand = new ModuleCommand("start")
+        .description("Start a refresh of a Power BI dataflow")
+        .action(startAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
+    startCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Update a Power BI refresh schedule")
         .action(updateAction)
@@ -39,15 +45,10 @@ export function getCommands(): ModuleCommand {
         .option("--refresh-schedule <data>", "String with the refresh schedule in JSON format")
         .option("--refresh-schedule-file <file>", "File with the refresh schedule in JSON format");
     updateCommand.addGlobalOptions();
-    const startCommand = new ModuleCommand("start")
-        .description("Get the details of a Power BI refresh schedule")
-        .action(startAction)
-        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
-        .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     const refreshCommand = new ModuleCommand("refresh")
         .description("Manage Power BI refresh schedule")
-        .addCommand(updateCommand)
-        .addCommand(startCommand);
+        .addCommand(startCommand)
+        .addCommand(updateCommand);
     refreshCommand.addGlobalOptions();
     return refreshCommand;
 }

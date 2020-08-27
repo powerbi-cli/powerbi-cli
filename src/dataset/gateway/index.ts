@@ -50,7 +50,7 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--gatewayId <gatewayId>", "Name or ID of the Power BI gateway")
-        .option("--datasourceIds [data]", "Set of datasource Ids. Comma seperated");
+        .option("--datasourceIds <data>", "Set of datasource Ids. Comma seperated");
     updateCommand.addGlobalOptions();
     const parameterCommand = new ModuleCommand("gateway")
         .description("Manages the linked gateways of a Power BI dataset")

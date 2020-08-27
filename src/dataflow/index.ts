@@ -31,6 +31,8 @@ import { listshowAction } from "./listshow";
 import { deleteAction } from "./delete";
 import { upstreamAction } from "./upstream";
 import { datasourceAction } from "./datasource";
+import { getCommands as getRefreshCommands } from "./refresh/index";
+import { getCommands as getStorageCommands } from "./storage/index";
 
 export function getCommands(): ModuleCommand {
     const datasourceCommand = new ModuleCommand("datasource")
@@ -68,7 +70,9 @@ export function getCommands(): ModuleCommand {
         .addCommand(deleteCommand)
         .addCommand(listCommand)
         .addCommand(showCommand)
-        .addCommand(upstreamCommand);
+        .addCommand(upstreamCommand)
+        .addCommand(getRefreshCommands())
+        .addCommand(getStorageCommands());
     appCommand.addGlobalOptions();
     return appCommand;
 }

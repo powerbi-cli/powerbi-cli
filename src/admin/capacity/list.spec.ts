@@ -81,7 +81,6 @@ describe("admin/capacity/list.ts", () => {
                 opts: () => emptyOptions,
             };
             listAction(cmdOptsMock as ModuleCommand).then(() => {
-                const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

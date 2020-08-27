@@ -31,7 +31,7 @@ import { debug } from "../../../lib/logging";
 import { APICall, executeAPICall } from "../../../lib/api";
 import { validateGatewayId, validateGatewayDatasourceId } from "../../../lib/parameters";
 
-export async function showAction(cmd: ModuleCommand): Promise<void> {
+export async function listAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
     const gatewayId = await validateGatewayId(options.G, true);

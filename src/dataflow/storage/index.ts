@@ -37,9 +37,11 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--storage-account <storage>", "ID of the Power BI dataflow storage account");
     assignCommand.addGlobalOptions();
-    const listCommand = new ModuleCommand("list").description("List Power BI dataflow storages").action(listAction);
+    const listCommand = new ModuleCommand("list")
+        .description("List Power BI dataflow storage accounts")
+        .action(listAction);
     const unassignCommand = new ModuleCommand("unassign")
-        .description("UnaAssign a Power BI group to a dataflow storage account")
+        .description("Unassign a Power BI group to a dataflow storage account")
         .action(assignAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     unassignCommand.addGlobalOptions();

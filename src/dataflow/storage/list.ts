@@ -33,7 +33,7 @@ import { APICall, executeAPICall } from "../../lib/api";
 export async function listAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    debug(`Retrieves Power BI dataflow storage account`);
+    debug(`List Power BI dataflow storage accounts`);
     const request: APICall = {
         method: "GET",
         url: `dataflowStorageAccounts`,
