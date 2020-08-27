@@ -45,10 +45,10 @@ describe("group/listshow.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const myOptions = {
-        G: "my",
+        W: "my",
     };
     const guidOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
@@ -61,7 +61,7 @@ describe("group/listshow.ts", () => {
     });
     describe("listshowAction()", () => {
         it("list with --help", (done) => {
-            validateParameterMock.resolves(guidOptions.G);
+            validateParameterMock.resolves(guidOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "list",
@@ -74,7 +74,7 @@ describe("group/listshow.ts", () => {
             });
         });
         it("list with no options", (done) => {
-            validateParameterMock.resolves(guidOptions.G);
+            validateParameterMock.resolves(guidOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "list",
@@ -87,7 +87,7 @@ describe("group/listshow.ts", () => {
             });
         });
         it("list with 'my' options", (done) => {
-            validateParameterMock.resolves(guidOptions.G);
+            validateParameterMock.resolves(guidOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "list",
@@ -100,7 +100,7 @@ describe("group/listshow.ts", () => {
             });
         });
         it("list with 'guid' options", (done) => {
-            validateParameterMock.resolves(guidOptions.G);
+            validateParameterMock.resolves(guidOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "list",

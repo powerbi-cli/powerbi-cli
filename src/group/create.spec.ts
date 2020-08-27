@@ -43,7 +43,7 @@ describe("group/create.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const allOptions = {
-        G: "groupName",
+        W: "groupName",
     };
     const helpOptions = { H: true };
     beforeEach(() => {

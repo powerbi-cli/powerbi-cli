@@ -46,10 +46,10 @@ describe("dataset/gateway/datasource.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
     };
     const helpOptions = { H: true };
@@ -95,7 +95,7 @@ describe("dataset/gateway/datasource.ts", () => {
             });
         });
         it("datasource with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateDatasetIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -110,7 +110,7 @@ describe("dataset/gateway/datasource.ts", () => {
             });
         });
         it("datasource with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -140,7 +140,7 @@ describe("dataset/gateway/datasource.ts", () => {
             });
         });
         it("show with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateDatasetIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -155,7 +155,7 @@ describe("dataset/gateway/datasource.ts", () => {
             });
         });
         it("show with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {

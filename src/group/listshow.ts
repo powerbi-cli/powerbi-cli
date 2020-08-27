@@ -38,13 +38,13 @@ export async function listshowAction(cmd: ModuleCommand): Promise<void> {
     if (options.H) return;
 
     const groupId = await validateParameter({
-        name: options.G,
-        isId: async () => `?$${stringify({ filter: `id eq '${options.G}'` })}`,
-        isName: async () => `?$${stringify({ filter: `name eq '${options.G}'` })}`,
-        missing: "error: missing option '--group'",
+        name: options.W,
+        isId: async () => `?$${stringify({ filter: `id eq '${options.W}'` })}`,
+        isName: async () => `?$${stringify({ filter: `name eq '${options.W}'` })}`,
+        missing: "error: missing option '--workspace'",
         isRequired: cmd.name() === "show",
     });
-    debug(`Shows details of the Power BI group: ${options.G}`);
+    debug(`Shows details of the Power BI workspace: ${options.W}`);
     const request: APICall = {
         method: "GET",
         url: `/groups${groupId || ""}`,

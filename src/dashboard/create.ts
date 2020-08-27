@@ -35,9 +35,9 @@ import { getGroupUrl } from "../lib/helpers";
 export async function createAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     if (!options.D) throw "error: missing option '--dashboard'";
-    debug(`Creates a Power BI dashboard in group (${groupId || "my"}) with name (${options.D})`);
+    debug(`Creates a Power BI dashboard in workspace (${groupId || "my"}) with name (${options.D})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/dashboards`,

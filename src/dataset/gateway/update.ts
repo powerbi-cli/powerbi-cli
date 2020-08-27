@@ -36,15 +36,15 @@ export async function updateGatewayAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     const gatewayId = await validateParameter({
-        name: options.gatewayId,
-        isName: () => getGatewayID(options.gatewayId),
+        name: options.watewayId,
+        isName: () => getGatewayID(options.watewayId),
         missing: "error: missing option '--gateway'",
         isRequired: true,
     });
-    debug(`Update the binding to a gateway of a Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Update the binding to a gateway of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/datasets/${datasetId}/Default.BindToGateway`,

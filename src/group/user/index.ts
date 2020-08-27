@@ -37,12 +37,12 @@ export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
         .description("List user and service pricipal with access")
         .action(listUserAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group");
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     listCommand.addGlobalOptions();
     const addCommand = new ModuleCommand("add")
         .description("Grant access to a user or service pricipal")
         .action(addUserAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--email <email>", "Email address of the user")
         .option("--identifier <identifier>", "Identifier of the principal")
         .option("--access-right <right>", `Access right. Allowed values: ${accessRights.join(", ")}`)
@@ -51,7 +51,7 @@ export function getCommands(): ModuleCommand {
     const updateCommand = new ModuleCommand("update")
         .description("Update access of a user or service pricipal")
         .action(updateUserAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--email <email>", "Email address of the user")
         .option("--identifier <identifier>", "Identifier of the principal")
         .option("--access-right <right>", `Access right. Allowed values: ${accessRights.join(", ")}`)
@@ -60,12 +60,12 @@ export function getCommands(): ModuleCommand {
     const deleteCommand = new ModuleCommand("delete")
         .description("Revoke access of a user or service pricipal")
         .action(deleteUserAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--email <email>", "Email address of the user")
         .option("--identifier <identifier>", "Identifier of the principal");
     deleteCommand.addGlobalOptions();
     const userCommand = new ModuleCommand("user")
-        .description("Manage users of Power BI groups")
+        .description("Manage users of Power BI workspaces")
         .addCommand(listCommand)
         .addCommand(addCommand)
         .addCommand(deleteCommand)

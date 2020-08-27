@@ -46,10 +46,10 @@ describe("report/listshow.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "reportName",
     };
     const helpOptions = { H: true };
@@ -95,7 +95,7 @@ describe("report/listshow.ts", () => {
             });
         });
         it("list with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateReportIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -110,7 +110,7 @@ describe("report/listshow.ts", () => {
             });
         });
         it("list with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -140,7 +140,7 @@ describe("report/listshow.ts", () => {
             });
         });
         it("show with one options", (done) => {
-            validateGroupIdMock.resolves(oneOptions.G);
+            validateGroupIdMock.resolves(oneOptions.W);
             validateReportIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -155,7 +155,7 @@ describe("report/listshow.ts", () => {
             });
         });
         it("show with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {

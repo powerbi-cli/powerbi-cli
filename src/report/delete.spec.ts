@@ -46,13 +46,13 @@ describe("report/delete.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const myOptions = {
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
@@ -68,7 +68,7 @@ describe("report/delete.ts", () => {
     });
     describe("deleteAction()", () => {
         it("delete with --help", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -113,7 +113,7 @@ describe("report/delete.ts", () => {
             });
         });
         it("delete with no report options ('groupId')", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateReportIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -128,7 +128,7 @@ describe("report/delete.ts", () => {
             });
         });
         it("delete with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {

@@ -46,13 +46,13 @@ describe("dataset/dataflow.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const myOptions = {
         D: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
@@ -68,7 +68,7 @@ describe("dataset/dataflow.ts", () => {
     });
     describe("dataflowAction()", () => {
         it("dataflow with --help", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -113,7 +113,7 @@ describe("dataset/dataflow.ts", () => {
             });
         });
         it("dataflow with no dataset options ('groupId')", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateDatasetIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -128,7 +128,7 @@ describe("dataset/dataflow.ts", () => {
             });
         });
         it("dataflow with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {

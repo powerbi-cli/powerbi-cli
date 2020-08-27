@@ -35,7 +35,7 @@ import { getGroupUrl } from "../lib/helpers";
 export async function listshowAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const importId = await validateImportId(groupId as string, options.I, cmd.name() === "show");
     const request: APICall = {
         method: "GET",

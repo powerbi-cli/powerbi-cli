@@ -45,10 +45,10 @@ describe("dashboard/create.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "dashboardName",
     };
     const helpOptions = { H: true };
@@ -88,7 +88,7 @@ describe("dashboard/create.ts", () => {
             });
         });
         it("create with missing options", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "create",
@@ -101,7 +101,7 @@ describe("dashboard/create.ts", () => {
             });
         });
         it("create with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "create",

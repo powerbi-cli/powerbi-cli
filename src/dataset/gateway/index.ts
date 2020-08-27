@@ -35,19 +35,19 @@ export function getCommands(): ModuleCommand {
     const datasourceCommand = new ModuleCommand("datasource")
         .description("List the datasource of a gateways linked to a Power BI dataset")
         .action(datasourceGatewayAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     datasourceCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .description("List the gateways of a Power BI dataset")
         .action(listGatewayAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     listCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Bind a gatweay of a Power BI dataset")
         .action(updateGatewayAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--gatewayId <gatewayId>", "Name or ID of the Power BI gateway")
         .option("--datasourceIds [data]", "Set of datasource Ids. Comma seperated");

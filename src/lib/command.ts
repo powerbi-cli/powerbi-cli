@@ -33,8 +33,7 @@ import { drawFooter } from "./footer";
 import { drawHeader } from "./header";
 
 import { OutputType } from "./output";
-
-const version = "1.0.0";
+import { currentVersion } from "./version";
 
 export class ModuleCommand extends Command {
     private errorMsg: string | undefined;
@@ -52,18 +51,21 @@ export class ModuleCommand extends Command {
     }
 
     public addGlobalOptions(): void {
+        this.addCommand(
+            new ModuleCommand("version")
+                .description("Show the version of this Power BI CLI")
+                .action(() => this.showVersion())
+        );
         this.option("--output -o [output]", "Output format. Allowed values: json, tsv, yml. Default: json")
             .option("--output-file <file>", "Save response payload to a file")
             .option("--query <query>", "JMESPath query string")
             .option("--debug", "Increase logging verbosity to show debug logs")
             .option("--verbose", "Increase logging verbosity to show all logs")
             .option("--help -h", "Show this help message and exit")
-            .version(version, "--version -v", "Show the version of this Power BI CLI")
             .on("option:-h", () => this.outputHelp())
-            .on("option:-v", () => this.showVersion())
             .on("option:-o", (value: string | null) => {
                 this.outputFormat = this.validateOutput(value);
-                if (this.outputFormat) {
+                if (this.outputFormat === OutputType.unknown) {
                     this.errorMsg = `error: unknown output value '${value}'`;
                     this.showHelpOrError(false);
                     this._exit(1, "pbicli.unknownOutputValue", this.errorMsg);
@@ -108,10 +110,10 @@ export class ModuleCommand extends Command {
         drawFooter(this.isInteractive);
     }
 
-    public showVersion(): void {
-        console.info(`pbicli      ${version}\n`);
+    public async showVersion(): Promise<void> {
+        console.info(`pbicli      ${currentVersion}\n`);
         drawFooter(this.isInteractive);
-        this._exit(0, "pbicli.version", version);
+        this._exit(0, "pbicli.version", currentVersion);
     }
 
     public showCurrentError(): void {
@@ -135,15 +137,27 @@ export class ModuleCommand extends Command {
     }
 
     private showUnknownOption(operand: string): void {
-        this.errorMsg = `error: unknown option '${operand}'. Run 'pbicli --help for more information'`;
+        const args = this.getAllArgs(this as ModuleCommand);
+        const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
+        this.errorMsg = `error: unknown option '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
         this.showHelpOrError(true);
         this._exit(1, "pbicli.unknownOption", this.errorMsg);
     }
 
     private showUnknownCommand(operand: string): void {
-        this.errorMsg = `error: unknown command '${operand}'. Run 'pbicli --help for more information'`;
+        const args = this.getAllArgs(this as ModuleCommand);
+        const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
+        this.errorMsg = `error: unknown command '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
         this.showHelpOrError(true);
         this._exit(1, "pbicli.unknownCommand", this.errorMsg);
+    }
+
+    private getAllArgs(command: ModuleCommand): string[] {
+        if (!command.parent) {
+            return command.args;
+        } else {
+            return this.getAllArgs(command.parent);
+        }
     }
 
     public set helpPrompt(value: string | undefined) {
@@ -186,7 +200,7 @@ export class ModuleCommand extends Command {
         this.errorMsg = value;
     }
 
-    private validateOutput(value: string | null): OutputType | undefined {
+    private validateOutput(value: string | null): OutputType {
         switch (value) {
             case null:
             case "json":
@@ -196,6 +210,6 @@ export class ModuleCommand extends Command {
             case "yml":
                 return OutputType.yml;
         }
-        return undefined;
+        return OutputType.unknown;
     }
 }

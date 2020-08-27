@@ -36,30 +36,30 @@ export function getCommands(): ModuleCommand {
     const datasourceCommand = new ModuleCommand("datasource")
         .description("Get the datasources of a Power BI dataflow")
         .action(datasourceAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group.")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     datasourceCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
         .description("Deletes a Power BI dataflow from a group")
         .action(deleteAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
         .description("List Power BI dataflows in a group")
-        .option("--group -g <name>", "Name or ID of the Power BI group.");
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI dataflow")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group.")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     showCommand.addGlobalOptions();
     const upstreamCommand = new ModuleCommand("upstream")
         .description("Get the upstream dataflows of a Power BI dataflow")
         .action(upstreamAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group.")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     upstreamCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dataflow")

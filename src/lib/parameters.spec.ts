@@ -39,6 +39,7 @@ import {
     validateParameter,
     validateDatasetId,
     validateAppId,
+    validateCapacityId,
     validateDashboardId,
     validateDashboardTileId,
     validateDataflowId,
@@ -46,6 +47,10 @@ import {
     validateGatewayId,
     validateGatewayDatasourceId,
     validateImportId,
+    validateAdminGroupId,
+    validateAdminCapacityId,
+    validateAdminObjectId,
+    capitalize,
 } from "./parameters";
 
 chai.use(chaiAsPromise);
@@ -65,91 +70,189 @@ describe("parameters.ts", () => {
         it("incorrect value 3", () => {
             validateAllowedValues("string 3", allowedValues).should.be.rejected;
         });
+        it("correct value 1 & 2", () => {
+            validateAllowedValues("string 1, string 2", allowedValues, true).should.eventually.be.equal(
+                "string 1, string 2"
+            );
+        });
+        it("incorrect value 1 & 3", () => {
+            validateAllowedValues("string 1, string 3", allowedValues, true).should.be.rejected;
+        });
     });
 
     describe("validateParameter()", () => {
-        it("group, required", () => {
+        it("workspace, required", () => {
             const parameter = {
-                name: "group",
+                name: "workspace",
                 isName: () => Promise.resolve("id"),
-                missing: "error: missing option '--group'",
+                missing: "error: missing option '--workspace'",
                 isRequired: true,
             };
             validateParameter(parameter).should.eventually.be.equal("id");
         });
-        it("group, not required", () => {
+        it("workspace, not required", () => {
             const parameter = {
-                name: "group",
+                name: "workspace",
                 isName: () => Promise.resolve("id"),
-                missing: "error: missing option '--group'",
+                missing: "error: missing option '--workspace'",
                 isRequired: false,
             };
             validateParameter(parameter).should.eventually.be.equal("id");
         });
-        it("empty group, required", () => {
+        it("empty workspace, required", () => {
             const parameter = {
                 name: undefined,
                 isName: () => Promise.resolve("id"),
-                missing: "error: missing option '--group'",
+                missing: "error: missing option '--workspace'",
                 isRequired: true,
             };
-            validateParameter(parameter).should.eventually.be.rejectedWith("error: missing option '--group'");
+            validateParameter(parameter).should.eventually.be.rejectedWith("error: missing option '--workspace'");
         });
-        it("empty group, required", () => {
+        it("empty workspace, required", () => {
             const parameter = {
                 name: undefined,
                 isName: () => Promise.resolve("id"),
-                missing: "error: missing option '--group'",
+                missing: "error: missing option '--workspace'",
                 isRequired: false,
             };
             validateParameter(parameter).should.eventually.be.equal(undefined);
         });
-        it("uuid group, required", () => {
+        it("uuid workspace, required", () => {
             const parameter = {
                 name: uuid,
                 isName: () => Promise.resolve("id"),
-                missing: "error: missing option '--group'",
+                missing: "error: missing option '--workspace'",
                 isRequired: true,
             };
             validateParameter(parameter).should.eventually.be.equal(uuid);
         });
-        it("group, no lookup", () => {
+        it("workspace, no lookup", () => {
             const parameter = {
-                name: "group",
-                missing: "error: missing option '--group'",
+                name: "workspace",
+                missing: "error: missing option '--workspace'",
                 isRequired: true,
             };
-            validateParameter(parameter).should.eventually.be.equal("group");
+            validateParameter(parameter).should.eventually.be.equal("workspace");
         });
         it("uuid, lookup", () => {
             const parameter = {
                 name: uuid,
-                isId: () => Promise.resolve("group"),
-                missing: "error: missing option '--group'",
+                isId: () => Promise.resolve("workspace"),
+                missing: "error: missing option '--workspace'",
                 isRequired: true,
             };
-            validateParameter(parameter).should.eventually.be.equal("group");
+            validateParameter(parameter).should.eventually.be.equal("workspace");
         });
     });
-    describe("validateGroupId()", () => {
-        let mockGetGroupId: SinonSpy<unknown[], unknown>;
+    describe("validateAdminWorkspaceId()", () => {
+        let mockGetWorkspaceId: SinonSpy<unknown[], unknown>;
         beforeEach(() => {
-            mockGetGroupId = ImportMock.mockFunction(helpers, "getGroupID").resolves(uuid);
+            mockGetWorkspaceId = ImportMock.mockFunction(helpers, "getAdminGroupInfo").resolves([uuid, "name"]);
         });
         afterEach(() => {
-            mockGetGroupId.restore();
+            mockGetWorkspaceId.restore();
         });
-        it("group, required", () => {
-            validateGroupId("group", true).should.eventually.be.equal(uuid);
-            expect(mockGetGroupId.callCount).equal(1);
+        it("workspace, required", () => {
+            validateAdminGroupId("workspace", true, "Deleted").should.eventually.be.equal(uuid);
+            expect(mockGetWorkspaceId.callCount).equal(1);
         });
-        it("empty group, required", () => {
-            validateGroupId(undefined, true).should.eventually.be.rejectedWith("error: missing option '--group'");
-            expect(mockGetGroupId.callCount).equal(0);
+        it("empty workspace, required", () => {
+            validateAdminGroupId(undefined, true, "Deleted").should.eventually.be.rejectedWith(
+                "error: missing option '--workspace'"
+            );
+            expect(mockGetWorkspaceId.callCount).equal(0);
         });
-        it("empty group, not required", () => {
+        it("empty workspace, not required", () => {
+            validateAdminGroupId(undefined, false, "Deleted").should.eventually.be.equal(undefined);
+            expect(mockGetWorkspaceId.callCount).equal(0);
+        });
+    });
+    describe("validateAdminObjectId()", () => {
+        let mockGetWorkspaceId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetWorkspaceId = ImportMock.mockFunction(helpers, "getAdminObjectInfo").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetWorkspaceId.restore();
+        });
+        it("object, required", () => {
+            validateAdminObjectId("dashboard", true, "dashboard", "name").should.eventually.be.equal(uuid);
+            expect(mockGetWorkspaceId.callCount).equal(1);
+        });
+        it("empty object, required", () => {
+            validateAdminObjectId(undefined, true, "report", "name").should.eventually.be.rejectedWith(
+                "error: missing option '--report'"
+            );
+            expect(mockGetWorkspaceId.callCount).equal(0);
+        });
+        it("empty object, not required", () => {
+            validateAdminObjectId(undefined, false, "dataflow", "name").should.eventually.be.equal(undefined);
+            expect(mockGetWorkspaceId.callCount).equal(0);
+        });
+    });
+    describe("validateAdminCapacityId()", () => {
+        let mockGetAdminCapacityId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetAdminCapacityId = ImportMock.mockFunction(helpers, "getAdminCapacityID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetAdminCapacityId.restore();
+        });
+        it("capacity, required", () => {
+            validateAdminCapacityId("capacity", true).should.eventually.be.equal(uuid);
+            expect(mockGetAdminCapacityId.callCount).equal(1);
+        });
+        it("empty capacity, required", () => {
+            validateAdminCapacityId(undefined, true).should.eventually.be.rejectedWith(
+                "error: missing option '--capacity'"
+            );
+            expect(mockGetAdminCapacityId.callCount).equal(0);
+        });
+        it("empty capacity, not required", () => {
+            validateAdminCapacityId(undefined, false).should.eventually.be.equal(undefined);
+            expect(mockGetAdminCapacityId.callCount).equal(0);
+        });
+    });
+    describe("validateCapacityId()", () => {
+        let mockGetCapacityId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetCapacityId = ImportMock.mockFunction(helpers, "getCapacityID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetCapacityId.restore();
+        });
+        it("capacity, required", () => {
+            validateCapacityId("capacity", true).should.eventually.be.equal(uuid);
+            expect(mockGetCapacityId.callCount).equal(1);
+        });
+        it("empty capacity, required", () => {
+            validateCapacityId(undefined, true).should.eventually.be.rejectedWith("error: missing option '--capacity'");
+            expect(mockGetCapacityId.callCount).equal(0);
+        });
+        it("empty capacity, not required", () => {
+            validateCapacityId(undefined, false).should.eventually.be.equal(undefined);
+            expect(mockGetCapacityId.callCount).equal(0);
+        });
+    });
+    describe("validateWorkspaceId()", () => {
+        let mockGetWorkspaceId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetWorkspaceId = ImportMock.mockFunction(helpers, "getGroupID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetWorkspaceId.restore();
+        });
+        it("workspace, required", () => {
+            validateGroupId("workspace", true).should.eventually.be.equal(uuid);
+            expect(mockGetWorkspaceId.callCount).equal(1);
+        });
+        it("empty workspace, required", () => {
+            validateGroupId(undefined, true).should.eventually.be.rejectedWith("error: missing option '--workspace'");
+            expect(mockGetWorkspaceId.callCount).equal(0);
+        });
+        it("empty workspace, not required", () => {
             validateGroupId(undefined, false).should.eventually.be.equal(undefined);
-            expect(mockGetGroupId.callCount).equal(0);
+            expect(mockGetWorkspaceId.callCount).equal(0);
         });
     });
     describe("validateDatasetId()", () => {
@@ -160,21 +263,21 @@ describe("parameters.ts", () => {
         afterEach(() => {
             mockGetDatasetId.restore();
         });
-        it("group, dataset, required", () => {
-            validateDatasetId("group", "dataset", true).should.eventually.be.equal(uuid);
+        it("workspace, dataset, required", () => {
+            validateDatasetId("workspace", "dataset", true).should.eventually.be.equal(uuid);
             expect(mockGetDatasetId.callCount).equal(1);
         });
-        it("group, no dataset, required", () => {
-            validateDatasetId("group", undefined, true).should.eventually.be.rejectedWith(
+        it("workspace, no dataset, required", () => {
+            validateDatasetId("workspace", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--dataset'"
             );
             expect(mockGetDatasetId.callCount).equal(0);
         });
-        it("empty group, dataset, required", () => {
+        it("empty workspace, dataset, required", () => {
             validateDatasetId(undefined, "dataset", true).should.eventually.be.equal(uuid);
             expect(mockGetDatasetId.callCount).equal(1);
         });
-        it("empty group, no dataset, required", () => {
+        it("empty workspace, no dataset, required", () => {
             validateDatasetId(undefined, undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--dataset'"
             );
@@ -189,21 +292,21 @@ describe("parameters.ts", () => {
         afterEach(() => {
             mockGetReportId.restore();
         });
-        it("group, report, required", () => {
-            validateReportId("group", "report", true).should.eventually.be.equal(uuid);
+        it("workspace, report, required", () => {
+            validateReportId("workspace", "report", true).should.eventually.be.equal(uuid);
             expect(mockGetReportId.callCount).equal(1);
         });
-        it("group, no report, required", () => {
-            validateReportId("group", undefined, true).should.eventually.be.rejectedWith(
+        it("workspace, no report, required", () => {
+            validateReportId("workspace", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--report'"
             );
             expect(mockGetReportId.callCount).equal(0);
         });
-        it("empty group, report, required", () => {
+        it("empty workspace, report, required", () => {
             validateReportId(undefined, "report", true).should.eventually.be.equal(uuid);
             expect(mockGetReportId.callCount).equal(1);
         });
-        it("empty group, no report, required", () => {
+        it("empty workspace, no report, required", () => {
             validateReportId(undefined, undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--report'"
             );
@@ -218,12 +321,12 @@ describe("parameters.ts", () => {
         afterEach(() => {
             mockGetDataflowId.restore();
         });
-        it("group, dataflow, required", () => {
-            validateDataflowId("group", "dataflow", true).should.eventually.be.equal(uuid);
+        it("workspace, dataflow, required", () => {
+            validateDataflowId("workspace", "dataflow", true).should.eventually.be.equal(uuid);
             expect(mockGetDataflowId.callCount).equal(1);
         });
-        it("group, no dataflow, required", () => {
-            validateDataflowId("group", undefined, true).should.eventually.be.rejectedWith(
+        it("workspace, no dataflow, required", () => {
+            validateDataflowId("workspace", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--dataflow'"
             );
             expect(mockGetDataflowId.callCount).equal(0);
@@ -237,21 +340,21 @@ describe("parameters.ts", () => {
         afterEach(() => {
             mockGetDashboardId.restore();
         });
-        it("group, dashboard, required", () => {
-            validateDashboardId("group", "dashboard", true).should.eventually.be.equal(uuid);
+        it("workspace, dashboard, required", () => {
+            validateDashboardId("workspace", "dashboard", true).should.eventually.be.equal(uuid);
             expect(mockGetDashboardId.callCount).equal(1);
         });
-        it("group, no dashboard, required", () => {
-            validateDashboardId("group", undefined, true).should.eventually.be.rejectedWith(
+        it("workspace, no dashboard, required", () => {
+            validateDashboardId("workspace", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--dashboard'"
             );
             expect(mockGetDashboardId.callCount).equal(0);
         });
-        it("empty group, dashboard, required", () => {
+        it("empty workspace, dashboard, required", () => {
             validateDashboardId(undefined, "dashboard", true).should.eventually.be.equal(uuid);
             expect(mockGetDashboardId.callCount).equal(1);
         });
-        it("empty group, no dashboard, required", () => {
+        it("empty workspace, no dashboard, required", () => {
             validateDashboardId(undefined, undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--dashboard'"
             );
@@ -266,21 +369,21 @@ describe("parameters.ts", () => {
         afterEach(() => {
             mockGetDashboardTileId.restore();
         });
-        it("group, dashboard, required", () => {
-            validateDashboardTileId("group", "dashboard", "tile", true).should.eventually.be.equal(uuid);
+        it("workspace, dashboard, required", () => {
+            validateDashboardTileId("workspace", "dashboard", "tile", true).should.eventually.be.equal(uuid);
             expect(mockGetDashboardTileId.callCount).equal(1);
         });
-        it("group, dashboard, no tile required", () => {
-            validateDashboardTileId("group", "dashboard", undefined, true).should.eventually.be.rejectedWith(
+        it("workspace, dashboard, no tile required", () => {
+            validateDashboardTileId("workspace", "dashboard", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--tile'"
             );
             expect(mockGetDashboardTileId.callCount).equal(0);
         });
-        it("empty group, dashboard, required", () => {
+        it("empty workspace, dashboard, required", () => {
             validateDashboardTileId(undefined, "dashboard", "tile", true).should.eventually.be.equal(uuid);
             expect(mockGetDashboardTileId.callCount).equal(1);
         });
-        it("empty group, no dashboard, required", () => {
+        it("empty workspace, no dashboard, required", () => {
             validateDashboardTileId(undefined, undefined, undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--tile'"
             );
@@ -296,7 +399,7 @@ describe("parameters.ts", () => {
             mockGetAppId.restore();
         });
         it("app, required", () => {
-            validateAppId("group", true).should.eventually.be.equal(uuid);
+            validateAppId("workspace", true).should.eventually.be.equal(uuid);
             expect(mockGetAppId.callCount).equal(1);
         });
         it("empty app, required", () => {
@@ -317,7 +420,7 @@ describe("parameters.ts", () => {
             mockGetGatewayId.restore();
         });
         it("gateway, required", () => {
-            validateGatewayId("group", true).should.eventually.be.equal(uuid);
+            validateGatewayId("workspace", true).should.eventually.be.equal(uuid);
             expect(mockGetGatewayId.callCount).equal(1);
         });
         it("empty gateway, required", () => {
@@ -338,11 +441,11 @@ describe("parameters.ts", () => {
             mockGetGatewayDatasourceID.restore();
         });
         it("gateway, datasource, required", () => {
-            validateGatewayDatasourceId("group", "datasource", true).should.eventually.be.equal(uuid);
+            validateGatewayDatasourceId("workspace", "datasource", true).should.eventually.be.equal(uuid);
             expect(mockGetGatewayDatasourceID.callCount).equal(1);
         });
         it("gateway, no datasource, required", () => {
-            validateGatewayDatasourceId("group", undefined, true).should.eventually.be.rejectedWith(
+            validateGatewayDatasourceId("workspace", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--datasource'"
             );
             expect(mockGetGatewayDatasourceID.callCount).equal(0);
@@ -356,25 +459,30 @@ describe("parameters.ts", () => {
         afterEach(() => {
             mockGetImportId.restore();
         });
-        it("group, import, required", () => {
-            validateImportId("group", "import", true).should.eventually.be.equal(uuid);
+        it("workspace, import, required", () => {
+            validateImportId("workspace", "import", true).should.eventually.be.equal(uuid);
             expect(mockGetImportId.callCount).equal(1);
         });
-        it("group, no import, required", () => {
-            validateImportId("group", undefined, true).should.eventually.be.rejectedWith(
+        it("workspace, no import, required", () => {
+            validateImportId("workspace", undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--import'"
             );
             expect(mockGetImportId.callCount).equal(0);
         });
-        it("empty group, import, required", () => {
+        it("empty workspace, import, required", () => {
             validateImportId(undefined, "import", true).should.eventually.be.equal(uuid);
             expect(mockGetImportId.callCount).equal(1);
         });
-        it("empty group, no import, required", () => {
+        it("empty workspace, no import, required", () => {
             validateImportId(undefined, undefined, true).should.eventually.be.rejectedWith(
                 "error: missing option '--import'"
             );
             expect(mockGetImportId.callCount).equal(0);
+        });
+    });
+    describe("capitalize()", () => {
+        it("string 1", () => {
+            expect(capitalize("string 1")).to.equal("String 1");
         });
     });
 });

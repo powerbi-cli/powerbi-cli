@@ -37,14 +37,16 @@ import { OutputType } from "../../lib/output";
 export async function startExportAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.format === undefined) throw "error: missing option '--format'";
     const format = await validateAllowedValues((options.format as string).toUpperCase(), allowedExportFormat);
     const isPbix = pbiDownloads.some((f) => f === format);
     const isPbiExport = pbiExports.some((f) => f === format);
     const config = options.config || (options.configFile === undefined ? undefined : readFileSync(options.configFile));
-    debug(`Start the export of a Power BI report (${reportId}) in group (${groupId || "my"}) to format (${format})`);
+    debug(
+        `Start the export of a Power BI report (${reportId}) in workspace (${groupId || "my"}) to format (${format})`
+    );
     const request: APICall = {
         method: isPbix ? "GET" : "POST",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/${isPbix ? "Export" : "ExportTo"}`,

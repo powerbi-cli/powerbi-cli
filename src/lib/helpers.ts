@@ -28,37 +28,11 @@
 
 import { RequestPrepareOptions } from "@azure/ms-rest-js";
 import jmespath from "jmespath";
+import { stringify, ParsedUrlQueryInput } from "querystring";
 
 import { executeRestCall } from "./rest";
 import { rootUrl } from "./api";
-
-/*
- * Copyright (c) 2020 Jan Pieter Posthuma / DataScenarios
- *
- * All rights reserved.
- *
- * MIT License.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- *  of this software and associated documentation files (the "Software"), to deal
- *  in the Software without restriction, including without limitation the rights
- *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- *  copies of the Software, and to permit persons to whom the Software is
- *  furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- *  all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- *  THE SOFTWARE.
- */
-
-"use strict";
+import { checkUUID } from "./validate";
 
 export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];
@@ -75,6 +49,108 @@ export const datasetNamingConflict = datasetNamingConflictPBIX
     .concat(datasetNamingConflictDF)
     .filter((v, i, s) => s.indexOf(v) === i)
     .sort();
+export const expandAdminGroups = ["dashboards", "datasets", "dataflows", "reports", "users", "workbooks"];
+export const expandCapacity = ["tenantKey"];
+export const expandAdminDashboards = ["tiles"];
+export const expandAdminImports = ["datasets", "reports"];
+export const expandRefreshes = ["capacity", "workspace"];
+export const workloadState = ["enabled", "disabled"];
+
+export function getAdminGroupInfo(name: string, filterState: string | undefined = undefined): Promise<string[]> {
+    return new Promise<string[]>((resolve, reject) => {
+        const query: ParsedUrlQueryInput = { $top: 1 };
+        name = name.replace(/['"]+/g, "");
+        if (checkUUID(name)) {
+            query["$filter"] = `id eq '${name}'`;
+        } else {
+            query["$filter"] = `name eq '${name}'`;
+        }
+        if (filterState) query["$filter"] += ` and state eq '${filterState}'`;
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/admin/groups?${stringify(query)}`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    resolve([(response as any)[0].id, (response as any)[0].name]);
+                } catch {
+                    let errorMsg = `No workspace found with name '${name}'`;
+                    if (filterState) errorMsg += ` and state '${filterState}'`;
+                    reject(errorMsg);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getAdminObjectInfo(
+    name: string,
+    objectType: string,
+    lookupName: string,
+    returnName: string | undefined = "id"
+): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const query: ParsedUrlQueryInput = { $top: 1 };
+        name = name.replace(/['"]+/g, "");
+        query["$filter"] = `${lookupName} eq '${name}'`;
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/admin/${objectType}?${stringify(query)}`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                try {
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    resolve((response as any)[0][returnName]);
+                } catch {
+                    reject(`No ${objectType} found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getAdminCapacityID(name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/admin/capacities`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No capacity found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getCapacityID(name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${rootUrl}/capacities`,
+        };
+        executeRestCall(lookUpRequest, true)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No capacity found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
 
 export function getGroupID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
@@ -89,7 +165,7 @@ export function getGroupID(name: string): Promise<string> {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     resolve((response as any)[0].id);
                 } catch {
-                    reject(`No group found with name '${name}'`);
+                    reject(`No workspace found with name '${name}'`);
                 }
             })
             .catch((err) => reject(err));

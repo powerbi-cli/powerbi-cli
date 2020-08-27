@@ -35,9 +35,9 @@ import { validateGroupId, validateDatasetId } from "../lib/parameters";
 export async function deleteAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
-    debug(`Delete Power BI dataset (${datasetId}) in group ${groupId}`);
+    debug(`Delete Power BI dataset (${datasetId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "DELETE",
         url: `${getGroupUrl(groupId)}/datasets/${datasetId}`,

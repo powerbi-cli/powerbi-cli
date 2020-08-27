@@ -35,9 +35,9 @@ import { validateGroupId, validateDataflowId } from "../lib/parameters";
 export async function upstreamAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, true);
+    const groupId = await validateGroupId(options.W, true);
     const dataflowId = await validateDataflowId(groupId as string, options.F, true);
-    debug(`Get the dataflows uplinks of a Power BI dataflow (${dataflowId}) in group (${groupId})`);
+    debug(`Get the upstream dataflows of a Power BI dataflow (${dataflowId}) in workspace (${groupId})`);
     const request: APICall = {
         method: "GET",
         url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}/upstreamDataflows`,

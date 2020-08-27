@@ -46,17 +46,17 @@ describe("report/rebind.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const missingOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const myOptions = {
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const twoOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         targetDataset: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
@@ -73,7 +73,7 @@ describe("report/rebind.ts", () => {
     });
     describe("rebindAction()", () => {
         it("rebind with --help", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -118,7 +118,7 @@ describe("report/rebind.ts", () => {
             });
         });
         it("rebind with no report options ('groupId')", (done) => {
-            validateGroupIdMock.resolves(missingOptions.G);
+            validateGroupIdMock.resolves(missingOptions.W);
             validateReportIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -133,7 +133,7 @@ describe("report/rebind.ts", () => {
             });
         });
         it("rebind with two report options ('groupId')", (done) => {
-            validateGroupIdMock.resolves(twoOptions.G);
+            validateGroupIdMock.resolves(twoOptions.W);
             validateReportIdMock.resolves(twoOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
@@ -148,7 +148,7 @@ describe("report/rebind.ts", () => {
             });
         });
         it("rebind with all options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {

@@ -34,24 +34,24 @@ export function getCommands(): ModuleCommand {
     const cloneCommand = new ModuleCommand("create")
         .description("Clone a Power BI dashboard tile")
         .action(cloneAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name of the Power BI dashboard")
         .option("--tile -t <tile>", "Name or ID of the Power BI dashboard tile")
         .option("--dest-dashboard <destdashboard>", "ID of the destination Power BI dashboard")
-        .option("--dest-group [destgroup]", "ID of the destination Power BI group")
+        .option("--dest-workspace [destworkspace]", "ID of the destination Power BI workspace")
         .option("--dest-model [destmodel]", "ID of the destination Power BI model/dataset")
         .option("--dest-report [destreport]", "ID of the destination Power BI report")
         .option("--abort", "If set the clone action will be arborted if the row/column position is not available");
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
         .description("List Power BI dashboard tiles in a group")
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name or ID of the Power BI dashboard");
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI dashboard tile")
         .action(listshowAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name or ID of the Power BI dashboard")
         .option("--tile -t <tile>", "Name or ID of the Power BI dashboard tile");
     showCommand.addGlobalOptions();

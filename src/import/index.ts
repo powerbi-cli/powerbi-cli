@@ -35,7 +35,7 @@ export function getCommands(): ModuleCommand {
     const pbixCommand = new ModuleCommand("pbix")
         .description("Upload of Power BI PBIX file (< 1GB)")
         .action(createAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--file <path>", "Path to the PBIX file")
         .option("--name <name>", "The display name of the dataset with file extension. Default the file name is used")
         .option(
@@ -49,7 +49,7 @@ export function getCommands(): ModuleCommand {
     const largepbixCommand = new ModuleCommand("pbix-large")
         .description("Start an upload of Power BI PBIX file (> 1GB, < 10GB)")
         .action(createAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--name <name>", "The display name of the dataset")
         .option("--url <url>", "Url of the temporary blob storage")
         .option(
@@ -63,7 +63,7 @@ export function getCommands(): ModuleCommand {
     const rdlCommand = new ModuleCommand("rdl")
         .description("Upload of Power BI RDL file")
         .action(createAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--file <file>", "Path to the RDL file")
         .option("--name <name>", "The display name of the dataset with file extension. Default the file name is used")
         .option(
@@ -74,7 +74,7 @@ export function getCommands(): ModuleCommand {
     const dataflowCommand = new ModuleCommand("dataflow")
         .description("Upload of Power BI dataflow JSON file")
         .action(createAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--file <file>", "Path to the dataflow JSON file")
         .option(
             "--conflict <option>",

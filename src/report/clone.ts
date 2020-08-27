@@ -35,14 +35,14 @@ import { validateGroupId, validateReportId } from "../lib/parameters";
 export async function cloneAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.name === undefined) throw "error: missing option '--name'";
     const name = options.name;
     const targetModelId = options.targetDataset;
     const targetWorkspaceId =
         options.targetGroup === true ? "00000000-0000-0000-0000-000000000000" : options.targetGroup;
-    debug(`Clone Power BI report (${reportId}) in group ${groupId}`);
+    debug(`Clone Power BI report (${reportId}) in workspace ${groupId}`);
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/Clone`,

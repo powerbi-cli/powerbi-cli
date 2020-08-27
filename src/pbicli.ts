@@ -36,6 +36,7 @@ import inquirerCommandPrompt from "inquirer-command-prompt";
 import { drawHeader } from "./lib/header";
 import { ModuleCommand } from "./lib/command";
 import { green } from "chalk";
+import { checkVersion } from "./lib/version";
 
 const questions = [
     {
@@ -48,14 +49,17 @@ const questions = [
 ];
 
 const modules: string[] = [
+    "admin",
     "app",
+    "capacity",
     "dashboard",
     "dataflow",
     "dataset",
+    "feature",
     "gateway",
-    "group",
     "import",
     "report",
+    "group",
     "login",
     "logout",
 ];
@@ -66,6 +70,8 @@ modules.forEach((module: string) => {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     program.addCommand(require(`./${module}/index`).getCommands());
 });
+
+program.addGlobalOptions();
 
 inquirerCommandPrompt.setConfig({
     history: {
@@ -123,11 +129,15 @@ if (args?.length === 2) {
     prompt();
 } else {
     // Commandline mode
-    args = fixHelpOptions(args, false);
-    program.parseAsync(args).catch((err) => {
-        program.errorMessage = err;
-        program.showHelpOrError(true);
-    });
+    const process = async () => {
+        await checkVersion(args);
+        args = fixHelpOptions(args, false);
+        await program.parseAsync(args).catch((err) => {
+            program.errorMessage = err;
+            program.showHelpOrError(true);
+        });
+    };
+    process();
 }
 
 function fixHelpOptions(args: string[], interactive: boolean): string[] {

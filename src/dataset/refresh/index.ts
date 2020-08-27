@@ -35,13 +35,13 @@ export function getCommands(): ModuleCommand {
     const historyCommand = new ModuleCommand("history")
         .description("Get the history of a Power BI refresh schedule")
         .action(historyAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     historyCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Update a Power BI refresh schedule")
         .action(updateAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--refresh-schedule <data>", "String with the refresh schedule in JSON format")
         .option("--refresh-schedule-file <file>", "File with the refresh schedule in JSON format")
@@ -50,7 +50,7 @@ export function getCommands(): ModuleCommand {
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI refresh schedule")
         .action(showAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--direct-query", "Dataset is a direct query or live connection");
     showCommand.addGlobalOptions();

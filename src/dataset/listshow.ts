@@ -35,7 +35,7 @@ import { validateGroupId, validateDatasetId } from "../lib/parameters";
 export async function listshowAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, cmd.name() === "show");
     debug(`Retrieves Power BI datasets of the group (${groupId || "my"})`);
     const request: APICall = {

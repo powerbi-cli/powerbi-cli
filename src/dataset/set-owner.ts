@@ -35,9 +35,9 @@ export async function setOwnerAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, true);
+    const groupId = await validateGroupId(options.W, true);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
-    debug(`Retrieve Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Retrieve Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",
         url: `/groups/${groupId}/datasets${datasetId}/Default.TakeOver`,

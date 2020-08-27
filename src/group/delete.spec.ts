@@ -45,7 +45,7 @@ describe("group/delete.ts", () => {
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const allOptions = {
-        G: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
@@ -58,7 +58,7 @@ describe("group/delete.ts", () => {
     });
     describe("deleteAction()", () => {
         it("delete with --help", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "delete",
@@ -84,7 +84,7 @@ describe("group/delete.ts", () => {
             });
         });
         it("delete with options", (done) => {
-            validateGroupIdMock.resolves(allOptions.G);
+            validateGroupIdMock.resolves(allOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "delete",

@@ -35,19 +35,19 @@ export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
         .description("List the datasources of a Power BI dataset")
         .action(listDatasourceAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     listCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("gateway")
         .description("List the datasource of a gateways linked to a Power BI dataset")
         .action(datasourceGatewayAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     gatewayCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Update the datasources of a Power BI dataset")
         .action(updateDatasourceAction)
-        .option("--group -g <name>", "Name or ID of the Power BI group. If not provided it uses 'My workspace'")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--update-details <data>", "String with the connection server details in JSON format")
         .option("--update-details-file <file>", "File with the connection server details in JSON format");

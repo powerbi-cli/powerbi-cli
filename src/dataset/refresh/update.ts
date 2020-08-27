@@ -37,12 +37,12 @@ export async function updateAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.refreshSchedule === undefined && options.refreshScheduleFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
     const refreshSchedule = options.refreshSchedule || readFileSync(options.refreshScheduleFile);
-    debug(`Update the refresch schedule of a Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Update the refresch schedule of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const connectionType = options.directQuery ? "directQueryRefreshSchedule" : "refreshSchedule";
     const request: APICall = {
         method: "PATCH",

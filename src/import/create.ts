@@ -41,7 +41,7 @@ import {
 export async function createAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     let file;
     let name;
     let url;

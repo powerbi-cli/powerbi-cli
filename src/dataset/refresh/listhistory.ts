@@ -36,9 +36,9 @@ export async function historyAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
-    debug(`Get the refresh schedule history of a Power BI dataset (${datasetId}) in group (${groupId || "my"})`);
+    debug(`Get the refresh schedule history of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "GET",
         url: `${getGroupUrl(groupId)}/datasets/${datasetId}/refreshes`,

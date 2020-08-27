@@ -36,7 +36,7 @@ export async function updateUserAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.G, true);
+    const groupId = await validateGroupId(options.W, true);
     if (!(options.email || options.identifier)) throw "error: missing option '--email' or '--identifier'";
     const accessRight = await validateParameter({
         name: options.accessRight,
@@ -50,7 +50,7 @@ export async function updateUserAction(cmd: ModuleCommand): Promise<void> {
         missing: "error: missing option '--principal-type'",
         isRequired: true,
     });
-    debug(`Update access of a user or service pricipal to the Power BI group: ${options.G}`);
+    debug(`Update access of a user or service pricipal to the Power BI workspace: ${options.W}`);
     const request: APICall = {
         method: "PUT",
         url: `/groups/${groupId}/users`,

@@ -33,13 +33,13 @@ import { APICall, executeAPICall } from "../lib/api";
 export async function createAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    if (!options.G) throw "error: missing option '--group'";
-    debug(`Creates a new Power BI group with name ${options.G}`);
+    if (!options.W) throw "error: missing option '--workspace'";
+    debug(`Creates a new Power BI workspace with name ${options.W}`);
     const request: APICall = {
         method: "POST",
         url: "/groups?workspaceV2=true",
         body: {
-            name: options.G,
+            name: options.W,
         },
     };
 

@@ -33,7 +33,7 @@ import { getCommands } from "./index";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const should = chai.should();
 
-describe("group/datasource/index.ts", () => {
+describe("report/export/index.ts", () => {
     describe("getCommands()", () => {
         it("normal execution", () => {
             getCommands().should.not.throw;

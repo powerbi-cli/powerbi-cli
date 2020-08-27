@@ -36,11 +36,11 @@ import { OutputType } from "../../lib/output";
 export async function downloadExportAction(cmd: ModuleCommand): Promise<void> {
     const options = cmd.opts();
     if (options.H) return;
-    const groupId = await validateGroupId(options.G, false);
+    const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.export === undefined) throw "error: missing option '--export'";
     const exportId = options.export;
-    debug(`Get the export of a Power BI report (${reportId}) in group (${groupId || "my"})`);
+    debug(`Get the export of a Power BI report (${reportId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "GET",
         url: `${getGroupUrl(groupId)}/reports/${reportId}/exports/${exportId}/file`,
