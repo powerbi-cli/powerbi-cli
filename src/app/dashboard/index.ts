@@ -32,7 +32,7 @@ import { listshowTileAction } from "./listshowtile";
 
 export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
-        .description("List dashbaords of a Power BI apps")
+        .description("List dashboards of a Power BI apps")
         .action(listshowAction)
         .option("--app -a <app>", "Name or ID of the Power BI app");
     listCommand.addGlobalOptions();
@@ -43,19 +43,22 @@ export function getCommands(): ModuleCommand {
         .option("--dashboard -d <dashboard>", "Name or ID of the dashboard of the Power BI app");
     showCommand.addGlobalOptions();
     const tileListCommand = new ModuleCommand("list")
-        .description("List dashboards of a Power BI apps")
+        .description("List of dashboard tiles of a Power BI apps")
         .action(listshowTileAction)
         .option("--app -a <app>", "Name or ID of the Power BI app")
         .option("--dashboard -d <dashboard>", "Name or ID of the dashboard of the Power BI app");
     tileListCommand.addGlobalOptions();
     const tileShowCommand = new ModuleCommand("show")
-        .description("Get the details of a dashboard tiles of a Power BI apps")
+        .description("Get the details of a dashboard tile of a Power BI apps")
         .action(listshowTileAction)
         .option("--app -a <app>", "Name or ID of the Power BI app")
         .option("--dashboard -d <dashboard>", "Name or ID of the dashboard of the Power BI app")
         .option("--tile -t <tile>", "Name or ID of the tile of the dashboard of the Power BI app");
     tileShowCommand.addGlobalOptions();
-    const tileCommand = new ModuleCommand("tile").addCommand(tileListCommand).addCommand(tileShowCommand);
+    const tileCommand = new ModuleCommand("tile")
+        .description("Manage dashboard tiles of a Power BI apps")
+        .addCommand(tileListCommand)
+        .addCommand(tileShowCommand);
     tileCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dashboard")
         .description("Manage dashboards of a Power BI apps")
