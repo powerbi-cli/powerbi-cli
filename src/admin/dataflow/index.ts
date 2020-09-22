@@ -52,7 +52,7 @@ export function getCommands(): ModuleCommand {
         .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");
     showCommand.addGlobalOptions();
     const upstreamCommand = new ModuleCommand("upstream")
-        .description("Exports the specified dataflow definition")
+        .description("Returns a list of upstream dataflows for the specified dataflow in a Power BI workspace")
         .action(upstreamAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");

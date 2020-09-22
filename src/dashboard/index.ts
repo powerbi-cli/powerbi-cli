@@ -39,7 +39,7 @@ export function getCommands(): ModuleCommand {
         .option("--dashboard -d <dashboard>", "Name of the Power BI dashboard");
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
-        .description("List Power BI dashboards in a group")
+        .description("List Power BI dashboards in a workspace")
         .option(
             "--workspace -w <name>",
             "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'"
