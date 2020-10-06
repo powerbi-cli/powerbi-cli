@@ -31,7 +31,7 @@ import chai from "chai";
 import { SinonStub } from "sinon";
 import fetch from "node-fetch";
 
-import { checkVersion } from "./version";
+import { checkVersion, currentVersion } from "./version";
 
 const expect = chai.expect;
 
@@ -53,6 +53,18 @@ describe("version.ts", () => {
                 expect(consoleInfoMock.callCount).equal(0);
                 done();
             });
+        });
+    });
+    describe("version validation", () => {
+        it("check currentVersion with package.json", () => {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const version = require("../../package.json").version;
+            expect(currentVersion).equal(version);
+        });
+        it("check currentVersion with package-lock.json", () => {
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            const version = require("../../package-lock.json").version;
+            expect(currentVersion).equal(version);
         });
     });
 });
