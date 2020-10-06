@@ -45,7 +45,6 @@ function getKeyTempFile(): string {
 function writeToken(accessToken: string) {
     if (!existsSync(location)) {
         mkdirSync(location);
-        return;
     }
     writeFileSync(getKeyTempFile(), accessToken);
 }
