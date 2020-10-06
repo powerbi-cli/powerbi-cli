@@ -2,9 +2,7 @@ name: Build and test
 
 on:
   push:
-    branches: [live]
-  pull_request:
-    branches: [live]
+    branches: [develop, live]
 
 jobs:
   test:
@@ -34,7 +32,7 @@ jobs:
     name: Build and package
     runs-on: ubuntu-latest
     needs: [test]
-    if: ${{ github.event_name == 'push' }}
+    if: ${{ endsWith(github.ref, 'live') }}
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js 12

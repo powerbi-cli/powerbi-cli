@@ -30,7 +30,7 @@
 
 "use strict";
 
-import { existsSync, writeFileSync, readFileSync, unlinkSync } from "fs";
+import { existsSync, writeFileSync, readFileSync, unlinkSync, mkdirSync } from "fs";
 import { homedir } from "os";
 import { decode } from "jsonwebtoken";
 import { verbose } from "./logging";
@@ -44,7 +44,7 @@ function getKeyTempFile(): string {
 
 function writeToken(accessToken: string) {
     if (!existsSync(location)) {
-        return;
+        mkdirSync(location);
     }
     writeFileSync(getKeyTempFile(), accessToken);
 }

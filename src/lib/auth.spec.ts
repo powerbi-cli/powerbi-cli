@@ -40,6 +40,7 @@ const expect = chai.expect;
 describe("auth.ts", () => {
     let existsSyncMock: SinonStub<unknown[], unknown>;
     let writeFileSyncMock: SinonStub<unknown[], unknown>;
+    let mkdirSyncMock: SinonStub<unknown[], unknown>;
     let readFileSyncMock: SinonStub<unknown[], unknown>;
     let unlinkSyncMock: SinonStub<unknown[], unknown>;
     let decodeMock: SinonStub<unknown[], unknown>;
@@ -47,6 +48,7 @@ describe("auth.ts", () => {
     beforeEach(() => {
         existsSyncMock = ImportMock.mockFunction(fs, "existsSync");
         writeFileSyncMock = ImportMock.mockFunction(fs, "writeFileSync");
+        mkdirSyncMock = ImportMock.mockFunction(fs, "mkdirSync");
         readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
         unlinkSyncMock = ImportMock.mockFunction(fs, "unlinkSync");
         decodeMock = ImportMock.mockFunction(jsonwebtoken, "decode");
@@ -55,6 +57,7 @@ describe("auth.ts", () => {
     afterEach(() => {
         existsSyncMock.restore();
         writeFileSyncMock.restore();
+        mkdirSyncMock.restore();
         readFileSyncMock.restore();
         unlinkSyncMock.restore();
         decodeMock.restore();
@@ -71,10 +74,12 @@ describe("auth.ts", () => {
 
         it("missing directory", () => {
             existsSyncMock.returns(false);
+            mkdirSyncMock.returns(true);
             writeFileSyncMock.returns(true);
             storeAccessToken("");
             expect(existsSyncMock.callCount).equal(1);
-            expect(writeFileSyncMock.callCount).equal(0);
+            expect(mkdirSyncMock.callCount).equal(1);
+            expect(writeFileSyncMock.callCount).equal(1);
         });
     });
     describe("getAccessToken()", () => {
