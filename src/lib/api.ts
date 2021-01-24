@@ -57,7 +57,7 @@ export function executeAPICall(
             if (outputFormat === OutputType.raw) {
                 executeDownloadCall(request, outputFile as string)
                     .then(() => {
-                        resolve();
+                        resolve(undefined);
                     })
                     .catch((err) => reject(err));
             }
@@ -71,7 +71,7 @@ export function executeAPICall(
                 executeRestCall(request, apiRequest.containsValue as boolean)
                     .then((response) => {
                         formatAndPrintOutput(response, outputFormat, outputFile, jmsePath);
-                        resolve();
+                        resolve(undefined);
                     })
                     .catch((err) => reject(err));
             }

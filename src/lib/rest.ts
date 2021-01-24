@@ -54,7 +54,7 @@ export function executeRestCall(request: RequestPrepareOptions, containsValue: b
                     } else if (silentMethods.some((silentMethod: string) => silentMethod === request.method)) {
                         //if (response.status === 202 && request.method === "POST")
                         if (response.parsedBody) resolve(JSON.parse(JSON.stringify(response.parsedBody)));
-                        else resolve();
+                        else resolve(undefined);
                     } else if (response.status === 404) {
                         resolve([]);
                     } else if (response.status === 200) {
@@ -104,7 +104,7 @@ export function executeDownloadCall(request: RequestPrepareOptions, outputFile: 
                 }
                 response.pipe(file);
             });
-            file.on("finish", () => resolve());
+            file.on("finish", () => resolve(undefined));
             req.on("error", (err) => {
                 unlink(outputFile, () => reject(`Error while calling the Power BI REST API: ${err}`));
             });
@@ -143,7 +143,7 @@ export function executeUploadCall(request: RequestPrepareOptions, inputFile: str
                     reject("Error uploading the report");
                     return;
                 }
-                resolve();
+                resolve(undefined);
             });
         } catch (err) {
             reject(err);
