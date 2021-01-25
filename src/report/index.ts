@@ -107,6 +107,7 @@ export function getCommands(): ModuleCommand {
         .addCommand(cloneCommand)
         .addCommand(listCommand)
         .addCommand(pageCommand)
+        .addCommand(rebindCommand)
         .addCommand(showCommand)
         .addCommand(updateCommand)
         .addCommand(getExportCommands());
