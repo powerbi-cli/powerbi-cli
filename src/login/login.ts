@@ -111,7 +111,6 @@ async function loginWithServicePrincipal(cmd: ModuleCommand, options: unknown): 
         if (!secret) return reject("error: missing option '--secret'");
         if (!tenant) return reject("error: missing option '--tenant'");
         const storedToken = getAccessToken();
-        console.log(`dd: ${storedToken}`);
         if (storedToken !== "") {
             verbose("Used stored access token");
             return storedToken;
