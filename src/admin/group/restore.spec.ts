@@ -73,7 +73,7 @@ describe("admin/group/restore.ts", () => {
                 name: () => "restore",
                 opts: () => helpOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).finally(() => {
+            restoreAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -86,7 +86,7 @@ describe("admin/group/restore.ts", () => {
                 name: () => "restore",
                 opts: () => emptyOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).catch(() => {
+            restoreAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -99,7 +99,7 @@ describe("admin/group/restore.ts", () => {
                 name: () => "restore",
                 opts: () => groupOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).catch(() => {
+            restoreAction(groupOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -112,7 +112,7 @@ describe("admin/group/restore.ts", () => {
                 name: () => "restore",
                 opts: () => groupOwnerOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).then(() => {
+            restoreAction(groupOwnerOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.body.name).to.equal(groupOwnerOptions.W);
                 expect(request?.body.emailAddress).to.equal(groupOwnerOptions.owner);
@@ -128,7 +128,7 @@ describe("admin/group/restore.ts", () => {
                 name: () => "restore",
                 opts: () => allOptions,
             };
-            restoreAction(cmdOptsMock as ModuleCommand).then(() => {
+            restoreAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.body.name).to.equal(allOptions.name);
                 expect(request?.body.emailAddress).to.equal(allOptions.owner);

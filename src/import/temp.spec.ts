@@ -64,7 +64,7 @@ describe("import/temp.ts", () => {
                 name: () => "temp",
                 opts: () => helpOptions,
             };
-            tempAction(cmdOptsMock as ModuleCommand).finally(() => {
+            tempAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("import/temp.ts", () => {
                 name: () => "temp",
                 opts: () => emptyOptions,
             };
-            tempAction(cmdOptsMock as ModuleCommand).then(() => {
+            tempAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -90,7 +90,7 @@ describe("import/temp.ts", () => {
                 name: () => "temp",
                 opts: () => oneOptions,
             };
-            tempAction(cmdOptsMock as ModuleCommand).then(() => {
+            tempAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

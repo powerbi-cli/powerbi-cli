@@ -77,7 +77,7 @@ describe("report/export/show.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            showExportAction(cmdOptsMock as ModuleCommand).finally(() => {
+            showExportAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -92,7 +92,7 @@ describe("report/export/show.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            showExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            showExportAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -107,7 +107,7 @@ describe("report/export/show.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            showExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            showExportAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -122,7 +122,7 @@ describe("report/export/show.ts", () => {
                 name: () => "show",
                 opts: () => twoOptions,
             };
-            showExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            showExportAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -137,7 +137,7 @@ describe("report/export/show.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            showExportAction(cmdOptsMock as ModuleCommand).then(() => {
+            showExportAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

@@ -72,7 +72,7 @@ describe("admin/dashboard/list.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -85,7 +85,7 @@ describe("admin/dashboard/list.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
@@ -101,7 +101,7 @@ describe("admin/dashboard/list.ts", () => {
                 name: () => "list",
                 opts: () => topOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(topOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
@@ -117,7 +117,7 @@ describe("admin/dashboard/list.ts", () => {
                 name: () => "list",
                 opts: () => topskipOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(topskipOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -133,7 +133,7 @@ describe("admin/dashboard/list.ts", () => {
                 name: () => "list",
                 opts: () => topskipErrorOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(topskipErrorOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);

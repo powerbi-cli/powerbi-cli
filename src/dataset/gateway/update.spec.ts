@@ -81,7 +81,7 @@ describe("dataset/gateway/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateGatewayAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateGatewayAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(validateParameterMock.callCount).to.equal(0);
@@ -98,7 +98,7 @@ describe("dataset/gateway/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateGatewayAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateGatewayAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(validateParameterMock.callCount).to.equal(0);
@@ -115,7 +115,7 @@ describe("dataset/gateway/update.ts", () => {
                 name: () => "update",
                 opts: () => oneOptions,
             };
-            updateGatewayAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateGatewayAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(0);
@@ -132,7 +132,7 @@ describe("dataset/gateway/update.ts", () => {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateGatewayAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateGatewayAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(1);
@@ -149,7 +149,7 @@ describe("dataset/gateway/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateGatewayAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateGatewayAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(1);

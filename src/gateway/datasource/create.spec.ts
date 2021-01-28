@@ -77,7 +77,7 @@ describe("gateway/datasource/create.ts", () => {
                 name: () => "create",
                 opts: () => helpOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).finally(() => {
+            createAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("gateway/datasource/create.ts", () => {
                 name: () => "create",
                 opts: () => emptyOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).catch(() => {
+            createAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -103,7 +103,7 @@ describe("gateway/datasource/create.ts", () => {
                 name: () => "create",
                 opts: () => missingOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).catch(() => {
+            createAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -117,7 +117,7 @@ describe("gateway/datasource/create.ts", () => {
                 name: () => "create",
                 opts: () => allOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).then(() => {
+            createAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -132,7 +132,7 @@ describe("gateway/datasource/create.ts", () => {
                 name: () => "create",
                 opts: () => allOptionsFile,
             };
-            createAction(cmdOptsMock as ModuleCommand).then(() => {
+            createAction(allOptionsFile, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

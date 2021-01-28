@@ -87,7 +87,7 @@ describe("gateway/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(0);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("gateway/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("gateway/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -133,7 +133,7 @@ describe("gateway/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => missingCredsOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(missingCredsOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(0);
@@ -150,7 +150,7 @@ describe("gateway/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(1);
@@ -167,7 +167,7 @@ describe("gateway/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptionsFile,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(allOptionsFile, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(1);

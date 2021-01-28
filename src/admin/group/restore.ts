@@ -25,6 +25,7 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
@@ -32,8 +33,9 @@ import { APICall, executeAPICall } from "../../lib/api";
 import { validateAdminGroupId } from "../../lib/parameters";
 import { checkUUID } from "../../lib/validate";
 
-export async function restoreAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function restoreAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     let groupId, groupName;
     const groupLookup = await validateAdminGroupId(options.W, true, "Deleted");

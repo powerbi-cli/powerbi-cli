@@ -87,7 +87,7 @@ describe("dashboard/tile/clone.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).finally(() => {
+            cloneAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDashboardIdMock.callCount).to.equal(0);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -104,7 +104,7 @@ describe("dashboard/tile/clone.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(0);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -121,7 +121,7 @@ describe("dashboard/tile/clone.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -138,7 +138,7 @@ describe("dashboard/tile/clone.ts", () => {
                 name: () => "show",
                 opts: () => twoOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);
@@ -155,7 +155,7 @@ describe("dashboard/tile/clone.ts", () => {
                 name: () => "show",
                 opts: () => threeOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(threeOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);
@@ -172,7 +172,7 @@ describe("dashboard/tile/clone.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).then(() => {
+            cloneAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);

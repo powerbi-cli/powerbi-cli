@@ -82,7 +82,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => helpOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).finally(() => {
+            importAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -95,7 +95,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => emptyOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).then(() => {
+            importAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
@@ -111,7 +111,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => topOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).then(() => {
+            importAction(topOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
@@ -127,7 +127,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => topskipOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).then(() => {
+            importAction(topskipOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -143,7 +143,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => topskipErrorOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).then(() => {
+            importAction(topskipErrorOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -159,7 +159,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => expandOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).then(() => {
+            importAction(expandOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -176,7 +176,7 @@ describe("admin/import.ts", () => {
                 name: () => "import",
                 opts: () => expandErrorOptions,
             };
-            importAction(cmdOptsMock as ModuleCommand).catch(() => {
+            importAction(expandErrorOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAllowedValuesMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();

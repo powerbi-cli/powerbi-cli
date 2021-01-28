@@ -64,7 +64,7 @@ describe("capacity/status.ts", () => {
                 name: () => "status",
                 opts: () => helpOptions,
             };
-            statusAction(cmdOptsMock as ModuleCommand).finally(() => {
+            statusAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("capacity/status.ts", () => {
                 name: () => "status",
                 opts: () => emptyOptions,
             };
-            statusAction(cmdOptsMock as ModuleCommand).then(() => {
+            statusAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -90,7 +90,7 @@ describe("capacity/status.ts", () => {
                 name: () => "status",
                 opts: () => workspaceOptions,
             };
-            statusAction(cmdOptsMock as ModuleCommand).then(() => {
+            statusAction(workspaceOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

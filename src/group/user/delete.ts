@@ -25,14 +25,16 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { validateGroupId } from "../../lib/parameters";
 
-export async function deleteUserAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function deleteUserAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
 
     const groupId = await validateGroupId(options.W, true);

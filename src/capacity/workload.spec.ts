@@ -83,7 +83,7 @@ describe("capacity/workload.ts", () => {
                 name: () => "workload",
                 opts: () => helpOptions,
             };
-            workloadAction(cmdOptsMock as ModuleCommand).finally(() => {
+            workloadAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateCapacityIdMock.callCount).to.equal(0);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -98,7 +98,7 @@ describe("capacity/workload.ts", () => {
                 name: () => "workload",
                 opts: () => emptyOptions,
             };
-            workloadAction(cmdOptsMock as ModuleCommand).catch(() => {
+            workloadAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -113,7 +113,7 @@ describe("capacity/workload.ts", () => {
                 name: () => "workload",
                 opts: () => capacityOptions,
             };
-            workloadAction(cmdOptsMock as ModuleCommand).then(() => {
+            workloadAction(capacityOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid")).to.greaterThan(-1);
                 expect(validateCapacityIdMock.callCount).to.equal(1);
@@ -130,7 +130,7 @@ describe("capacity/workload.ts", () => {
                 name: () => "workload",
                 opts: () => workloadOptions,
             };
-            workloadAction(cmdOptsMock as ModuleCommand).then(() => {
+            workloadAction(workloadOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("/dataflows")).to.greaterThan(-1);
@@ -148,7 +148,7 @@ describe("capacity/workload.ts", () => {
                 name: () => "workload",
                 opts: () => disableOptions,
             };
-            workloadAction(cmdOptsMock as ModuleCommand).then(() => {
+            workloadAction(disableOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("/dataflows")).to.greaterThan(-1);
@@ -167,7 +167,7 @@ describe("capacity/workload.ts", () => {
                 name: () => "workload",
                 opts: () => enableOptions,
             };
-            workloadAction(cmdOptsMock as ModuleCommand).then(() => {
+            workloadAction(enableOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("/dataflows")).to.greaterThan(-1);

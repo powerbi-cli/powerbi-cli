@@ -56,7 +56,7 @@ describe("admin/key/list.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -67,7 +67,7 @@ describe("admin/key/list.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

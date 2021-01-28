@@ -72,7 +72,7 @@ describe("dataflow/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => helpOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).finally(() => {
+            upstreamAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDataflowIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("dataflow/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => emptyOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).catch(() => {
+            upstreamAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("dataflow/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => missingOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).catch(() => {
+            upstreamAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("dataflow/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => allOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).then(() => {
+            upstreamAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

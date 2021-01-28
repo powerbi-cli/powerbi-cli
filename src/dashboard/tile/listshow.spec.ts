@@ -81,7 +81,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listshowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDashboardIdMock.callCount).to.equal(0);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -98,7 +98,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -115,7 +115,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "list",
                 opts: () => oneOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -132,7 +132,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "list",
                 opts: () => twoOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(twoOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);
@@ -149,7 +149,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "list",
                 opts: () => allOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);
@@ -166,7 +166,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(0);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -183,7 +183,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(0);
@@ -200,7 +200,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "show",
                 opts: () => twoOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);
@@ -217,7 +217,7 @@ describe("dashboard/tile/listshow.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDashboardIdMock.callCount).to.equal(1);
                 expect(validateDashboardTileIdMock.callCount).to.equal(1);

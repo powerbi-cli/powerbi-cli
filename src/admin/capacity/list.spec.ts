@@ -67,7 +67,7 @@ describe("admin/capacity/list.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -80,7 +80,7 @@ describe("admin/capacity/list.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -93,7 +93,7 @@ describe("admin/capacity/list.ts", () => {
                 name: () => "list",
                 opts: () => expandOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).then(() => {
+            listAction(expandOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("expand=tenantKey")).to.greaterThan(-1);
                 expect(validateAllowedValuesMock.callCount).to.equal(1);
@@ -108,7 +108,7 @@ describe("admin/capacity/list.ts", () => {
                 name: () => "list",
                 opts: () => expandErrorOptions,
             };
-            listAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listAction(expandErrorOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAllowedValuesMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();

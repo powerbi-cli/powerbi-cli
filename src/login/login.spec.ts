@@ -104,7 +104,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => helpOptions,
             };
-            loginAction(cmdOptsMock as ModuleCommand).finally(() => {
+            loginAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -128,7 +128,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => emptyOptions,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -152,7 +152,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => azurecli,
             };
-            loginAction(cmdOptsMock as ModuleCommand).then(() => {
+            loginAction(azurecli, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -176,7 +176,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => azurecli,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(azurecli, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -200,7 +200,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => azurecli,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(azurecli, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -219,12 +219,12 @@ describe("login/login.ts", () => {
                 credentials: { getToken: () => Promise.resolve("token") },
             });
             AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns({ tenantId: "" });
+            getConfigMock.returns({ tenant: "" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => interactive,
             };
-            loginAction(cmdOptsMock as ModuleCommand).then(() => {
+            loginAction(interactive, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(1);
@@ -248,7 +248,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => interactive,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(interactive, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -272,7 +272,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => interactive,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(interactive, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(1);
@@ -294,7 +294,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => interactive,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(interactive, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -318,7 +318,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).then(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
                 expect(getAccessTokenMock.callCount).to.equal(1);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -342,7 +342,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -366,7 +366,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -390,7 +390,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -412,7 +412,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
                 expect(getAccessTokenMock.callCount).to.equal(1);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -436,7 +436,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
                 expect(getAccessTokenMock.callCount).to.equal(0);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
@@ -460,7 +460,7 @@ describe("login/login.ts", () => {
                 name: () => "login",
                 opts: () => principal,
             };
-            loginAction(cmdOptsMock as ModuleCommand).then(() => {
+            loginAction(principal, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
                 expect(getAccessTokenMock.callCount).to.equal(1);
                 expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);

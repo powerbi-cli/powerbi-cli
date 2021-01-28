@@ -25,6 +25,7 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../lib/command";
 import { logoutAction } from "./logout";

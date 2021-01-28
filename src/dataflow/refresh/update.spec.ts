@@ -87,7 +87,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDataflowIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -132,7 +132,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => oneOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -147,7 +147,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -163,7 +163,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -180,7 +180,7 @@ describe("dataflow/refresh/update.ts", () => {
                 name: () => "update",
                 opts: () => allFileOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(allFileOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

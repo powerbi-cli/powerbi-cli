@@ -50,7 +50,7 @@ describe("output.ts", () => {
     ];
     const responseStr = JSON.stringify(response);
     const responseJson = JSON.parse(responseStr);
-    const responseYml = yml.safeDump(responseJson);
+    const responseYml = yml.dump(responseJson);
     let writeFileSyncMock: SinonSpy<unknown[], unknown>;
     let jsonStringifyMock: SinonSpy<unknown[], unknown>;
     let safeDumpMock: SinonSpy<unknown[], unknown>;
@@ -60,7 +60,7 @@ describe("output.ts", () => {
     beforeEach(() => {
         writeFileSyncMock = ImportMock.mockFunction(fs, "writeFileSync");
         jsonStringifyMock = ImportMock.mockFunction(JSON, "stringify").returns(responseStr);
-        safeDumpMock = ImportMock.mockFunction(yml, "safeDump").returns(responseYml);
+        safeDumpMock = ImportMock.mockFunction(yml, "dump").returns(responseYml);
         jmespathMock = ImportMock.mockFunction(jmespath, "search").returns({ id: "1" });
         consoleInfoMock = ImportMock.mockFunction(console, "info", true);
         consoleErrorMock = ImportMock.mockFunction(console, "error", true);

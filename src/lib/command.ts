@@ -26,7 +26,7 @@
 
 "use strict";
 
-import { Command } from "commander";
+import { Command, CommanderError, HelpContext } from "commander";
 import { red } from "chalk";
 
 import { drawFooter } from "./footer";
@@ -37,17 +37,14 @@ import { currentVersion } from "./version";
 
 export class ModuleCommand extends Command {
     private errorMsg: string | undefined;
+    private _parent: ModuleCommand | undefined;
 
     constructor(name: string) {
         super(name);
 
-        // override default help values
-        const thisCommand = this as ModuleCommand;
-        thisCommand._helpDescription = "Show this help message and exit";
-        thisCommand._helpFlags = thisCommand._helpLongFlag + " " + thisCommand._helpShortFlag;
-        thisCommand._helpCommandDescription = "Show help message for [command] and exit";
-
-        return this.storeOptionsAsProperties(false);
+        this.exitOverride(this.exit);
+        this.addHelpCommand("help [command]", "Show help message for [command] and exit");
+        //this.addHelpCommand(false);
     }
 
     public addGlobalOptions(): void {
@@ -68,7 +65,7 @@ export class ModuleCommand extends Command {
                 if (this.outputFormat === OutputType.unknown) {
                     this.errorMsg = `error: unknown output value '${value}'`;
                     this.showHelpOrError(false);
-                    this._exit(1, "pbicli.unknownOutputValue", this.errorMsg);
+                    this.exit(new CommanderError(1, "pbicli.unknownOutputValue", this.errorMsg));
                 }
             })
             .on("option:output-file", (value: string) => {
@@ -94,7 +91,7 @@ export class ModuleCommand extends Command {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public outputHelp(cb?: (str: string) => string): void {
+    public outputHelp(contextOptions?: unknown): void {
         if (this.helpPrompt == "false" || this.errorMsg === "") return;
         this.helpPrompt = "false";
         drawHeader(this.isInteractive);
@@ -113,19 +110,24 @@ export class ModuleCommand extends Command {
     public async showVersion(): Promise<void> {
         console.info(`pbicli      ${currentVersion}\n`);
         drawFooter(this.isInteractive);
-        this._exit(0, "pbicli.version", currentVersion);
+        this.exit(new CommanderError(0, "pbicli.version", currentVersion));
     }
 
     public showCurrentError(): void {
         if (this.errorMsg) console.error(red(this.errorMsg));
     }
 
+    // Stil need to override _exit() as the base version allways exits the process
     public _exit(exitCode: number, code: string, message: string): void {
-        if (!this.isInteractive) super._exit(exitCode, code, message);
+        this.exit(new CommanderError(exitCode, code, message));
+    }
+
+    public exit(error: CommanderError): void {
+        if (!this.isInteractive) process.exit(error.exitCode);
     }
 
     public unknownOption(flag: string): void {
-        if (this._allowUnknownOption) return;
+        //if (super._allowUnknownOption) return;
         if (flag === "--help" || flag === "-h") return;
         this.showUnknownOption(flag);
     }
@@ -141,7 +143,7 @@ export class ModuleCommand extends Command {
         const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
         this.errorMsg = `error: unknown option '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
         this.showHelpOrError(true);
-        this._exit(1, "pbicli.unknownOption", this.errorMsg);
+        this.exit(new CommanderError(1, "pbicli.unknownOption", this.errorMsg));
     }
 
     private showUnknownCommand(operand: string): void {
@@ -149,7 +151,7 @@ export class ModuleCommand extends Command {
         const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
         this.errorMsg = `error: unknown command '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
         this.showHelpOrError(true);
-        this._exit(1, "pbicli.unknownCommand", this.errorMsg);
+        this.exit(new CommanderError(1, "pbicli.unknownCommand", this.errorMsg));
     }
 
     private getAllArgs(command: ModuleCommand): string[] {
@@ -198,6 +200,14 @@ export class ModuleCommand extends Command {
 
     public set errorMessage(value: string | undefined) {
         this.errorMsg = value;
+    }
+
+    public set parent(value: ModuleCommand | undefined) {
+        this._parent = value;
+    }
+
+    public get parent(): ModuleCommand | undefined {
+        return this._parent;
     }
 
     private validateOutput(value: string | null): OutputType {

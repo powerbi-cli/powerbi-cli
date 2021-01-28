@@ -26,7 +26,7 @@
 
 "use strict";
 
-import { safeDump } from "js-yaml";
+import { dump } from "js-yaml";
 import { Parser } from "json2csv";
 import jmespath from "jmespath";
 import { writeFileSync } from "fs";
@@ -68,7 +68,7 @@ export function formatAndPrintOutput(
             }
             break;
         case OutputType.yml:
-            console.info(safeDump(output));
+            console.info(dump(output));
             break;
         case OutputType.tsv:
             try {

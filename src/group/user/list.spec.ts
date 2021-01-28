@@ -64,7 +64,7 @@ describe("group/user/list.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listUserAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listUserAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("group/user/list.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listUserAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("group/user/list.ts", () => {
                 name: () => "list",
                 opts: () => allOptions,
             };
-            listUserAction(cmdOptsMock as ModuleCommand).then(() => {
+            listUserAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

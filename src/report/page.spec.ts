@@ -77,7 +77,7 @@ describe("report/page.ts", () => {
                 name: () => "page",
                 opts: () => helpOptions,
             };
-            pageAction(cmdOptsMock as ModuleCommand).finally(() => {
+            pageAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -92,7 +92,7 @@ describe("report/page.ts", () => {
                 name: () => "page",
                 opts: () => emptyOptions,
             };
-            pageAction(cmdOptsMock as ModuleCommand).then(() => {
+            pageAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -107,7 +107,7 @@ describe("report/page.ts", () => {
                 name: () => "page",
                 opts: () => oneOptions,
             };
-            pageAction(cmdOptsMock as ModuleCommand).then(() => {
+            pageAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -122,7 +122,7 @@ describe("report/page.ts", () => {
                 name: () => "page",
                 opts: () => twoOptions,
             };
-            pageAction(cmdOptsMock as ModuleCommand).then(() => {
+            pageAction(twoOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -137,7 +137,7 @@ describe("report/page.ts", () => {
                 name: () => "page",
                 opts: () => allOptions,
             };
-            pageAction(cmdOptsMock as ModuleCommand).then(() => {
+            pageAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

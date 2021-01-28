@@ -72,7 +72,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => helpOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).finally(() => {
+            datasourceGatewayAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => emptyOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).then(() => {
+            datasourceGatewayAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -102,7 +102,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => oneOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).then(() => {
+            datasourceGatewayAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -117,7 +117,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => allOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).then(() => {
+            datasourceGatewayAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -132,7 +132,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).catch(() => {
+            datasourceGatewayAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -147,7 +147,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).catch(() => {
+            datasourceGatewayAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -162,7 +162,7 @@ describe("dataset/gateway/datasource.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            datasourceGatewayAction(cmdOptsMock as ModuleCommand).then(() => {
+            datasourceGatewayAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

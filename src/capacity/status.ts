@@ -25,6 +25,7 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
@@ -32,8 +33,9 @@ import { APICall, executeAPICall } from "../lib/api";
 import { validateGroupId } from "../lib/parameters";
 import { getGroupUrl } from "../lib/helpers";
 
-export async function statusAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function statusAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const groupId = await validateGroupId(options.W, false);
     debug(`Gets the status of the assignment to capacity operation of the specified workspace (${groupId})`);

@@ -33,14 +33,16 @@ import {
     AzureCliCredentials,
 } from "@azure/ms-rest-nodeauth";
 import { TokenResponse } from "@azure/ms-rest-nodeauth/dist/lib/credentials/tokenClientCredentials";
+import { OptionValues } from "commander";
 
 import { getConfig } from "../lib/config";
 import { storeAccessToken, getAccessToken } from "../lib/auth";
 import { ModuleCommand } from "../lib/command";
 import { debug, verbose } from "../lib/logging";
 
-export async function loginAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function loginAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) {
         delete options.H;
         return;

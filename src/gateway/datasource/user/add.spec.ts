@@ -85,7 +85,7 @@ describe("gateway/datasource/add.ts", () => {
                 name: () => "add",
                 opts: () => helpOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).finally(() => {
+            addAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(0);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(0);
                 expect(validateParameterMock.callCount).to.equal(0);
@@ -101,7 +101,7 @@ describe("gateway/datasource/add.ts", () => {
                 name: () => "add",
                 opts: () => emptyOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(0);
                 expect(validateParameterMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("gateway/datasource/add.ts", () => {
                 name: () => "add",
                 opts: () => missingOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(0);
@@ -135,7 +135,7 @@ describe("gateway/datasource/add.ts", () => {
                 name: () => "add",
                 opts: () => incorrectTypeOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addAction(incorrectTypeOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(2);
@@ -153,7 +153,7 @@ describe("gateway/datasource/add.ts", () => {
                 name: () => "add",
                 opts: () => allOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).then(() => {
+            addAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(2);

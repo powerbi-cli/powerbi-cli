@@ -86,7 +86,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -101,7 +101,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -116,7 +116,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => myOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(myOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -131,7 +131,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -146,7 +146,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => twoOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -161,7 +161,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => threeOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(threeOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -176,7 +176,7 @@ describe("report/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

@@ -80,7 +80,7 @@ describe("group/user/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateUserAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateUserAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateParameterMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -95,7 +95,7 @@ describe("group/user/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateUserAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -110,7 +110,7 @@ describe("group/user/update.ts", () => {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateUserAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -126,7 +126,7 @@ describe("group/user/update.ts", () => {
                 name: () => "update",
                 opts: () => incorrectTypeOptions,
             };
-            updateUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateUserAction(incorrectTypeOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(2);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -142,7 +142,7 @@ describe("group/user/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateUserAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateUserAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(2);
                 expect(executeAPICallMock.callCount).to.equal(1);

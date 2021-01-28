@@ -25,6 +25,7 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../lib/command";
 import { getCommands as getCapacityCommands } from "./capacity/index";

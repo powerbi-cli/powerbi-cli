@@ -25,9 +25,10 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { parse } from "path";
 import { ModuleCommand } from "../lib/command";
+import { parse } from "path";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
 import { validateGroupId, validateParameter, validateAllowedValues } from "../lib/parameters";
@@ -38,8 +39,9 @@ import {
     datasetNamingConflictDF,
 } from "../lib/helpers";
 
-export async function createAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function createAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const groupId = await validateGroupId(options.W, false);
     let file;
