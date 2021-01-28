@@ -34,9 +34,9 @@ import inquirer from "inquirer";
 import inquirerCommandPrompt from "inquirer-command-prompt";
 
 import { drawHeader } from "./lib/header";
-import { ModuleCommand } from "./lib/command";
 import { green } from "chalk";
 import { checkVersion } from "./lib/version";
+import { initializeProgram, programModules } from "./lib/program";
 
 const questions = [
     {
@@ -48,30 +48,8 @@ const questions = [
     },
 ];
 
-const modules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "login",
-    "logout",
-];
-
-const program = new ModuleCommand("pbicli");
-
-modules.forEach((module: string) => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    program.addCommand(require(`./${module}/index`).getCommands());
-});
-
-program.addGlobalOptions();
+const modules = programModules;
+const program = initializeProgram(modules);
 
 inquirerCommandPrompt.setConfig({
     history: {
