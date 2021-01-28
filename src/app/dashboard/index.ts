@@ -25,7 +25,6 @@
  */
 
 "use strict";
-import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../../lib/command";
 import { listshowAction } from "./listshow";

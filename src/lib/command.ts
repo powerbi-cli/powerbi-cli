@@ -26,7 +26,7 @@
 
 "use strict";
 
-import { Command, CommanderError, HelpContext } from "commander";
+import { Command, CommanderError } from "commander";
 import { red } from "chalk";
 
 import { drawFooter } from "./footer";

@@ -32,6 +32,7 @@
     "include": ["src/**/*.ts"],
     "exclude": ["src/**/*.spec.ts"],
     "ts-node": {
-        "files": true
+        "files": true,
+        "ignore": []
     }
 }

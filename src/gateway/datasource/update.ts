@@ -27,14 +27,12 @@
 "use strict";
 import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { validateGatewayId, validateGatewayDatasourceId } from "../../lib/parameters";
 import { readFileSync } from "fs";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
-    const cmd = args[args.length - 1] as ModuleCommand;
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const gatewayId = await validateGatewayId(options.G, true);

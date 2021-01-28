@@ -27,12 +27,10 @@
 "use strict";
 import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
 import { removeAccessToken } from "../lib/auth";
 
 export function logoutAction(...args: unknown[]): void {
-    const cmd = args[args.length - 1] as ModuleCommand;
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     debug("Logging out of Power BI and removing stored access_token");

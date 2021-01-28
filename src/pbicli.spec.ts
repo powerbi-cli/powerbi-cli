@@ -27,7 +27,6 @@
 "use strict";
 import { ImportMock, MockManager } from "ts-mock-imports";
 import chai from "chai";
-import chaiAsPromise from "chai-as-promised";
 import { SinonSpy, SinonStub, match } from "sinon";
 
 import { initializeProgram, programModules } from "./lib/program";
@@ -37,9 +36,6 @@ import * as nodeauth from "@azure/ms-rest-nodeauth";
 import * as azureserviceclient from "@azure/ms-rest-azure-js";
 import fs from "fs";
 import jsonwebtoken from "jsonwebtoken";
-import { OutputType } from "./lib/output";
-
-import jmespath from "jmespath";
 
 const expect = chai.expect;
 const modules = programModules;
