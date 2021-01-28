@@ -30,5 +30,8 @@
         "target": "es6"
     },
     "include": ["src/**/*.ts"],
-    "exclude": ["src/**/*.spec.ts"]
+    "exclude": ["src/**/*.spec.ts"],
+    "ts-node": {
+        "files": true
+    }
 }
