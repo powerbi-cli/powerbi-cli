@@ -82,7 +82,6 @@ async function loginAzureCLI(): Promise<string> {
 async function loginInteractive(cmd: ModuleCommand, options: unknown): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const { tenant } = getConfig(options);
-        if (!tenant) reject("error: missing option '--tenant'");
         interactiveLoginWithAuthResponse({
             tokenAudience: "https://analysis.windows.net/powerbi/api",
             domain: tenant,
@@ -106,10 +105,11 @@ async function loginInteractive(cmd: ModuleCommand, options: unknown): Promise<s
 async function loginWithServicePrincipal(cmd: ModuleCommand, options: unknown): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const { principal, secret, tenant } = getConfig(options);
-        if (!principal) reject("error: missing option '--principal'");
-        if (!secret) reject("error: missing option '--secret'");
-        if (!tenant) reject("error: missing option '--tenant'");
+        if (!principal) return reject("error: missing option '--principal'");
+        if (!secret) return reject("error: missing option '--secret'");
+        if (!tenant) return reject("error: missing option '--tenant'");
         const storedToken = getAccessToken();
+        console.log(`dd: ${storedToken}`);
         if (storedToken !== "") {
             verbose("Used stored access token");
             return storedToken;
