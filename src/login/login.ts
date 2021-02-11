@@ -116,13 +116,13 @@ can be retrived via a new request.`)
                   consts
               )) as Token)
             : undefined;
-        console.info(
-            yellow(`Currently the access token for the XMLA command cannot be retrieved 'silent' and 
+        if (options.xmla) {
+            console.info(
+                yellow(`Currently the access token for the XMLA command cannot be retrieved 'silent' and 
 can be retrived via the 'device code' flow.`)
-        );
-        accessToken.xmla = options.xmla
-            ? ((await loginWithDeviceCode(options, consts, TokenType.XMLA)) as Token)
-            : undefined;
+            );
+            accessToken.xmla = (await loginWithDeviceCode(options, consts, TokenType.XMLA)) as Token;
+        }
     }
 
     if (!accessToken) throw "Error empty access token";
