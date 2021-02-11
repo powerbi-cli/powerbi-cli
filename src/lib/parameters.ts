@@ -225,6 +225,30 @@ export async function validateGatewayDatasourceId(
     });
 }
 
+export async function validateSubscriptionId(
+    subscription: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    return validateParameter({
+        name: subscription,
+        isName: () => Promise.reject("error: '--subscription' should be a unique identifier"),
+        missing: "error: missing option '--subscription'",
+        isRequired,
+    });
+}
+
+export async function validateResourceGroupId(
+    resourceGroup: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    return validateParameter({
+        name: resourceGroup,
+        isId: () => Promise.reject("error: '--resource' should be a name"),
+        missing: "error: missing option '--resource'",
+        isRequired,
+    });
+}
+
 export async function validateParameter(parameter: Parameter): Promise<string | undefined> {
     return new Promise<string | undefined>((resolve, reject) => {
         if (!parameter.name && parameter.isRequired) {

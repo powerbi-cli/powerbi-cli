@@ -31,8 +31,9 @@ import jmespath from "jmespath";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 
 import { executeRestCall } from "./rest";
-import { rootUrl } from "./api";
+import { rootPowerBIUrl } from "./api";
 import { checkUUID } from "./validate";
+import { TokenType } from "./auth";
 
 export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];
@@ -68,9 +69,9 @@ export function getAdminGroupInfo(name: string, filterState: string | undefined 
         if (filterState) query["$filter"] += ` and state eq '${filterState}'`;
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/admin/groups?${stringify(query)}`,
+            url: `${rootPowerBIUrl}/admin/groups?${stringify(query)}`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 try {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -97,9 +98,9 @@ export function getAdminObjectInfo(
         query["$filter"] = `${lookupName} eq '${name}'`;
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/admin/${objectType}?${stringify(query)}`,
+            url: `${rootPowerBIUrl}/admin/${objectType}?${stringify(query)}`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 try {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,9 +117,9 @@ export function getAdminCapacityID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/admin/capacities`,
+            url: `${rootPowerBIUrl}/admin/capacities`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
@@ -136,9 +137,9 @@ export function getCapacityID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/capacities`,
+            url: `${rootPowerBIUrl}/capacities`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
@@ -157,9 +158,9 @@ export function getGroupID(name: string): Promise<string> {
         name = name.replace(/['"]+/g, "");
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/groups?$filter=name%20eq%20'${name}'`,
+            url: `${rootPowerBIUrl}/groups?$filter=name%20eq%20'${name}'`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 try {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -177,9 +178,9 @@ export function getDataflowID(groupName: string, name: string): Promise<string> 
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}${groupName}/dataflows`,
+            url: `${rootPowerBIUrl}${groupName}/dataflows`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:objectId}`);
@@ -198,9 +199,9 @@ export function getDatasetID(groupName: string | undefined, name: string): Promi
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}${groupName}/datasets`,
+            url: `${rootPowerBIUrl}${groupName}/datasets`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
@@ -219,9 +220,9 @@ export function getReportID(groupName: string | undefined, name: string): Promis
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}${groupName}/reports`,
+            url: `${rootPowerBIUrl}${groupName}/reports`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
@@ -240,9 +241,9 @@ export function getDashboardID(groupName: string | undefined, name: string): Pro
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}${groupName}/dashboards`,
+            url: `${rootPowerBIUrl}${groupName}/dashboards`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
@@ -265,9 +266,9 @@ export function getDashboardTileID(
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}${groupName}/dashboards/${dashboardName}/tiles`,
+            url: `${rootPowerBIUrl}${groupName}/dashboards/${dashboardName}/tiles`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?title=='${name}'].{id:id}`);
@@ -285,9 +286,9 @@ export function getGatewayID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/gateways`,
+            url: `${rootPowerBIUrl}/gateways`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
@@ -305,9 +306,9 @@ export function getGatewayDatasourceID(gatewayId: string, name: string): Promise
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/gateways/${gatewayId}/datasources`,
+            url: `${rootPowerBIUrl}/gateways/${gatewayId}/datasources`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?datasourceName=='${name}'].{id:id}`);
@@ -326,9 +327,9 @@ export function getImportID(groupName: string | undefined, name: string): Promis
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}${groupName}/imports`,
+            url: `${rootPowerBIUrl}${groupName}/imports`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
@@ -346,9 +347,9 @@ export function getAppID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/apps`,
+            url: `${rootPowerBIUrl}/apps`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
@@ -371,9 +372,9 @@ export function getAppContentID(
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/apps/${appId}/${appContent}`,
+            url: `${rootPowerBIUrl}/apps/${appId}/${appContent}`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 searchText = searchText.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?${lookup}=='${searchText}'].{id:id}`);
@@ -391,9 +392,9 @@ export function getAppDashboardTileID(appId: string, dashboardId: string, tileNa
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootUrl}/apps/${appId}/dashboards/${dashboardId}/tiles`,
+            url: `${rootPowerBIUrl}/apps/${appId}/dashboards/${dashboardId}/tiles`,
         };
-        executeRestCall(lookUpRequest, true)
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 tileName = tileName.replace(/['"]+/g, "");
                 const output = jmespath.search(response, `[?title=='${tileName}'].{id:id}`);

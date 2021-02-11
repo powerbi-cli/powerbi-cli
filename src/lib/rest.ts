@@ -38,9 +38,13 @@ import { TokenType } from "./auth";
 
 const silentMethods: string[] = ["DELETE", "PUT", "POST", "PATCH"];
 
-export function executeRestCall(request: RequestPrepareOptions, containsValue: boolean): Promise<unknown> {
+export function executeRestCall(
+    request: RequestPrepareOptions,
+    containsValue: boolean,
+    tokenType: TokenType
+): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {
-        getAccessToken(TokenType.POWERBI).then((token) => {
+        getAccessToken(tokenType).then((token) => {
             if (token === "") {
                 reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
                 return;
@@ -59,8 +63,12 @@ export function executeRestCall(request: RequestPrepareOptions, containsValue: b
                             );
                         } else if (silentMethods.some((silentMethod: string) => silentMethod === request.method)) {
                             //if (response.status === 202 && request.method === "POST")
-                            if (response.parsedBody) resolve(JSON.parse(JSON.stringify(response.parsedBody)));
-                            else resolve(undefined);
+                            if (response.parsedBody) {
+                                const errorResponse = JSON.parse(JSON.stringify(response.parsedBody));
+                                if (errorResponse.error && errorResponse.error.message)
+                                    return reject(errorResponse.error.message);
+                                else resolve(errorResponse);
+                            } else resolve(undefined);
                         } else if (response.status === 404) {
                             resolve([]);
                         } else if (response.status === 200) {

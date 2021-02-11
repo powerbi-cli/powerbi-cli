@@ -27,15 +27,18 @@
 "use strict";
 
 import { RequestPrepareOptions } from "@azure/ms-rest-js";
+import { TokenType } from "./auth";
 
 import { formatAndPrintOutput, OutputType } from "./output";
 import { executeRestCall, executeDownloadCall, executeUploadCall } from "./rest";
 
-export const rootUrl = "https://api.powerbi.com/v1.0/myorg";
+export const rootPowerBIUrl = "https://api.powerbi.com/v1.0/myorg";
+export const rootAzureUrl = "https://management.azure.com";
 
 export interface APICall extends RequestPrepareOptions {
     containsValue?: boolean;
     uploadFile?: string;
+    tokenType?: TokenType;
 }
 
 export function executeAPICall(
@@ -45,10 +48,19 @@ export function executeAPICall(
     jmsePath?: string
 ): Promise<unknown> {
     return new Promise((resolve, reject) => {
+        let url;
+        switch (apiRequest.tokenType) {
+            case TokenType.AZURE:
+                url = `${rootAzureUrl}${apiRequest.url}`;
+                break;
+            case TokenType.POWERBI:
+            default:
+                url = `${rootPowerBIUrl}${apiRequest.url}`;
+        }
         const request: RequestPrepareOptions = {
             method: apiRequest.method,
             headers: apiRequest.headers,
-            url: `${rootUrl}${apiRequest.url}`,
+            url,
             body: apiRequest.body,
         };
         try {
@@ -68,7 +80,7 @@ export function executeAPICall(
                     })
                     .catch((err) => reject(err));
             } else {
-                executeRestCall(request, apiRequest.containsValue as boolean)
+                executeRestCall(request, apiRequest.containsValue as boolean, apiRequest.tokenType || TokenType.POWERBI)
                     .then((response) => {
                         formatAndPrintOutput(response, outputFormat, outputFile, jmsePath);
                         resolve(undefined);

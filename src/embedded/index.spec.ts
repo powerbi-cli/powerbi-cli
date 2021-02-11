@@ -26,33 +26,17 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import chai from "chai";
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "login",
-    "logout",
-];
+import { getCommands } from "./index";
 
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const should = chai.should();
 
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
+describe("embedded/index.ts", () => {
+    describe("getCommands()", () => {
+        it("normal execution", () => {
+            getCommands().should.not.throw;
+        });
     });
-
-    program.addGlobalOptions();
-    return program;
-}
+});
