@@ -26,7 +26,7 @@
 
 "use strict";
 
-import { ImportMock, MockManager } from "ts-mock-imports";
+import { ImportMock } from "ts-mock-imports";
 import chai from "chai";
 import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
@@ -37,7 +37,6 @@ import * as auth from "../lib/auth";
 import * as logging from "../lib/logging";
 import * as config from "../lib/config";
 import { loginAction } from "./login";
-import { getConsts } from "../lib/consts";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
