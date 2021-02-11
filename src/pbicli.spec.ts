@@ -32,7 +32,8 @@ import { SinonSpy, SinonStub, match } from "sinon";
 import { initializeProgram, programModules } from "./lib/program";
 import { ModuleCommand } from "./lib/command";
 
-import * as nodeauth from "@azure/ms-rest-nodeauth";
+import * as auth from "./lib/auth";
+
 import * as azureserviceclient from "@azure/ms-rest-azure-js";
 import fs from "fs";
 import jsonwebtoken from "jsonwebtoken";
@@ -42,9 +43,10 @@ const modules = programModules;
 
 describe("pbicli.ts:", () => {
     let program: ModuleCommand;
-    let interactiveLoginWithAuthResponseMock: SinonStub<unknown[], unknown>;
-    let loginWithServicePrincipalSecretWithAuthResponseMock: SinonStub<unknown[], unknown>;
-    let AzureCliCredentialsMock: SinonStub<unknown[], unknown>;
+    let getAzureCLITokenMock: SinonStub<unknown[], unknown>;
+    let getDeviceCodeMock: SinonStub<unknown[], unknown>;
+    let getAuthCodeMock: SinonStub<unknown[], unknown>;
+    let executeAuthRequestMock: SinonStub<unknown[], unknown>;
     let AzureServiceClientMock: MockManager<unknown>;
 
     let existsSyncMock: SinonStub<unknown[], unknown>;
@@ -84,6 +86,17 @@ describe("pbicli.ts:", () => {
     ];
 
     const jsmeQuery = `[?name=='Test'].{id:id}`;
+    const token = {
+        accessToken: "token",
+        expiresOn: 1612707018034,
+    };
+    const tokenResponse = {
+        token_type: "Bearer",
+        expires_in: 3599,
+        ext_expires_in: 3599,
+        access_token: "token",
+        refresh_token: "resfrehToken",
+    };
 
     beforeEach(() => {
         program = initializeProgram(modules);
@@ -92,25 +105,24 @@ describe("pbicli.ts:", () => {
         delete process.env.PBICLI_outputFile;
         delete process.env.PBICLI_jmsePath;
 
-        interactiveLoginWithAuthResponseMock = ImportMock.mockFunction(nodeauth, "interactiveLoginWithAuthResponse");
-        loginWithServicePrincipalSecretWithAuthResponseMock = ImportMock.mockFunction(
-            nodeauth,
-            "loginWithServicePrincipalSecretWithAuthResponse"
-        );
-        AzureCliCredentialsMock = ImportMock.mockFunction(nodeauth.AzureCliCredentials, "create");
-        interactiveLoginWithAuthResponseMock.resolves({
-            credentials: { getToken: () => Promise.resolve("token") },
-        });
-        loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-            credentials: { getToken: () => Promise.resolve("token") },
-        });
-        AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
+        getAzureCLITokenMock = ImportMock.mockFunction(auth, "getAzureCLIToken").resolves(token);
+        getDeviceCodeMock = ImportMock.mockFunction(auth, "getDeviceCode").resolves(token);
+        getAuthCodeMock = ImportMock.mockFunction(auth, "getAuthCode").resolves(token);
+        executeAuthRequestMock = ImportMock.mockFunction(auth, "executeAuthRequest").resolves(tokenResponse);
+
         AzureServiceClientMock = ImportMock.mockClass(azureserviceclient, "AzureServiceClient");
 
         existsSyncMock = ImportMock.mockFunction(fs, "existsSync").returns(true);
         mkdirSyncMock = ImportMock.mockFunction(fs, "mkdirSync").returns(true);
         readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
-        readFileSyncMock.returns("token");
+        readFileSyncMock.returns(
+            JSON.stringify({
+                powerbi: {
+                    accessToken: "token",
+                    expiresOn: new Date().getTime() + 3599,
+                },
+            })
+        );
         writeFileSyncMock = ImportMock.mockFunction(fs, "writeFileSync");
         writeFileSyncMock.returns(true);
 
@@ -122,9 +134,10 @@ describe("pbicli.ts:", () => {
     });
 
     afterEach(() => {
-        interactiveLoginWithAuthResponseMock.restore();
-        loginWithServicePrincipalSecretWithAuthResponseMock.restore();
-        AzureCliCredentialsMock.restore();
+        getAzureCLITokenMock.restore();
+        getDeviceCodeMock.restore();
+        getAuthCodeMock.restore();
+        executeAuthRequestMock.restore();
         AzureServiceClientMock.restore();
 
         existsSyncMock.restore();
@@ -139,6 +152,13 @@ describe("pbicli.ts:", () => {
     });
 
     describe("pbicli login", () => {
+        it("with no error", (done) => {
+            existsSyncMock.returns(false); // No stored token, as expected
+            program.parseAsync(["login"], { from: "user" }).finally(() => {
+                done();
+            });
+        });
+
         it("with --interactive and no error", (done) => {
             existsSyncMock.returns(false); // No stored token, as expected
             program.parseAsync(["login", "--interactive"], { from: "user" }).finally(() => {
@@ -191,7 +211,7 @@ describe("pbicli.ts:", () => {
         });
 
         it("list", (done) => {
-            program.parseAsync(["workspace", "list"], { from: "user" }).finally(() => {
+            program.parseAsync(["workspace", "list"], { from: "user" }).then(() => {
                 expect(consoleInfoMock.calledWith(match(JSON.stringify(workspaceListValue, null, " ")))).be.true;
                 expect(consoleInfoMock.callCount).equal(1);
                 done();
@@ -199,7 +219,7 @@ describe("pbicli.ts:", () => {
         });
 
         it("list --query", (done) => {
-            program.parseAsync(["workspace", "list", "--query", jsmeQuery], { from: "user" }).finally(() => {
+            program.parseAsync(["workspace", "list", "--query", jsmeQuery], { from: "user" }).then(() => {
                 expect(consoleInfoMock.calledWith(match(new RegExp(workspaceId)))).be.true;
                 expect(consoleInfoMock.callCount).equal(1);
                 done();
@@ -221,7 +241,7 @@ describe("pbicli.ts:", () => {
         });
 
         it("list", (done) => {
-            program.parseAsync(["report", "list", "--workspace", workspaceId], { from: "user" }).finally(() => {
+            program.parseAsync(["report", "list", "--workspace", workspaceId], { from: "user" }).then(() => {
                 expect(consoleInfoMock.calledWith(match(JSON.stringify(reportListValue, null, " ")))).be.true;
                 expect(consoleInfoMock.callCount).equal(1);
                 done();
@@ -233,7 +253,7 @@ describe("pbicli.ts:", () => {
                 .parseAsync(["report", "list", "--workspace", workspaceId, "--query", jsmeQuery], {
                     from: "user",
                 })
-                .finally(() => {
+                .then(() => {
                     expect(consoleInfoMock.calledWith(match(new RegExp(reportId)))).be.true;
                     expect(consoleInfoMock.callCount).equal(1);
                     done();

@@ -34,11 +34,14 @@ export function getCommands(): ModuleCommand {
         .description("Login to Power BI")
         .action(loginAction)
         .option("--interactive", "Login interactively")
+        .option("--use-device-code", "Use CLI's old authentication flow based on device code.")
         .option("--azurecli", "Login via Azure CLI")
         .option("--service-principal", "Login with a service principal")
         .option("--principal -p <principal>", "The service principal ID")
         .option("--secret -s <secret>", "Client secret")
-        .option("--tenant -t <tenant>", "The AAD tenant");
+        .option("--tenant -t <tenant>", "The AAD tenant")
+        .option("--no-azure", "Do not authenticate against Azure for 'embedded' commands")
+        .option("--xmla", "Authenticate against the XMLA endpoints for 'xmla' commands");
     loginCommand.addGlobalOptions();
 
     return loginCommand;

@@ -25,14 +25,23 @@
  */
 
 "use strict";
-import { OptionValues } from "commander";
+import chai from "chai";
 
-import { debug } from "../lib/logging";
-import { removeAccessToken } from "../lib/token";
+import { getConsts } from "./consts";
 
-export function logoutAction(...args: unknown[]): void {
-    const options = args[args.length - 2] as OptionValues;
-    if (options.H) return;
-    debug("Logging out of Power BI and removing stored access_token");
-    removeAccessToken();
-}
+const expect = chai.expect;
+
+describe("consts.ts", () => {
+    describe("getConsts()", () => {
+        const testConsts = getConsts();
+        it("PBI scope", () => {
+            expect(testConsts.pbiScope).equal("https://analysis.windows.net/powerbi/api/.default offline_access");
+        });
+        it("PBI scope for AzureCLI", () => {
+            expect(testConsts.pbiCLIScope).equal("https://analysis.windows.net/powerbi/api");
+        });
+        it("authorityHost", () => {
+            expect(testConsts.authorityHost).equal("https://login.microsoftonline.com");
+        });
+    });
+});

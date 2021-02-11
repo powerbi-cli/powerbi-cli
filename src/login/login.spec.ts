@@ -26,32 +26,38 @@
 
 "use strict";
 
-import { ImportMock } from "ts-mock-imports";
+import { ImportMock, MockManager } from "ts-mock-imports";
 import chai from "chai";
 import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
 import { ModuleCommand } from "../lib/command";
+import * as token from "../lib/token";
 import * as auth from "../lib/auth";
 import * as logging from "../lib/logging";
 import * as config from "../lib/config";
-import * as nodeauth from "@azure/ms-rest-nodeauth";
-
 import { loginAction } from "./login";
+import { getConsts } from "../lib/consts";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
 describe("login/login.ts", () => {
     let storeAccessTokenMock: SinonStub<unknown[], unknown>;
-    let getAccessTokenMock: SinonStub<unknown[], unknown>;
-    let interactiveLoginWithAuthResponseMock: SinonStub<unknown[], unknown>;
-    let loginWithServicePrincipalSecretWithAuthResponseMock: SinonStub<unknown[], unknown>;
-    let AzureCliCredentialsMock: SinonStub<unknown[], unknown>;
+
+    let executeAuthRequestMock: SinonStub<unknown[], unknown>;
+    let getDeviceCodeMock: SinonStub<unknown[], unknown>;
+    let getAzureCLITokenMock: SinonStub<unknown[], unknown>;
+    let getTokenUrlMock: SinonStub<unknown[], unknown>;
+    let getTokenMock: SinonStub<unknown[], unknown>;
+    let getAuthConfigMock: SinonStub<unknown[], unknown>;
+    let getAuthCodeMock: SinonStub<unknown[], unknown>;
     let getConfigMock: SinonStub<unknown[], unknown>;
+
+    let consoleInfoMock: SinonStub<unknown[], unknown>;
     let verboseMock: SinonStub<unknown[], unknown>;
     let debugMock: SinonStub<unknown[], unknown>;
-    let errorMock: SinonStub<unknown[], unknown>;
+
     const emptyOptions = {};
     const interactive = {
         interactive: true,
@@ -59,46 +65,48 @@ describe("login/login.ts", () => {
     const azurecli = {
         azurecli: true,
     };
+    const devicecode = {
+        useDeviceCode: true,
+    };
     const principal = {
         servicePrincipal: true,
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        storeAccessTokenMock = ImportMock.mockFunction(auth, "storeAccessToken");
-        getAccessTokenMock = ImportMock.mockFunction(auth, "getAccessToken");
-        interactiveLoginWithAuthResponseMock = ImportMock.mockFunction(nodeauth, "interactiveLoginWithAuthResponse");
-        loginWithServicePrincipalSecretWithAuthResponseMock = ImportMock.mockFunction(
-            nodeauth,
-            "loginWithServicePrincipalSecretWithAuthResponse"
-        );
-        AzureCliCredentialsMock = ImportMock.mockFunction(nodeauth.AzureCliCredentials, "create");
+        storeAccessTokenMock = ImportMock.mockFunction(token, "storeAccessToken");
+
+        executeAuthRequestMock = ImportMock.mockFunction(auth, "executeAuthRequest");
+        getDeviceCodeMock = ImportMock.mockFunction(auth, "getDeviceCode");
+        getAzureCLITokenMock = ImportMock.mockFunction(auth, "getAzureCLIToken");
+        getTokenUrlMock = ImportMock.mockFunction(auth, "getTokenUrl");
+        getTokenMock = ImportMock.mockFunction(auth, "getToken");
+        getAuthCodeMock = ImportMock.mockFunction(auth, "getAuthCode");
+        getAuthConfigMock = ImportMock.mockFunction(auth, "getAuthConfig");
         getConfigMock = ImportMock.mockFunction(config, "getConfig");
+
+        consoleInfoMock = ImportMock.mockFunction(console, "info", true);
         verboseMock = ImportMock.mockFunction(logging, "verbose").returns(true);
         debugMock = ImportMock.mockFunction(logging, "debug").returns(true);
-        errorMock = ImportMock.mockFunction(console, "error").returns(true);
     });
     afterEach(() => {
         storeAccessTokenMock.restore();
-        getAccessTokenMock.restore();
-        interactiveLoginWithAuthResponseMock.restore();
-        loginWithServicePrincipalSecretWithAuthResponseMock.restore();
-        AzureCliCredentialsMock.restore();
+
+        executeAuthRequestMock.restore();
+        getDeviceCodeMock.restore();
+        getAzureCLITokenMock.restore();
+        getTokenUrlMock.restore();
+        getTokenMock.restore();
+        getAuthCodeMock.restore();
+        getAuthConfigMock.restore();
         getConfigMock.restore();
+
+        consoleInfoMock.restore();
         verboseMock.restore();
         debugMock.restore();
-        errorMock.restore();
     });
-    describe("logoutAction()", () => {
+    describe("loginAction()", () => {
         it("login with --help", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
             getConfigMock.returns({ tenant: "tenant" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
@@ -106,367 +114,300 @@ describe("login/login.ts", () => {
             };
             loginAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
+                expect(getConfigMock.callCount).to.equal(0);
             });
         });
         it("login with no options", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
+            getAuthCodeMock.returns("code");
+            getTokenUrlMock.returns("");
             getConfigMock.returns({ tenant: "tenant" });
+            executeAuthRequestMock.resolves({
+                token_type: "Bearer",
+                expires_in: 3599,
+                ext_expires_in: 3599,
+                access_token: "token",
+                refresh_token: "resfrehToken",
+            });
+            getTokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => emptyOptions,
             };
+            loginAction(emptyOptions, cmdOptsMock as ModuleCommand).then((token) => {
+                expect(token).equal({ accessToken: "token" });
+                expect(storeAccessTokenMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(1);
+                expect(getTokenUrlMock.callCount).to.equal(1);
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(executeAuthRequestMock.callCount).to.equal(1);
+                expect(getTokenMock.callCount).to.equal(1);
+            });
+        });
+        it("login with --interactive", () => {
+            storeAccessTokenMock.returns(true);
+            getAuthCodeMock.returns("code");
+            getTokenUrlMock.returns("");
+            getConfigMock.returns({ tenant: "tenant" });
+            executeAuthRequestMock.resolves({
+                token_type: "Bearer",
+                expires_in: 3599,
+                ext_expires_in: 3599,
+                access_token: "token",
+                refresh_token: "resfrehToken",
+            });
+            getTokenMock.returns({ accessToken: "token" });
+            const cmdOptsMock: unknown = {
+                name: () => "login",
+                opts: () => interactive,
+            };
+            loginAction(emptyOptions, cmdOptsMock as ModuleCommand).then((token) => {
+                expect(token).equal({ accessToken: "token" });
+                expect(storeAccessTokenMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(1);
+                expect(getTokenUrlMock.callCount).to.equal(1);
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(executeAuthRequestMock.callCount).to.equal(1);
+                expect(getTokenMock.callCount).to.equal(1);
+            });
+        });
+        it("login with --interactive, error getAuthCode()", () => {
+            storeAccessTokenMock.returns(true);
+            getAuthCodeMock.throws();
+            getTokenUrlMock.returns("");
+            getConfigMock.returns({ tenant: "tenant" });
+            executeAuthRequestMock.rejects();
+            getTokenMock.returns({ accessToken: "token" });
+            const cmdOptsMock: unknown = {
+                name: () => "login",
+                opts: () => interactive,
+            };
             loginAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
+                expect(token).equal({ accessToken: "token" });
+                expect(storeAccessTokenMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(1);
+                expect(getTokenUrlMock.callCount).to.equal(0);
+                expect(getConfigMock.callCount).to.equal(0);
+                expect(executeAuthRequestMock.callCount).to.equal(0);
+                expect(getTokenMock.callCount).to.equal(0);
+            });
+        });
+        it("login with --interactive, error executeAuthRequest()", () => {
+            storeAccessTokenMock.returns(true);
+            getAuthCodeMock.returns("code");
+            getTokenUrlMock.returns("");
+            getConfigMock.returns({ tenant: "tenant" });
+            executeAuthRequestMock.rejects();
+            getTokenMock.returns({ accessToken: "token" });
+            const cmdOptsMock: unknown = {
+                name: () => "login",
+                opts: () => interactive,
+            };
+            loginAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(token).equal({ accessToken: "token" });
+                expect(storeAccessTokenMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(1);
+                expect(getTokenUrlMock.callCount).to.equal(1);
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(executeAuthRequestMock.callCount).to.equal(1);
+                expect(getTokenMock.callCount).to.equal(0);
             });
         });
         it("login with --azurecli", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns({ tenant: "tenant" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getAzureCLITokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => azurecli,
             };
             loginAction(azurecli, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(1);
-                expect(errorMock.callCount).to.equal(0);
+                expect(getAuthConfigMock.callCount).to.equal(2);
+                expect(getAzureCLITokenMock.callCount).to.equal(2);
             });
         });
-        it("login with --azurecli, error", () => {
+        it("login with --azurecli, error accessToken", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.rejects();
-            getConfigMock.returns({ tenant: "tenant" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getAzureCLITokenMock.throws();
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => azurecli,
             };
-            loginAction(azurecli, cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(azurecli, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(1);
-                expect(errorMock.callCount).to.equal(0);
+                expect(getAuthConfigMock.callCount).to.equal(2);
+                expect(getAzureCLITokenMock.callCount).to.equal(2);
             });
         });
-        it("login with --azurecli, error getToken()", () => {
+        it("login with --azurecli, error accessToken on 2nd call (Azure)", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.reject("token") });
-            getConfigMock.returns({ tenant: "tenant" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getAzureCLITokenMock.onCall(0).returns({ accessToken: "token" });
+            getAzureCLITokenMock.onCall(1).throws();
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => azurecli,
             };
-            loginAction(azurecli, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(1);
-                expect(errorMock.callCount).to.equal(0);
-            });
-        });
-        it("login with --interactive", () => {
-            storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns({ tenant: "tenant" });
-            const cmdOptsMock: unknown = {
-                name: () => "login",
-                opts: () => interactive,
-            };
-            loginAction(interactive, cmdOptsMock as ModuleCommand).then(() => {
+            loginAction(azurecli, cmdOptsMock as ModuleCommand).then(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(1);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(1);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
+                expect(getAuthConfigMock.callCount).to.equal(2);
+                expect(getAzureCLITokenMock.callCount).to.equal(2);
             });
         });
-        it("login with --interactive, missing tentant", () => {
+        it("login with --use-device-code", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns("");
-            const cmdOptsMock: unknown = {
-                name: () => "login",
-                opts: () => interactive,
-            };
-            loginAction(cmdOptsMock as ModuleCommand).then(() => {
-                expect(storeAccessTokenMock.callCount).to.equal(1);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(1);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
-            });
-        });
-        it("login with --interactive, error getToken()", () => {
-            storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.reject("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
             getConfigMock.returns({ tenant: "tenant" });
+            getDeviceCodeMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
-                opts: () => interactive,
+                opts: () => devicecode,
             };
-            loginAction(interactive, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(1);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
+            loginAction(emptyOptions, cmdOptsMock as ModuleCommand).then((token) => {
+                expect(token).equal({ accessToken: "token" });
+                expect(storeAccessTokenMock.callCount).to.equal(1);
+                expect(getDeviceCodeMock.callCount).to.equal(1);
+                expect(getConfigMock.callCount).to.equal(1);
             });
         });
-        it("login with --interactive, error", () => {
+        it("login with --use-device-code, error empty accessToken", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.rejects();
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns("");
+            getConfigMock.returns({ tenant: "tenant" });
+            getDeviceCodeMock.throws();
             const cmdOptsMock: unknown = {
                 name: () => "login",
-                opts: () => interactive,
+                opts: () => devicecode,
             };
-            loginAction(interactive, cmdOptsMock as ModuleCommand).catch(() => {
+            loginAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(1);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
+                expect(getDeviceCodeMock.callCount).to.equal(1);
+                expect(getConfigMock.callCount).to.equal(1);
             });
         });
         it("login with --service-principal", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
             getConfigMock.returns({ tenant: "tenant", principal: "principal", secret: "secret" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getTokenUrlMock.returns("");
+            executeAuthRequestMock.resolves({
+                token_type: "Bearer",
+                expires_in: 3599,
+                ext_expires_in: 3599,
+                access_token: "token",
+                refresh_token: "resfrehToken",
+            });
+            getTokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => principal,
             };
             loginAction(principal, cmdOptsMock as ModuleCommand).then(() => {
+                expect(token).equal({ accessToken: "token" });
+                expect(getAuthCodeMock.callCount).to.equal(1);
+                expect(getTokenUrlMock.callCount).to.equal(1);
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(executeAuthRequestMock.callCount).to.equal(1);
+                expect(getTokenMock.callCount).to.equal(1);
                 expect(storeAccessTokenMock.callCount).to.equal(1);
-                expect(getAccessTokenMock.callCount).to.equal(1);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(1);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
             });
         });
         it("login with --service-principal, no tenantID", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
             getConfigMock.returns({ principal: "principal", secret: "secret" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getTokenUrlMock.returns("");
+            executeAuthRequestMock.resolves({
+                token_type: "Bearer",
+                expires_in: 3599,
+                ext_expires_in: 3599,
+                access_token: "token",
+                refresh_token: "resfrehToken",
+            });
+            getTokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => principal,
             };
             loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(0);
+                expect(getTokenUrlMock.callCount).to.equal(0);
+                expect(executeAuthRequestMock.callCount).to.equal(0);
+                expect(getTokenMock.callCount).to.equal(0);
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
             });
         });
         it("login with --service-principal, no principal", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
             getConfigMock.returns({ tenant: "tenant", secret: "secret" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getTokenUrlMock.returns("");
+            executeAuthRequestMock.resolves({
+                token_type: "Bearer",
+                expires_in: 3599,
+                ext_expires_in: 3599,
+                access_token: "token",
+                refresh_token: "resfrehToken",
+            });
+            getTokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => principal,
             };
             loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(0);
+                expect(getTokenUrlMock.callCount).to.equal(0);
+                expect(executeAuthRequestMock.callCount).to.equal(0);
+                expect(getTokenMock.callCount).to.equal(0);
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
             });
         });
         it("login with --service-principal, no secret", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
+            getConfigMock.returns({ principal: "principal", tenant: "tenant" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getTokenUrlMock.returns("");
+            executeAuthRequestMock.resolves({
+                token_type: "Bearer",
+                expires_in: 3599,
+                ext_expires_in: 3599,
+                access_token: "token",
+                refresh_token: "resfrehToken",
             });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns({ tenant: "tenant", principal: "principal" });
+            getTokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => principal,
             };
             loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(0);
+                expect(getTokenUrlMock.callCount).to.equal(0);
+                expect(executeAuthRequestMock.callCount).to.equal(0);
+                expect(getTokenMock.callCount).to.equal(0);
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(0);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(0);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
             });
         });
-        it("login with --service-principal, error", () => {
+        it("login with --service-principal, error executeAuthRequest()", () => {
             storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.rejects();
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
             getConfigMock.returns({ tenant: "tenant", principal: "principal", secret: "secret" });
+            getAuthConfigMock.returns({ clientId: "clientid", scope: "powerbi" });
+            getTokenUrlMock.returns("");
+            executeAuthRequestMock.rejects();
+            getTokenMock.returns({ accessToken: "token" });
             const cmdOptsMock: unknown = {
                 name: () => "login",
                 opts: () => principal,
             };
             loginAction(principal, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(getConfigMock.callCount).to.equal(1);
+                expect(getAuthCodeMock.callCount).to.equal(1);
+                expect(getTokenUrlMock.callCount).to.equal(1);
+                expect(executeAuthRequestMock.callCount).to.equal(1);
+                expect(getTokenMock.callCount).to.equal(0);
                 expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(1);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(1);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
-            });
-        });
-        it("login with --service-principal, error getToken()", () => {
-            storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.reject("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns({ tenant: "tenant", principal: "principal", secret: "secret" });
-            const cmdOptsMock: unknown = {
-                name: () => "login",
-                opts: () => principal,
-            };
-            loginAction(cmdOptsMock as ModuleCommand).catch(() => {
-                expect(storeAccessTokenMock.callCount).to.equal(0);
-                expect(getAccessTokenMock.callCount).to.equal(1);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(1);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
-            });
-        });
-        it("login with --service-principal, stored token", () => {
-            storeAccessTokenMock.returns(true);
-            getAccessTokenMock.returns("token");
-            interactiveLoginWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            loginWithServicePrincipalSecretWithAuthResponseMock.resolves({
-                credentials: { getToken: () => Promise.resolve("token") },
-            });
-            AzureCliCredentialsMock.resolves({ getToken: () => Promise.resolve("token") });
-            getConfigMock.returns({ tenant: "tenant", principal: "principal", secret: "secret" });
-            const cmdOptsMock: unknown = {
-                name: () => "login",
-                opts: () => principal,
-            };
-            loginAction(principal, cmdOptsMock as ModuleCommand).then(() => {
-                expect(storeAccessTokenMock.callCount).to.equal(1);
-                expect(getAccessTokenMock.callCount).to.equal(1);
-                expect(interactiveLoginWithAuthResponseMock.callCount).to.equal(0);
-                expect(loginWithServicePrincipalSecretWithAuthResponseMock.callCount).to.equal(1);
-                expect(AzureCliCredentialsMock.callCount).to.equal(0);
-                expect(errorMock.callCount).to.equal(0);
             });
         });
     });
