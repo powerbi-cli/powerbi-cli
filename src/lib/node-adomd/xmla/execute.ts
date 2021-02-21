@@ -26,34 +26,10 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
-
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
-
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
-    });
-
-    program.addGlobalOptions();
-    return program;
+export function createExecute(command: string, properties: string, parameters?: string): string {
+    return `<Execute xmlns="urn:schemas-microsoft-com:xml-analysis">  
+    <Command>${command}</Command>  
+    <Properties>${properties}</Properties>  
+    ${parameters ? `<Parameters>${parameters}</Parameters>` : ``}
+ </Execute> `;
 }

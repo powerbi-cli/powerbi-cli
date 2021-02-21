@@ -217,8 +217,12 @@ export class ModuleCommand extends Command {
                 return OutputType.json;
             case "tsv":
                 return OutputType.tsv;
+            case "csv":
+                return OutputType.csv;
             case "yml":
                 return OutputType.yml;
+            case "none":
+                return OutputType.none;
         }
         return OutputType.unknown;
     }

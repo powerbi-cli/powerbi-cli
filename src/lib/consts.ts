@@ -59,6 +59,11 @@ export class consts {
     <p>You can log an issue at <a href="https://github.com/powerbi-cli/powerbi-cli/issues">Power BI CLI GitHub Repository</a> and we will assist you in resolving it.</p>
 </body>
 </html>`;
+    public powerBIRootUrl = "https://api.powerbi.com";
+    public get powerBIRestURL(): string {
+        return `${this.powerBIRootUrl}/v1.0/myorg`;
+    }
+    public azureRestURL = "https://management.azure.com";
     public get azureScope(): string {
         return scopesRequestAzure.join(" ");
     }

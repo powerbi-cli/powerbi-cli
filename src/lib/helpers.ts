@@ -31,9 +31,9 @@ import jmespath from "jmespath";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 
 import { executeRestCall } from "./rest";
-import { rootPowerBIUrl } from "./api";
 import { checkUUID } from "./validate";
 import { TokenType } from "./auth";
+import { getConsts } from "./consts";
 
 export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];
@@ -57,6 +57,8 @@ export const expandAdminImports = ["datasets", "reports"];
 export const expandRefreshes = ["capacity", "workspace"];
 export const workloadState = ["enabled", "disabled"];
 
+const { powerBIRestURL } = getConsts();
+
 export function getAdminGroupInfo(name: string, filterState: string | undefined = undefined): Promise<string[]> {
     return new Promise<string[]>((resolve, reject) => {
         const query: ParsedUrlQueryInput = { $top: 1 };
@@ -69,7 +71,7 @@ export function getAdminGroupInfo(name: string, filterState: string | undefined 
         if (filterState) query["$filter"] += ` and state eq '${filterState}'`;
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/admin/groups?${stringify(query)}`,
+            url: `${powerBIRestURL}/admin/groups?${stringify(query)}`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -98,7 +100,7 @@ export function getAdminObjectInfo(
         query["$filter"] = `${lookupName} eq '${name}'`;
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/admin/${objectType}?${stringify(query)}`,
+            url: `${powerBIRestURL}/admin/${objectType}?${stringify(query)}`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -117,7 +119,7 @@ export function getAdminCapacityID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/admin/capacities`,
+            url: `${powerBIRestURL}/admin/capacities`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -137,7 +139,7 @@ export function getCapacityID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/capacities`,
+            url: `${powerBIRestURL}/capacities`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -158,7 +160,7 @@ export function getGroupID(name: string): Promise<string> {
         name = name.replace(/['"]+/g, "");
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/groups?$filter=name%20eq%20'${name}'`,
+            url: `${powerBIRestURL}/groups?$filter=name%20eq%20'${name}'`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -178,7 +180,7 @@ export function getDataflowID(groupName: string, name: string): Promise<string> 
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}${groupName}/dataflows`,
+            url: `${powerBIRestURL}${groupName}/dataflows`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -199,7 +201,7 @@ export function getDatasetID(groupName: string | undefined, name: string): Promi
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}${groupName}/datasets`,
+            url: `${powerBIRestURL}${groupName}/datasets`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -220,7 +222,7 @@ export function getReportID(groupName: string | undefined, name: string): Promis
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}${groupName}/reports`,
+            url: `${powerBIRestURL}${groupName}/reports`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -241,7 +243,7 @@ export function getDashboardID(groupName: string | undefined, name: string): Pro
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}${groupName}/dashboards`,
+            url: `${powerBIRestURL}${groupName}/dashboards`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -266,7 +268,7 @@ export function getDashboardTileID(
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}${groupName}/dashboards/${dashboardName}/tiles`,
+            url: `${powerBIRestURL}${groupName}/dashboards/${dashboardName}/tiles`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -286,7 +288,7 @@ export function getGatewayID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/gateways`,
+            url: `${powerBIRestURL}/gateways`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -306,7 +308,7 @@ export function getGatewayDatasourceID(gatewayId: string, name: string): Promise
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/gateways/${gatewayId}/datasources`,
+            url: `${powerBIRestURL}/gateways/${gatewayId}/datasources`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -327,7 +329,7 @@ export function getImportID(groupName: string | undefined, name: string): Promis
         groupName = getGroupUrl(groupName);
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}${groupName}/imports`,
+            url: `${powerBIRestURL}${groupName}/imports`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -347,7 +349,7 @@ export function getAppID(name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/apps`,
+            url: `${powerBIRestURL}/apps`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -372,7 +374,7 @@ export function getAppContentID(
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/apps/${appId}/${appContent}`,
+            url: `${powerBIRestURL}/apps/${appId}/${appContent}`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
@@ -392,7 +394,7 @@ export function getAppDashboardTileID(appId: string, dashboardId: string, tileNa
     return new Promise<string>((resolve, reject) => {
         const lookUpRequest: RequestPrepareOptions = {
             method: "GET",
-            url: `${rootPowerBIUrl}/apps/${appId}/dashboards/${dashboardId}/tiles`,
+            url: `${powerBIRestURL}/apps/${appId}/dashboards/${dashboardId}/tiles`,
         };
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {

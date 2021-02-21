@@ -26,34 +26,23 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import { Connection } from "./connectionstring";
+import { ASToken, Token, Workspace } from "./interface";
+import { executeRequest } from "./request";
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
-
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
+function getRequestBody(capacityId: string, workspaceId: string): string {
+    return JSON.stringify({
+        capacityObjectId: capacityId,
+        workspaceObjectId: workspaceId,
     });
+}
 
-    program.addGlobalOptions();
-    return program;
+export async function getAsToken(connection: Connection, workspace: Workspace): Promise<Token> {
+    const astoken = (await executeRequest({
+        url: `https://${connection.rootUrl}/metadata/v201606/generateastoken`,
+        method: "POST",
+        token: connection.token as Token,
+        body: getRequestBody(workspace.capacityObjectId as string, workspace.id),
+    })) as ASToken;
+    return new Token(astoken.Token, "MwcToken");
 }

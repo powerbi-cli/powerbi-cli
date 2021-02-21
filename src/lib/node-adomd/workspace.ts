@@ -25,35 +25,26 @@
  */
 
 "use strict";
+import jmespath from "jmespath";
 
-import { ModuleCommand } from "./command";
+import { Connection } from "./connectionstring";
+import { executeRequest } from "./request";
+import { Token, Workspace } from "./interface";
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
+export async function getWorkspace(connection: Connection, requestID: string): Promise<Workspace> {
+    const workspaces = await getWorkspaces(connection, requestID);
+    const workspaceQuery = `[?name=='${connection.database}'] | [0]`;
+    return jmespath.search(workspaces, workspaceQuery);
+}
 
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
-    });
-
-    program.addGlobalOptions();
-    return program;
+export async function getWorkspaces(connection: Connection, requestID: string): Promise<Workspace[]> {
+    const url = `https://${connection.rootUrl}/powerbi/databases/v201606/workspaces`;
+    return (await executeRequest({
+        url,
+        method: "GET",
+        token: connection.token as Token,
+        headers: {
+            RequestId: requestID,
+        },
+    })) as Workspace[];
 }

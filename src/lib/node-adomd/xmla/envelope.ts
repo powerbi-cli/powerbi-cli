@@ -26,34 +26,11 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
-
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
-
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
-    });
-
-    program.addGlobalOptions();
-    return program;
+export function createEnvelope(header: string, body: string): string {
+    return `<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Header>${header}
+    </Header>
+    <Body>${body}
+    </Body>
+</Envelope>`;
 }

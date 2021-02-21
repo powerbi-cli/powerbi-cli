@@ -26,34 +26,22 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import { ModuleCommand } from "../lib/command";
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
+import { queryAction } from "./query";
 
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
-    });
-
-    program.addGlobalOptions();
-    return program;
+export function getCommands(): ModuleCommand {
+    const queryCommand = new ModuleCommand("query")
+        .description("Lists all the Dedicated capacities for the given subscription")
+        .action(queryAction)
+        .option("--connection -c <connection>", "XMLA Endpoint or workspace connection")
+        .option("--dataset -d <dataset>", "Name of the Power BI dataset")
+        .option("--script <script>", "String with the actual script, query, or statement")
+        .option("--script-file <file>", "File with the  actual script, query, or statement");
+    queryCommand.addGlobalOptions();
+    const embeddedCommand = new ModuleCommand("xmla")
+        .description("[PREVIEW] Manage Power BI XMLA endpoint")
+        .addCommand(queryCommand);
+    embeddedCommand.addGlobalOptions();
+    return embeddedCommand;
 }

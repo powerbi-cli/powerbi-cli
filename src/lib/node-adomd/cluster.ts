@@ -26,34 +26,27 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import { Connection } from "./connectionstring";
+import { Cluster, Token, Workspace } from "./interface";
+import { executeRequest } from "./request";
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
-
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
+function getRequestBody(serverName: string): string {
+    return JSON.stringify({
+        serverName,
+        premiumPublicXmlaEndpoint: true,
     });
+}
 
-    program.addGlobalOptions();
-    return program;
+export async function resolveCluster(
+    connection: Connection,
+    workspace: Workspace,
+    requestID: string
+): Promise<Cluster> {
+    const clusterHostname = new URL(workspace.capacityUri as string).hostname;
+    return (await executeRequest({
+        url: `https://${clusterHostname}/webapi/clusterResolve`,
+        method: "POST",
+        headers: { "x-ms-parent-activity-id": requestID },
+        body: getRequestBody(workspace.capacityObjectId as string),
+    })) as Cluster;
 }

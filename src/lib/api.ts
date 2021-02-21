@@ -28,12 +28,10 @@
 
 import { RequestPrepareOptions } from "@azure/ms-rest-js";
 import { TokenType } from "./auth";
+import { getConsts } from "./consts";
 
 import { formatAndPrintOutput, OutputType } from "./output";
 import { executeRestCall, executeDownloadCall, executeUploadCall } from "./rest";
-
-export const rootPowerBIUrl = "https://api.powerbi.com/v1.0/myorg";
-export const rootAzureUrl = "https://management.azure.com";
 
 export interface APICall extends RequestPrepareOptions {
     containsValue?: boolean;
@@ -49,13 +47,14 @@ export function executeAPICall(
 ): Promise<unknown> {
     return new Promise((resolve, reject) => {
         let url;
+        const { azureRestURL, powerBIRestURL } = getConsts();
         switch (apiRequest.tokenType) {
             case TokenType.AZURE:
-                url = `${rootAzureUrl}${apiRequest.url}`;
+                url = `${azureRestURL}${apiRequest.url}`;
                 break;
             case TokenType.POWERBI:
             default:
-                url = `${rootPowerBIUrl}${apiRequest.url}`;
+                url = `${powerBIRestURL}${apiRequest.url}`;
         }
         const request: RequestPrepareOptions = {
             method: apiRequest.method,

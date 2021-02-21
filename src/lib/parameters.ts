@@ -301,6 +301,16 @@ export function validateAllowedValues(value: string, allowedValues: string[], mu
     });
 }
 
+export function validateStartValues(value: string, startString: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        if (value.startsWith(startString)) {
+            resolve(value);
+        } else {
+            reject(`error: '${value}' needs to start with ${startString}`);
+        }
+    });
+}
+
 export function capitalize(value: string): string {
     return value.charAt(0).toUpperCase() + value.slice(1);
 }

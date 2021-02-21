@@ -26,34 +26,52 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+export class Token {
+    token: string;
+    authorizationScheme: string;
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
-];
+    constructor(token: string, authorizationScheme: string) {
+        this.token = token;
+        this.authorizationScheme = authorizationScheme;
+    }
 
-export function initializeProgram(modules: string[]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
+    get tokenHeader(): string {
+        return `${this.authorizationScheme} ${this.token}`;
+    }
+}
 
-    modules.forEach((module: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
-    });
+export interface ASToken {
+    Token: string;
+}
 
-    program.addGlobalOptions();
-    return program;
+export interface Workspace {
+    id: string;
+    name: string;
+    type: string;
+    capacitySku: string;
+    capacityObjectId: string | null;
+    capacityUri: string | null;
+}
+
+export interface Cluster {
+    clusterFQDN: string;
+    coreServerName: string;
+}
+
+export interface ExecuteRequestOptions {
+    url: string;
+    method: string;
+    token?: Token;
+    headers?: { [key: string]: unknown };
+    body?: string;
+}
+
+export interface Row {
+    [key: string]: unknown;
+}
+
+export interface Schema {
+    friendlyName: string;
+    columnName: string;
+    dataType: string;
 }
