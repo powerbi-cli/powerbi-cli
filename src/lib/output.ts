@@ -94,6 +94,8 @@ export function formatAndPrintOutputStream(
     query?: string
 ): void {
     let isStart = outputType === OutputType.json || outputType === OutputType.csv;
+    const isCsv = outputType === OutputType.csv;
+
     if (!response) return;
     if (outputType === OutputType.raw || outputType === OutputType.none) {
         return;
@@ -122,7 +124,6 @@ export function formatAndPrintOutputStream(
                 case OutputType.csv:
                     try {
                         if (data === null) return;
-                        const isCsv = outputType === OutputType.csv;
                         const json2csvParser = new Parser({
                             header: isCsv && isStart,
                             delimiter: isCsv ? "," : "\t",
@@ -134,7 +135,7 @@ export function formatAndPrintOutputStream(
                     }
                     break;
             }
-            this.push(`${isStart ? "[\n" : ""}${result}\n`);
+            this.push(`${isStart && !isCsv ? "[\n" : ""}${result}\n`);
             isStart = false;
             next();
         },
