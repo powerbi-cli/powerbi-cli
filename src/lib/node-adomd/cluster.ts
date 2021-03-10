@@ -26,8 +26,7 @@
 
 "use strict";
 
-import { Connection } from "./connectionstring";
-import { Cluster, Token, Workspace } from "./interface";
+import { Cluster, Workspace } from "./interface";
 import { executeRequest } from "./request";
 
 function getRequestBody(serverName: string): string {
@@ -37,11 +36,7 @@ function getRequestBody(serverName: string): string {
     });
 }
 
-export async function resolveCluster(
-    connection: Connection,
-    workspace: Workspace,
-    requestID: string
-): Promise<Cluster> {
+export async function resolveCluster(workspace: Workspace, requestID: string): Promise<Cluster> {
     const clusterHostname = new URL(workspace.capacityUri as string).hostname;
     return (await executeRequest({
         url: `https://${clusterHostname}/webapi/clusterResolve`,

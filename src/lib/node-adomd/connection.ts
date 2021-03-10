@@ -75,7 +75,7 @@ export class ADOMDConnection {
             throw `Unable to connect to ${this.connection.dataSource}.`;
         }
         this.token = await getAsToken(this.connection, this.workspace);
-        this.cluster = await resolveCluster(this.connection, this.workspace, this.requestId);
+        this.cluster = await resolveCluster(this.workspace, this.requestId);
         this.sessionId = await this.startSession();
         this.openState = ConnectionState.Open;
     }

@@ -209,7 +209,7 @@ describe("command.ts", () => {
             expect(drawHeaderMock.callCount).to.equal(0);
             expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(0);
-            expect(errorMock.callCount).to.equal(1);
+            expect(errorMock.callCount).to.equal(0);
         });
         it("unknown command", () => {
             const cmd = new ModuleCommand("new");
