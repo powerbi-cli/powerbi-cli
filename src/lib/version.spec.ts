@@ -58,13 +58,13 @@ describe("version.ts", () => {
     describe("version validation", () => {
         it("check currentVersion with package.json", () => {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const version = require("../../package.json").version;
-            expect(currentVersion).equal(version);
+            const version = require("../../package.json").version as string;
+            if (version.indexOf("preview") === -1) expect(currentVersion).equal(version);
         });
         it("check currentVersion with package-lock.json", () => {
             // eslint-disable-next-line @typescript-eslint/no-var-requires
-            const version = require("../../package-lock.json").version;
-            expect(currentVersion).equal(version);
+            const version = require("../../package-lock.json").version as string;
+            if (version.indexOf("preview") === -1) expect(currentVersion).equal(version);
         });
     });
 });
