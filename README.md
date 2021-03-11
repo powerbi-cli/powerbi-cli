@@ -20,6 +20,10 @@ Open a cmd/bash/powershell prompt and type to install the `powerbi-cli`:
 
 `npm i -g @powerbi-cli/powerbi-cli`
 
+To install a preview version use the following command:
+
+`npm i -g @powerbi-cli/powerbi-cli@preview`
+
 ## Usage
 
 To use the `powerbi-cli` type
