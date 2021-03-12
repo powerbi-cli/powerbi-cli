@@ -267,22 +267,31 @@ export async function getAuthCode(tenantId: string, consts: consts): Promise<str
         });
 
         server = app.listen(consts.port);
+        server.on("error", () => {
+            reject(
+                new Error(
+                    `Error opening internal webserver: port ${consts.port} already in use. Please use use device code flow with 'pbicli login --use-device-code'`
+                )
+            );
+            return;
+        });
         server.setTimeout(1000);
+
+        // Direct the user to the authentication URI either by opening a browser (desktop and mobile apps) or redirecting their browser using a Location header (web apps and APIs).
+        const authenticateUrl = getAuthorizeUrl(tenantId, consts);
+        server.on("listening", async () => {
+            try {
+                await open(authenticateUrl);
+            } catch {
+                if (server) {
+                    (server as Server).close();
+                }
+                throw new Error(
+                    `Error opening default web browser. Please use use device code flow with 'pbicli login --use-device-code'`
+                );
+            }
+        });
     });
-
-    // Direct the user to the authentication URI either by opening a browser (desktop and mobile apps) or redirecting their browser using a Location header (web apps and APIs).
-    const authenticateUrl = getAuthorizeUrl(tenantId, consts);
-
-    try {
-        await open(authenticateUrl);
-    } catch {
-        if (server) {
-            (server as Server).close();
-        }
-        throw new Error(
-            `Error opening default web browser. Please use use device code flow with 'pbicli login --use-device-code'`
-        );
-    }
     console.info(
         yellow(`The default web browser has been opened at ${consts.redirectUri}. Please continue the login in the web browser.
 If no web browser is available or if the web browser fails to open, use device code flow 
