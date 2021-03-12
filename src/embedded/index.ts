@@ -46,14 +46,14 @@ export function getCommands(): ModuleCommand {
         .option("--capacity -c <name>", "Name of the Azure dedicated capacity");
     showCommand.addGlobalOptions();
     const startCommand = new ModuleCommand("start")
-        .description("Gets details about the specified dedicated capacity.")
+        .description("Starts the specified dedicated capacity.")
         .action(startstopAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")
         .option("--capacity -c <name>", "Name of the Azure dedicated capacity");
     startCommand.addGlobalOptions();
     const stopCommand = new ModuleCommand("stop")
-        .description("Gets details about the specified dedicated capacity.")
+        .description("Stops the specified dedicated capacity.")
         .action(startstopAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")
@@ -73,7 +73,8 @@ export function getCommands(): ModuleCommand {
         .addCommand(listCommand)
         .addCommand(showCommand)
         .addCommand(startCommand)
-        .addCommand(stopCommand);
+        .addCommand(stopCommand)
+        .addCommand(updateCommand);
     embeddedCommand.addGlobalOptions();
     return embeddedCommand;
 }
