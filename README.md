@@ -49,6 +49,7 @@ For more information see [documentation](https://powerbi-cli.github.io/)
 
 There are many ways in which you can participate in the project, for example:
 
+-   [Ask questions and share ideas](https://github.com/powerbi-cli/powerbi-cli/discussions) via the discussions section
 -   [Submit bugs and feature requests](https://github.com/powerbi-cli/powerbi-cli/issues), and help us verify as they are checked in
 -   Review [source code changes](https://github.com/powerbi-cli/powerbi-cli/pulls)
 -   Review the [documentation](https://powerbi-cli.github.io/) and make pull requests for anything from typos to new content
