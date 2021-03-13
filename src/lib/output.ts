@@ -106,41 +106,42 @@ export function formatAndPrintOutputStream(
                 result = "";
             if (query) {
                 try {
-                    data = jmespath.search(data, query);
+                    data = jmespath.search([data], query)[0];
                 } catch (err) {
                     console.error(red(`Error parsing query: ${query} (${err})`));
                     return;
                 }
             }
-            switch (outputType) {
-                case OutputType.json:
-                default:
-                    result = `${JSON.stringify([data], null, 2).slice(0, -2).substring(2)},`;
-                    break;
-                case OutputType.yml:
-                    result = dump(JSON.parse(`[${JSON.stringify(data)}]`)).slice(0, -1);
-                    break;
-                case OutputType.tsv:
-                case OutputType.csv:
-                    try {
-                        if (data === null) return;
-                        const json2csvParser = new Parser({
-                            header: isCsv && isStart,
-                            delimiter: isCsv ? "," : "\t",
-                            quote: isCsv ? "'" : "",
-                        });
-                        result = json2csvParser.parse(data);
-                    } catch {
-                        console.error(red("Error parsing data to tsv format."));
-                    }
-                    break;
+            if (data) {
+                switch (outputType) {
+                    case OutputType.json:
+                    default:
+                        result = `${JSON.stringify([data], null, 2).slice(0, -2).substring(2)},`;
+                        break;
+                    case OutputType.yml:
+                        result = dump(JSON.parse(`[${JSON.stringify(data)}]`)).slice(0, -1);
+                        break;
+                    case OutputType.tsv:
+                    case OutputType.csv:
+                        try {
+                            const json2csvParser = new Parser({
+                                header: isCsv && isStart,
+                                delimiter: isCsv ? "," : "\t",
+                                quote: isCsv ? "'" : "",
+                            });
+                            result = json2csvParser.parse(data);
+                        } catch {
+                            console.error(red("Error parsing data to tsv format."));
+                        }
+                        break;
+                }
+                this.push(`${isStart && !isCsv ? "[\n" : ""}${result}\n`);
+                isStart = false;
             }
-            this.push(`${isStart && !isCsv ? "[\n" : ""}${result}\n`);
-            isStart = false;
             next();
         },
         flush(this: Transform, next: TransformCallback) {
-            if (outputType === OutputType.json) this.push("]");
+            if (outputType === OutputType.json) this.push("]\n");
             next();
         },
     });
