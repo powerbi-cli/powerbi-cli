@@ -57,6 +57,8 @@ export async function queryAction(...args: unknown[]): Promise<void> {
         throw "error: missing option '--script' or '--script-file'";
     const query = options.script || readFileSync(options.scriptFile);
     const token = await getAccessToken(TokenType.XMLA);
+    if (token === "")
+        throw "Not authenticated. Please run 'pbicli login --xmla' to login to the Power BI XMLA endpoints.";
     const connectionString = `Data Source=${connection};Catalog=${catalog};Password=${token}`;
     verbose(`Execute '${query}' to '${catalog}' on '${connection}'`);
     const adomdconn = new ADOMDConnection(connectionString);
