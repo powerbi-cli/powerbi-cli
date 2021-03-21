@@ -93,7 +93,9 @@ export function formatAndPrintOutputStream(
     outputFile?: string,
     query?: string
 ): void {
-    let isStart = outputType === OutputType.json || outputType === OutputType.csv;
+    let hasResult = false,
+        hasRows = false;
+    const isHeader = outputType === OutputType.json || outputType === OutputType.csv;
     const isCsv = outputType === OutputType.csv;
 
     if (!response) return;
@@ -104,44 +106,56 @@ export function formatAndPrintOutputStream(
         transform(this: Transform, chunk: string, encoding: BufferEncoding, next: TransformCallback) {
             let data = JSON.parse(chunk),
                 result = "";
-            if (query) {
-                try {
-                    data = jmespath.search([data], query)[0];
-                } catch (err) {
-                    console.error(red(`Error parsing query: ${query} (${err})`));
-                    return;
-                }
-            }
-            if (data) {
+            if (data === "[" || data == "]") {
                 switch (outputType) {
                     case OutputType.json:
                     default:
-                        result = `${JSON.stringify([data], null, 2).slice(0, -2).substring(2)},`;
+                        this.push(`${data === "[" && hasResult ? ",\n" : ""}${data === "]" ? "\n" : ""}${data}`);
                         break;
                     case OutputType.yml:
-                        result = dump(JSON.parse(`[${JSON.stringify(data)}]`)).slice(0, -1);
-                        break;
                     case OutputType.tsv:
                     case OutputType.csv:
-                        try {
-                            const json2csvParser = new Parser({
-                                header: isCsv && isStart,
-                                delimiter: isCsv ? "," : "\t",
-                                quote: isCsv ? "'" : "",
-                            });
-                            result = json2csvParser.parse(data);
-                        } catch {
-                            console.error(red("Error parsing data to tsv format."));
-                        }
+                        if (data === "[" && hasResult) this.push("\n");
                         break;
                 }
-                this.push(`${isStart && !isCsv ? "[\n" : ""}${result}\n`);
-                isStart = false;
+                hasResult = true;
+                hasRows = false;
+            } else {
+                if (query) {
+                    try {
+                        data = jmespath.search([data], query)[0];
+                    } catch (err) {
+                        console.error(red(`Error parsing query: ${query} (${err})`));
+                        return;
+                    }
+                }
+                if (data) {
+                    switch (outputType) {
+                        case OutputType.json:
+                        default:
+                            result = `${JSON.stringify([data], null, 2).slice(0, -2).substring(1)}`;
+                            break;
+                        case OutputType.yml:
+                            result = dump(JSON.parse(`[${JSON.stringify(data)}]`)).slice(0, -1);
+                            break;
+                        case OutputType.tsv:
+                        case OutputType.csv:
+                            try {
+                                const json2csvParser = new Parser({
+                                    header: isCsv && isHeader,
+                                    delimiter: isCsv ? "," : "\t",
+                                    quote: isCsv ? "'" : "",
+                                });
+                                result = json2csvParser.parse(data);
+                            } catch {
+                                console.error(red("Error parsing data to tsv format."));
+                            }
+                            break;
+                    }
+                    this.push(`${hasRows ? "," : ""}${result}`);
+                    hasRows = true;
+                }
             }
-            next();
-        },
-        flush(this: Transform, next: TransformCallback) {
-            if (outputType === OutputType.json) this.push("]\n");
             next();
         },
     });

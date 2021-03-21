@@ -26,10 +26,21 @@
 
 "use strict";
 
-export function createExecute(command: string, properties: string, parameters?: string): string {
-    return `<Execute xmlns="urn:schemas-microsoft-com:xml-analysis">  
-    ${command} 
-    <Properties>${properties}</Properties>  
-    ${parameters ? `<Parameters>${parameters}</Parameters>` : ``}
- </Execute> `;
+export enum XMLAQueryType {
+    Statement,
+    Discover,
+    Other,
+}
+
+export function determineQueryType(query: string): XMLAQueryType {
+    const queryString = String(query);
+    if (queryString.startsWith("<")) {
+        if (queryString.toLocaleLowerCase().startsWith("<discover")) {
+            return XMLAQueryType.Discover;
+        } else {
+            return XMLAQueryType.Other;
+        }
+    } else {
+        return XMLAQueryType.Statement;
+    }
 }

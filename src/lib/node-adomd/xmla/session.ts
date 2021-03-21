@@ -28,6 +28,7 @@
 import { parser } from "sax";
 
 import { Connection } from "../connectionstring";
+import { determineQueryType, XMLAQueryType } from "./queryType";
 import { createEnvelope } from "./envelope";
 import { createExecute } from "./execute";
 import { getProperties } from "./properties";
@@ -69,23 +70,30 @@ export function getCommandSession(
     connection: Connection,
     parentActivityId: string,
     sessionId: string,
-    statement: string
+    query: string
 ): string {
     const header = `<XA:Session soap:mustUnderstand="1" SessionId="${sessionId}" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:XA="urn:schemas-microsoft-com:xml-analysis" />`;
 
-    const command = getStatement(statement);
-    const properties = getProperties(connection, parentActivityId);
+    const queryType: XMLAQueryType = determineQueryType(query);
 
-    const body = createExecute(command, properties);
+    if (queryType === XMLAQueryType.Discover) {
+        return createEnvelope(header, query);
+    } else {
+        const command = queryType === XMLAQueryType.Statement ? getStatement(query) : `<Command>${query}</Command>`;
 
-    return createEnvelope(header, body);
+        const properties = getProperties(connection, parentActivityId);
+
+        const body = createExecute(command, properties);
+
+        return createEnvelope(header, body);
+    }
 }
 
 function getStatement(statement?: string) {
     if (statement) {
-        return `<Statement>${statement}</Statement>`;
+        return `<Command><Statement>${statement}</Statement></Command>`;
     } else {
-        return `<Statement />`;
+        return `<Command><Statement /></Command>`;
     }
 }
 

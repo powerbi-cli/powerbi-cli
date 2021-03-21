@@ -52,6 +52,7 @@ export async function parseRowSet(result: string): Promise<Row[]> {
                 isError,
                 isSchema,
                 schema,
+                (row: Row) => rows.push(row),
                 reject,
                 isRows,
                 columnName
@@ -62,7 +63,7 @@ export async function parseRowSet(result: string): Promise<Row[]> {
             row[column.friendlyName] = parseTextValue(column, text);
         };
         rowSetParser.onclosetag = (tag) => {
-            ({ isSchema, row } = parseCloseTag(tag, isSchema, (row: Row) => rows.push(row), row));
+            ({ isSchema, row } = parseCloseTag(tag, isSchema, schema, (row: Row) => rows.push(row), isRows, row));
         };
         rowSetParser.onerror = (err) => {
             reject(err);
@@ -76,8 +77,8 @@ export function parseRowSetStream(stream: Readable): Promise<Readable> {
     return new Promise<Readable>((resolve) => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         const returnStream: Readable = new Readable({ read() {} });
-        const schema: Schema[] = [];
         let row: Row = {},
+            schema: Schema[] = [],
             columnName = "",
             isSchema = false,
             isRows = false,
@@ -94,6 +95,7 @@ export function parseRowSetStream(stream: Readable): Promise<Readable> {
                 isError,
                 isSchema,
                 schema,
+                (row: Row) => returnStream.push(JSON.stringify(row)),
                 (err: string) => {
                     verbose(`XMLA result of type 'error' found`);
                     stream.pause();
@@ -106,14 +108,16 @@ export function parseRowSetStream(stream: Readable): Promise<Readable> {
         rowSetParser.on("text", (text) => {
             if (!isError) {
                 const column = schema.filter((col) => col.columnName === columnName)[0];
-                row[column.friendlyName] = parseTextValue(column, text);
+                if (column) row[column.friendlyName] = parseTextValue(column, text);
             }
         });
         rowSetParser.on("closetag", (tag) => {
-            ({ isSchema, row } = parseCloseTag(
+            ({ isSchema, schema, row } = parseCloseTag(
                 tag,
                 isSchema,
+                schema,
                 (row: Row) => returnStream.push(JSON.stringify(row)),
+                isRows,
                 row
             ));
         });
@@ -123,7 +127,7 @@ export function parseRowSetStream(stream: Readable): Promise<Readable> {
             returnStream.destroy(err);
         });
         rowSetParser.on("end", () => {
-            verbose(`End of XMLA result`);
+            verbose(`XMLA result end`);
             returnStream.push(null);
         });
         stream.pipe(rowSetParser);
@@ -136,11 +140,17 @@ function parseOpenTag(
     isError: boolean,
     isSchema: boolean,
     schema: Schema[],
+    pushRows: (row: Row | "[") => number | boolean,
     reject: (reason?: unknown) => void,
     isRows: boolean,
     columnName: string
 ) {
     if (tag.name === "soap:fault") isError = true;
+    if (tag.name === "root") {
+        verbose("Rowset start");
+        pushRows("[");
+        isRows = false;
+    }
     if (
         !isError &&
         tag.name === "xsd:complextype" &&
@@ -148,9 +158,11 @@ function parseOpenTag(
         tag.attributes.name &&
         (tag.attributes.name as QualifiedAttribute).value === "row"
     ) {
+        verbose("Schema definition start");
         isSchema = true;
     }
     if (isSchema && tag.name === "xsd:element" && tag.attributes && (tag.attributes.name || tag.attributes.type)) {
+        verbose("Schema definition row");
         schema.push({
             friendlyName: (tag.attributes["sql:field"] as QualifiedAttribute).value,
             columnName: (tag.attributes.name as QualifiedAttribute).value.toLowerCase(),
@@ -169,15 +181,33 @@ function parseOpenTag(
     return { isError, isSchema, isRows, columnName };
 }
 
-function parseCloseTag(tag: string, isSchema: boolean, pushRows: (row: Row) => number | boolean, row: Row) {
-    if (tag === "xsd:complextype") isSchema = false;
+function parseCloseTag(
+    tag: string,
+    isSchema: boolean,
+    schema: Schema[],
+    pushRows: (row: Row | "]") => number | boolean,
+    isRows: boolean,
+    row: Row
+) {
+    if (tag === "xsd:complextype" && isSchema) {
+        verbose("Schema definition end");
+        isSchema = false;
+    }
     if (tag === "row") {
         verbose(`New row added to output stream`);
         pushRows(row);
         row = {};
         isSchema = false;
     }
-    return { isSchema, row };
+    if (tag === "root") {
+        verbose(`Rowset end`);
+        if (!isRows) pushRows({});
+        pushRows("]");
+        row = {};
+        isSchema = false;
+        schema = [];
+    }
+    return { isSchema, schema, row };
 }
 
 function parseTextValue(column: Schema, text: string): unknown {
