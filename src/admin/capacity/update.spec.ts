@@ -71,7 +71,7 @@ describe("admin/capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => helpOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).finally(() => {
+            assignAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminCapacityIdMock.callCount).to.equal(0);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -85,7 +85,7 @@ describe("admin/capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => emptyOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).catch(() => {
+            assignAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -99,7 +99,7 @@ describe("admin/capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => noWorkspaceOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).catch(() => {
+            assignAction(noWorkspaceOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -113,7 +113,7 @@ describe("admin/capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => allOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).then(() => {
+            assignAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);

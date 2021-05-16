@@ -64,7 +64,7 @@ describe("admin/dataset/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => helpOptions,
             };
-            datasourceAction(cmdOptsMock as ModuleCommand).finally(() => {
+            datasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("admin/dataset/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => emptyOptions,
             };
-            datasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            datasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("admin/dataset/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => allOptions,
             };
-            datasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            datasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("datasets/uuid/")).to.greaterThan(-1);
                 expect(executeAPICallMock.callCount).to.equal(1);

@@ -35,11 +35,13 @@ export const programModules: string[] = [
     "dashboard",
     "dataflow",
     "dataset",
+    "embedded",
     "feature",
     "gateway",
     "import",
     "report",
     "group",
+    "xmla",
     "login",
     "logout",
 ];

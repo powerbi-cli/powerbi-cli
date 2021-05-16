@@ -68,7 +68,7 @@ describe("group/user/delete.ts", () => {
                 name: () => "delete",
                 opts: () => helpOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).finally(() => {
+            deleteUserAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -81,7 +81,7 @@ describe("group/user/delete.ts", () => {
                 name: () => "delete",
                 opts: () => emptyOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            deleteUserAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -94,7 +94,7 @@ describe("group/user/delete.ts", () => {
                 name: () => "delete",
                 opts: () => missingOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            deleteUserAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -107,7 +107,7 @@ describe("group/user/delete.ts", () => {
                 name: () => "delete",
                 opts: () => allOptions,
             };
-            deleteUserAction(cmdOptsMock as ModuleCommand).then(() => {
+            deleteUserAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

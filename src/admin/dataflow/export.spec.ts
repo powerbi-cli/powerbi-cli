@@ -64,7 +64,7 @@ describe("admin/dataflow/export.ts", () => {
                 name: () => "export",
                 opts: () => helpOptions,
             };
-            exportAction(cmdOptsMock as ModuleCommand).finally(() => {
+            exportAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("admin/dataflow/export.ts", () => {
                 name: () => "export",
                 opts: () => emptyOptions,
             };
-            exportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            exportAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("admin/dataflow/export.ts", () => {
                 name: () => "export",
                 opts: () => allOptions,
             };
-            exportAction(cmdOptsMock as ModuleCommand).then(() => {
+            exportAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("uuid")).to.greaterThan(-1);
                 expect(validateAdminObjectIdMock.callCount).to.equal(1);

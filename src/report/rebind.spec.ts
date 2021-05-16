@@ -80,7 +80,7 @@ describe("report/rebind.ts", () => {
                 name: () => "rebind",
                 opts: () => helpOptions,
             };
-            rebindAction(cmdOptsMock as ModuleCommand).finally(() => {
+            rebindAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -95,7 +95,7 @@ describe("report/rebind.ts", () => {
                 name: () => "rebind",
                 opts: () => emptyOptions,
             };
-            rebindAction(cmdOptsMock as ModuleCommand).catch(() => {
+            rebindAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -110,7 +110,7 @@ describe("report/rebind.ts", () => {
                 name: () => "rebind",
                 opts: () => myOptions,
             };
-            rebindAction(cmdOptsMock as ModuleCommand).catch(() => {
+            rebindAction(myOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -125,7 +125,7 @@ describe("report/rebind.ts", () => {
                 name: () => "rebind",
                 opts: () => missingOptions,
             };
-            rebindAction(cmdOptsMock as ModuleCommand).catch(() => {
+            rebindAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -140,7 +140,7 @@ describe("report/rebind.ts", () => {
                 name: () => "rebind",
                 opts: () => twoOptions,
             };
-            rebindAction(cmdOptsMock as ModuleCommand).catch(() => {
+            rebindAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -155,7 +155,7 @@ describe("report/rebind.ts", () => {
                 name: () => "rebind",
                 opts: () => allOptions,
             };
-            rebindAction(cmdOptsMock as ModuleCommand).then(() => {
+            rebindAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

@@ -75,7 +75,7 @@ describe("dataset/set-owner.ts", () => {
                 name: () => "setOwner",
                 opts: () => helpOptions,
             };
-            setOwnerAction(cmdOptsMock as ModuleCommand).finally(() => {
+            setOwnerAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -90,7 +90,7 @@ describe("dataset/set-owner.ts", () => {
                 name: () => "setOwner",
                 opts: () => emptyOptions,
             };
-            setOwnerAction(cmdOptsMock as ModuleCommand).catch(() => {
+            setOwnerAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -105,7 +105,7 @@ describe("dataset/set-owner.ts", () => {
                 name: () => "setOwner",
                 opts: () => myOptions,
             };
-            setOwnerAction(cmdOptsMock as ModuleCommand).catch(() => {
+            setOwnerAction(myOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -120,7 +120,7 @@ describe("dataset/set-owner.ts", () => {
                 name: () => "setOwner",
                 opts: () => missingOptions,
             };
-            setOwnerAction(cmdOptsMock as ModuleCommand).catch(() => {
+            setOwnerAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -135,7 +135,7 @@ describe("dataset/set-owner.ts", () => {
                 name: () => "setOwner",
                 opts: () => allOptions,
             };
-            setOwnerAction(cmdOptsMock as ModuleCommand).then(() => {
+            setOwnerAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

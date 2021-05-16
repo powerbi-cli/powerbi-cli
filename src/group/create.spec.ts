@@ -59,7 +59,7 @@ describe("group/create.ts", () => {
                 name: () => "create",
                 opts: () => helpOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).finally(() => {
+            createAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -70,7 +70,7 @@ describe("group/create.ts", () => {
                 name: () => "create",
                 opts: () => emptyOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).catch(() => {
+            createAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -81,7 +81,7 @@ describe("group/create.ts", () => {
                 name: () => "create",
                 opts: () => allOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).then(() => {
+            createAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

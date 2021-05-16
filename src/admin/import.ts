@@ -25,7 +25,7 @@
  */
 
 "use strict";
-
+import { OptionValues } from "commander";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 
 import { ModuleCommand } from "../lib/command";
@@ -34,8 +34,9 @@ import { APICall, executeAPICall } from "../lib/api";
 import { validateAllowedValues } from "../lib/parameters";
 import { expandAdminImports } from "../lib/helpers";
 
-export async function importAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function importAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const filter = options.filter;
     const expand = options.expand;

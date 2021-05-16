@@ -64,7 +64,7 @@ describe("dataflow/refresh/assign.ts", () => {
                 name: () => "assign",
                 opts: () => helpOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).finally(() => {
+            assignAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("dataflow/refresh/assign.ts", () => {
                 name: () => "assign",
                 opts: () => emptyOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).catch(() => {
+            assignAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("dataflow/refresh/assign.ts", () => {
                 name: () => "assign",
                 opts: () => allOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).then(() => {
+            assignAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

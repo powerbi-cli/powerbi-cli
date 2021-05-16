@@ -70,7 +70,7 @@ describe("admin/activity.ts", () => {
                 name: () => "activity",
                 opts: () => helpOptions,
             };
-            activityAction(cmdOptsMock as ModuleCommand).finally(() => {
+            activityAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -81,7 +81,7 @@ describe("admin/activity.ts", () => {
                 name: () => "activity",
                 opts: () => emptyOptions,
             };
-            activityAction(cmdOptsMock as ModuleCommand).catch(() => {
+            activityAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -92,7 +92,7 @@ describe("admin/activity.ts", () => {
                 name: () => "activity",
                 opts: () => filterOptions,
             };
-            activityAction(cmdOptsMock as ModuleCommand).catch(() => {
+            activityAction(filterOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -103,7 +103,7 @@ describe("admin/activity.ts", () => {
                 name: () => "activity",
                 opts: () => dateOptions,
             };
-            activityAction(cmdOptsMock as ModuleCommand).then(() => {
+            activityAction(dateOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("startDateTime='1900-01-01T00%3A00%3A00.000Z'")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("endDateTime='1900-01-01T23%3A59%3A59.999Z'")).to.greaterThan(-1);
@@ -117,7 +117,7 @@ describe("admin/activity.ts", () => {
                 name: () => "activity",
                 opts: () => dateTimeOptions,
             };
-            activityAction(cmdOptsMock as ModuleCommand).then(() => {
+            activityAction(dateTimeOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("startDateTime='1900-01-01T22%3A00%3A00.000Z'")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("endDateTime='1900-01-01T23%3A00%3A00.000Z'")).to.greaterThan(-1);
@@ -131,7 +131,7 @@ describe("admin/activity.ts", () => {
                 name: () => "activity",
                 opts: () => tokenOptions,
             };
-            activityAction(cmdOptsMock as ModuleCommand).then(() => {
+            activityAction(tokenOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("continuationToken=token")).to.greaterThan(-1);
                 expect(executeAPICallMock.callCount).to.equal(1);

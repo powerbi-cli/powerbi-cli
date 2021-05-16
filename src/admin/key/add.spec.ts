@@ -74,7 +74,7 @@ describe("admin/key/add.ts", () => {
                 name: () => "add",
                 opts: () => helpOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).finally(() => {
+            addAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -85,7 +85,7 @@ describe("admin/key/add.ts", () => {
                 name: () => "add",
                 opts: () => emptyOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -96,7 +96,7 @@ describe("admin/key/add.ts", () => {
                 name: () => "add",
                 opts: () => missingKVOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addAction(missingKVOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -107,7 +107,7 @@ describe("admin/key/add.ts", () => {
                 name: () => "add",
                 opts: () => correctOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).then(() => {
+            addAction(correctOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request.body.name.indexOf(correctOptions.name)).to.greaterThan(-1);
                 expect(request.body.keyVaultKeyIdentifier.indexOf(correctOptions.keyVaultURI)).to.greaterThan(-1);
@@ -123,7 +123,7 @@ describe("admin/key/add.ts", () => {
                 name: () => "add",
                 opts: () => defaultOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).then(() => {
+            addAction(defaultOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request.body.name.indexOf(defaultOptions.name)).to.greaterThan(-1);
                 expect(request.body.keyVaultKeyIdentifier.indexOf(defaultOptions.keyVaultURI)).to.greaterThan(-1);
@@ -139,7 +139,7 @@ describe("admin/key/add.ts", () => {
                 name: () => "add",
                 opts: () => allOptions,
             };
-            addAction(cmdOptsMock as ModuleCommand).then(() => {
+            addAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request.body.name.indexOf(allOptions.name)).to.greaterThan(-1);
                 expect(request.body.keyVaultKeyIdentifier.indexOf(allOptions.keyVaultURI)).to.greaterThan(-1);

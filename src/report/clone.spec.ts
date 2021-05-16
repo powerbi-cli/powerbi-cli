@@ -80,7 +80,7 @@ describe("report/clone.ts", () => {
                 name: () => "clone",
                 opts: () => helpOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).finally(() => {
+            cloneAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -95,7 +95,7 @@ describe("report/clone.ts", () => {
                 name: () => "clone",
                 opts: () => emptyOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -110,7 +110,7 @@ describe("report/clone.ts", () => {
                 name: () => "clone",
                 opts: () => myOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(myOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -125,7 +125,7 @@ describe("report/clone.ts", () => {
                 name: () => "clone",
                 opts: () => missingOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -140,7 +140,7 @@ describe("report/clone.ts", () => {
                 name: () => "clone",
                 opts: () => twoOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).catch(() => {
+            cloneAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -155,7 +155,7 @@ describe("report/clone.ts", () => {
                 name: () => "clone",
                 opts: () => allOptions,
             };
-            cloneAction(cmdOptsMock as ModuleCommand).then(() => {
+            cloneAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

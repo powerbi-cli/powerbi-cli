@@ -87,7 +87,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateDatasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -132,7 +132,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => oneOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateDatasourceAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -147,7 +147,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateDatasourceAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -163,7 +163,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateDatasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -180,7 +180,7 @@ describe("dataset/datasource/update.ts", () => {
                 name: () => "update",
                 opts: () => allFileOptions,
             };
-            updateDatasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateDatasourceAction(allFileOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

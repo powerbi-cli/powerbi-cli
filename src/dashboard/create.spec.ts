@@ -68,7 +68,7 @@ describe("dashboard/create.ts", () => {
                 name: () => "create",
                 opts: () => helpOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).finally(() => {
+            createAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -81,7 +81,7 @@ describe("dashboard/create.ts", () => {
                 name: () => "create",
                 opts: () => emptyOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).catch(() => {
+            createAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -94,7 +94,7 @@ describe("dashboard/create.ts", () => {
                 name: () => "create",
                 opts: () => missingOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).catch(() => {
+            createAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -107,7 +107,7 @@ describe("dashboard/create.ts", () => {
                 name: () => "create",
                 opts: () => allOptions,
             };
-            createAction(cmdOptsMock as ModuleCommand).then(() => {
+            createAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

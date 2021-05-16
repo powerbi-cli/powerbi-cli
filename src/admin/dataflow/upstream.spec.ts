@@ -72,7 +72,7 @@ describe("admin/dataflow/upstream.ts", () => {
                 name: () => "upstream",
                 opts: () => helpOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).finally(() => {
+            upstreamAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("admin/dataflow/upstream.ts", () => {
                 name: () => "upstream",
                 opts: () => emptyOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).catch(() => {
+            upstreamAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("admin/dataflow/upstream.ts", () => {
                 name: () => "upstream",
                 opts: () => missingOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).catch(() => {
+            upstreamAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("admin/dataflow/upstream.ts", () => {
                 name: () => "upstream",
                 opts: () => allOptions,
             };
-            upstreamAction(cmdOptsMock as ModuleCommand).then(() => {
+            upstreamAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("groups/uuid/")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("dataflows/uuid/")).to.greaterThan(-1);

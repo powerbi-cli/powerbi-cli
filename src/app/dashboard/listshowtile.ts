@@ -25,6 +25,7 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
@@ -32,8 +33,9 @@ import { APICall, executeAPICall } from "../../lib/api";
 import { getAppContentID, getAppDashboardTileID } from "../../lib/helpers";
 import { validateParameter, validateAppId } from "../../lib/parameters";
 
-export async function listshowTileAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function listshowTileAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
 
     const appId = await validateAppId(options.A, true);

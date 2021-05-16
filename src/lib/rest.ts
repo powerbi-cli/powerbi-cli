@@ -32,122 +32,142 @@ import { createWriteStream, unlink, readFileSync } from "fs";
 import https from "https";
 import FormData from "form-data";
 
-import { getAccessToken } from "./auth";
+import { getAccessToken } from "./token";
 import { debug } from "./logging";
+import { TokenType } from "./auth";
 
 const silentMethods: string[] = ["DELETE", "PUT", "POST", "PATCH"];
 
-export function executeRestCall(request: RequestPrepareOptions, containsValue: boolean): Promise<unknown> {
+export function executeRestCall(
+    request: RequestPrepareOptions,
+    containsValue: boolean,
+    tokenType: TokenType
+): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {
-        const token = getAccessToken();
-        if (token === "") reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
-        const creds = new TokenCredentials(token);
-        try {
-            const client = new AzureServiceClient(creds);
-            client
-                .sendRequest(request)
-                .then((response: HttpOperationResponse) => {
-                    if (response.status === 401) {
-                        reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
-                    } else if (response.status === 403) {
-                        reject("Authorisation error. Please validate the API rights of the user / service principal.");
-                    } else if (silentMethods.some((silentMethod: string) => silentMethod === request.method)) {
-                        //if (response.status === 202 && request.method === "POST")
-                        if (response.parsedBody) resolve(JSON.parse(JSON.stringify(response.parsedBody)));
-                        else resolve();
-                    } else if (response.status === 404) {
-                        resolve([]);
-                    } else if (response.status === 200) {
-                        const body = JSON.parse(JSON.stringify(response.parsedBody));
-                        const content = containsValue ? body.value : body;
-                        const callNextLink = async (link?: string) => {
-                            if (!link) return;
-                            const nextRequest = request;
-                            nextRequest.url = link;
-                            const nextResponse = await executeNextLink(client, nextRequest);
-                            const nextBody = JSON.parse(JSON.stringify(nextResponse.parsedBody));
-                            content.concat(nextBody.value);
-                            callNextLink(nextBody["@odata.nextLink"]);
-                        };
-                        callNextLink(body["@odata.nextLink"]);
-                        resolve(content);
-                    } else {
-                        reject(
-                            `Error while calling the Power BI REST API: ${response.status} (${response.bodyAsText})`
-                        );
-                    }
-                })
-                .catch((err) => reject(err));
-        } catch (err) {
-            reject(err);
-        }
+        getAccessToken(tokenType).then((token) => {
+            if (token === "") {
+                reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
+                return;
+            }
+            const creds = new TokenCredentials(token);
+            try {
+                const client = new AzureServiceClient(creds);
+                client
+                    .sendRequest(request)
+                    .then((response: HttpOperationResponse) => {
+                        if (response.status === 401) {
+                            reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
+                        } else if (response.status === 403) {
+                            reject(
+                                "Authorisation error. Please validate the API rights of the user / service principal."
+                            );
+                        } else if (silentMethods.some((silentMethod: string) => silentMethod === request.method)) {
+                            //if (response.status === 202 && request.method === "POST")
+                            if (response.parsedBody) {
+                                const errorResponse = JSON.parse(JSON.stringify(response.parsedBody));
+                                if (errorResponse.error && errorResponse.error.message)
+                                    return reject(errorResponse.error.message);
+                                else resolve(errorResponse);
+                            } else resolve(undefined);
+                        } else if (response.status === 404) {
+                            resolve([]);
+                        } else if (response.status === 200) {
+                            const body = JSON.parse(JSON.stringify(response.parsedBody));
+                            const content = containsValue ? body.value : body;
+                            const callNextLink = async (link?: string) => {
+                                if (!link) return;
+                                const nextRequest = request;
+                                nextRequest.url = link;
+                                const nextResponse = await executeNextLink(client, nextRequest);
+                                const nextBody = JSON.parse(JSON.stringify(nextResponse.parsedBody));
+                                content.concat(nextBody.value);
+                                callNextLink(nextBody["@odata.nextLink"]);
+                            };
+                            callNextLink(body["@odata.nextLink"]);
+                            resolve(content);
+                        } else {
+                            reject(
+                                `Error while calling the Power BI REST API: ${response.status} (${response.bodyAsText})`
+                            );
+                        }
+                    })
+                    .catch((err) => reject(err));
+            } catch (err) {
+                reject(err);
+            }
+        });
     });
 }
 
 export function executeDownloadCall(request: RequestPrepareOptions, outputFile: string): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {
-        const token = getAccessToken();
-        if (token === "") reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
-        try {
-            const options: https.RequestOptions = {
-                headers: { authorization: `Bearer ${token}` },
-            };
-            const file = createWriteStream(outputFile);
-            const req = https.get(request.url as string, options, (response) => {
-                if (response.statusCode === 404) {
-                    reject("Download this report is not supported");
-                    return;
-                }
-                if (response.statusCode !== 200) {
-                    reject("Error downloading the report");
-                    return;
-                }
-                response.pipe(file);
-            });
-            file.on("finish", () => resolve());
-            req.on("error", (err) => {
-                unlink(outputFile, () => reject(`Error while calling the Power BI REST API: ${err}`));
-            });
-            req.end();
-        } catch (err) {
-            reject(err);
-        }
+        getAccessToken(TokenType.POWERBI).then((token) => {
+            if (token === "") {
+                reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
+                return;
+            }
+            try {
+                const options: https.RequestOptions = {
+                    headers: { authorization: `Bearer ${token}` },
+                };
+                const file = createWriteStream(outputFile);
+                const req = https.get(request.url as string, options, (response) => {
+                    if (response.statusCode === 404) {
+                        reject("Download this report is not supported");
+                        return;
+                    }
+                    if (response.statusCode !== 200) {
+                        reject("Error downloading the report");
+                        return;
+                    }
+                    response.pipe(file);
+                });
+                file.on("finish", () => resolve(undefined));
+                req.on("error", (err) => {
+                    unlink(outputFile, () => reject(`Error while calling the Power BI REST API: ${err}`));
+                });
+                req.end();
+            } catch (err) {
+                reject(err);
+            }
+        });
     });
 }
 
 export function executeUploadCall(request: RequestPrepareOptions, inputFile: string): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {
-        const token = getAccessToken();
-        if (token === "") {
-            reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
-            return;
-        }
-        try {
-            const form = new FormData();
-            form.append("file0", readFileSync(inputFile));
-            const url = new URL(request.url as string);
-            const options = {
-                method: "POST",
-                host: url.host,
-                path: url.pathname + url.search,
-                headers: Object.assign(
-                    { authorization: `Bearer ${token}`, "Content-Length": form.getLengthSync() },
-                    form.getHeaders()
-                ),
-            };
-            const req = https.request(options);
-            form.pipe(req);
-            req.on("response", (response) => {
-                if (response.statusCode !== 200 && response.statusCode !== 202) {
-                    debug(response.headers["x-powerbi-error-details"] as string);
-                    reject("Error uploading the report");
-                    return;
-                }
-                resolve();
-            });
-        } catch (err) {
-            reject(err);
-        }
+        getAccessToken(TokenType.POWERBI).then((token) => {
+            if (token === "") {
+                reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
+                return;
+            }
+            try {
+                const form = new FormData();
+                form.append("file0", readFileSync(inputFile));
+                const url = new URL(request.url as string);
+                const options = {
+                    method: "POST",
+                    host: url.host,
+                    path: url.pathname + url.search,
+                    headers: Object.assign(
+                        { authorization: `Bearer ${token}`, "Content-Length": form.getLengthSync() },
+                        form.getHeaders()
+                    ),
+                };
+                const req = https.request(options);
+                form.pipe(req);
+                req.on("response", (response) => {
+                    if (response.statusCode !== 200 && response.statusCode !== 202) {
+                        debug(response.headers["x-powerbi-error-details"] as string);
+                        reject("Error uploading the report");
+                        return;
+                    }
+                    resolve(undefined);
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
     });
 }
 

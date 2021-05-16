@@ -64,7 +64,7 @@ describe("admin/dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => helpOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).finally(() => {
+            dataflowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("admin/dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => emptyOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            dataflowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("admin/dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => allOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).then(() => {
+            dataflowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("groups/uuid/")).to.greaterThan(-1);
                 expect(executeAPICallMock.callCount).to.equal(1);

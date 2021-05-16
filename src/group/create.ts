@@ -25,13 +25,13 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
 
-export async function createAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function createAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     if (!options.W) throw "error: missing option '--workspace'";
     debug(`Creates a new Power BI workspace with name ${options.W}`);

@@ -72,7 +72,7 @@ describe("capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => helpOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).finally(() => {
+            assignAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateCapacityIdMock.callCount).to.equal(0);
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => emptyOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).catch(() => {
+            assignAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateCapacityIdMock.callCount).to.equal(1);
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => capacityOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).then(() => {
+            assignAction(capacityOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateCapacityIdMock.callCount).to.equal(1);
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -117,7 +117,7 @@ describe("capacity/assign.ts", () => {
                 name: () => "assign",
                 opts: () => allOptions,
             };
-            assignAction(cmdOptsMock as ModuleCommand).then(() => {
+            assignAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("/uuid2")).to.greaterThan(-1);

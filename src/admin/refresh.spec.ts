@@ -93,7 +93,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => helpOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).finally(() => {
+            refreshAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminCapacityIdMock.callCount).to.equal(0);
                 expect(validateAllowedValuesMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -108,7 +108,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => emptyOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
@@ -126,7 +126,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => topOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(topOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=0")).to.greaterThan(-1);
@@ -144,7 +144,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => topskipOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(topskipOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -162,7 +162,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => topskipErrorOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(topskipErrorOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=5000")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -180,7 +180,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => expandOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(expandOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("top=1")).to.greaterThan(-1);
                 expect(request?.url?.indexOf("skip=1")).to.greaterThan(-1);
@@ -199,7 +199,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => expandErrorOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).catch(() => {
+            refreshAction(expandErrorOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminCapacityIdMock.callCount).to.equal(1);
                 expect(validateAllowedValuesMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -214,7 +214,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => capacityOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(capacityOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid/")).to.greaterThan(-1);
                 expect(validateAdminCapacityIdMock.callCount).to.equal(1);
@@ -231,7 +231,7 @@ describe("admin/refresh.ts", () => {
                 name: () => "refresh",
                 opts: () => allOptions,
             };
-            refreshAction(cmdOptsMock as ModuleCommand).then(() => {
+            refreshAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("/uuid/")).to.greaterThan(-1);
                 expect(request?.url?.indexOf(`/${allOptions.refreshableId}`)).to.greaterThan(-1);

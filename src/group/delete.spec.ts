@@ -64,7 +64,7 @@ describe("group/delete.ts", () => {
                 name: () => "delete",
                 opts: () => helpOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).finally(() => {
+            deleteAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("group/delete.ts", () => {
                 name: () => "delete",
                 opts: () => emptyOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).catch(() => {
+            deleteAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("group/delete.ts", () => {
                 name: () => "delete",
                 opts: () => allOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).then(() => {
+            deleteAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

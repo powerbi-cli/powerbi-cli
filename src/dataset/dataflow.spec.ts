@@ -75,7 +75,7 @@ describe("dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => helpOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).finally(() => {
+            dataflowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -90,7 +90,7 @@ describe("dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => emptyOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            dataflowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -105,7 +105,7 @@ describe("dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => myOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            dataflowAction(myOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -120,7 +120,7 @@ describe("dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => missingOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            dataflowAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -135,7 +135,7 @@ describe("dataset/dataflow.ts", () => {
                 name: () => "dataflow",
                 opts: () => allOptions,
             };
-            dataflowAction(cmdOptsMock as ModuleCommand).then(() => {
+            dataflowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

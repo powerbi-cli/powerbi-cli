@@ -72,7 +72,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "history",
                 opts: () => helpOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).finally(() => {
+            historyAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "history",
                 opts: () => emptyOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).then(() => {
+            historyAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -102,7 +102,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "history",
                 opts: () => oneOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).then(() => {
+            historyAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -117,7 +117,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "history",
                 opts: () => allOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).then(() => {
+            historyAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -132,7 +132,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).catch(() => {
+            historyAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -147,7 +147,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).catch(() => {
+            historyAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -162,7 +162,7 @@ describe("dataset/refresh/history.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            historyAction(cmdOptsMock as ModuleCommand).then(() => {
+            historyAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

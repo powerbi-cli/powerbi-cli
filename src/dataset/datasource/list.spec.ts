@@ -72,7 +72,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listDatasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            listDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -102,7 +102,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "list",
                 opts: () => oneOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            listDatasourceAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -117,7 +117,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "list",
                 opts: () => allOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            listDatasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -132,7 +132,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -147,7 +147,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listDatasourceAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -162,7 +162,7 @@ describe("dataset/datasource/list.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            listDatasourceAction(cmdOptsMock as ModuleCommand).then(() => {
+            listDatasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

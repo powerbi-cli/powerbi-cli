@@ -72,7 +72,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listParameterAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).then(() => {
+            listParameterAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -102,7 +102,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "list",
                 opts: () => oneOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).then(() => {
+            listParameterAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -117,7 +117,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "list",
                 opts: () => allOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).then(() => {
+            listParameterAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -132,7 +132,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listParameterAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -147,7 +147,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "show",
                 opts: () => oneOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listParameterAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -162,7 +162,7 @@ describe("dataset/parameter/listshow.ts", () => {
                 name: () => "show",
                 opts: () => allOptions,
             };
-            listParameterAction(cmdOptsMock as ModuleCommand).then(() => {
+            listParameterAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

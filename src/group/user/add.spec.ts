@@ -80,7 +80,7 @@ describe("group/user/add.ts", () => {
                 name: () => "add",
                 opts: () => helpOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).finally(() => {
+            addUserAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateParameterMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -95,7 +95,7 @@ describe("group/user/add.ts", () => {
                 name: () => "add",
                 opts: () => emptyOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addUserAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -110,7 +110,7 @@ describe("group/user/add.ts", () => {
                 name: () => "add",
                 opts: () => missingOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addUserAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -126,7 +126,7 @@ describe("group/user/add.ts", () => {
                 name: () => "add",
                 opts: () => incorrectTypeOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).catch(() => {
+            addUserAction(incorrectTypeOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(2);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -142,7 +142,7 @@ describe("group/user/add.ts", () => {
                 name: () => "add",
                 opts: () => allOptions,
             };
-            addUserAction(cmdOptsMock as ModuleCommand).then(() => {
+            addUserAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateParameterMock.callCount).to.equal(2);
                 expect(executeAPICallMock.callCount).to.equal(1);

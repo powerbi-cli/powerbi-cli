@@ -63,7 +63,7 @@ describe("admin/key/rotate.ts", () => {
                 name: () => "rotate",
                 opts: () => helpOptions,
             };
-            rotateAction(cmdOptsMock as ModuleCommand).finally(() => {
+            rotateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -74,7 +74,7 @@ describe("admin/key/rotate.ts", () => {
                 name: () => "rotate",
                 opts: () => emptyOptions,
             };
-            rotateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            rotateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -85,7 +85,7 @@ describe("admin/key/rotate.ts", () => {
                 name: () => "rotate",
                 opts: () => missingKVOptions,
             };
-            rotateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            rotateAction(missingKVOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -96,7 +96,7 @@ describe("admin/key/rotate.ts", () => {
                 name: () => "rotate",
                 opts: () => correctOptions,
             };
-            rotateAction(cmdOptsMock as ModuleCommand).then(() => {
+            rotateAction(correctOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request.url?.indexOf(correctOptions.key)).to.greaterThan(-1);
                 expect(request.body.keyVaultKeyIdentifier.indexOf(correctOptions.keyVaultURI)).to.greaterThan(-1);

@@ -59,7 +59,7 @@ describe("feature/listshow.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listshowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
@@ -70,7 +70,7 @@ describe("feature/listshow.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
@@ -81,7 +81,7 @@ describe("feature/listshow.ts", () => {
                 name: () => "list",
                 opts: () => oneOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

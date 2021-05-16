@@ -25,15 +25,15 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { getGatewayID, getGroupUrl } from "../../lib/helpers";
 import { validateParameter, validateGroupId, validateDatasetId } from "../../lib/parameters";
 
-export async function updateGatewayAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function updateGatewayAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
 
     const groupId = await validateGroupId(options.W, false);

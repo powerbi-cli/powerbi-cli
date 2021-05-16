@@ -108,7 +108,7 @@ describe("report/export/start.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).finally(() => {
+            startExportAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(validateAllowedValues.callCount).to.equal(0);
@@ -125,7 +125,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => emptyOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            startExportAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(validateAllowedValues.callCount).to.equal(0);
@@ -142,7 +142,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => oneOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            startExportAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(0);
@@ -159,7 +159,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => twoOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            startExportAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(0);
@@ -176,7 +176,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => pbixOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).then(() => {
+            startExportAction(pbixOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(1);
@@ -193,7 +193,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => pptxOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).then(() => {
+            startExportAction(pptxOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(1);
@@ -210,7 +210,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => xlsxOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).then(() => {
+            startExportAction(xlsxOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(1);
@@ -227,7 +227,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => xlsxOptionsFile,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).then(() => {
+            startExportAction(xlsxOptionsFile, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(1);
@@ -244,7 +244,7 @@ describe("report/export/start.ts", () => {
                 name: () => "start",
                 opts: () => zipOptions,
             };
-            startExportAction(cmdOptsMock as ModuleCommand).catch(() => {
+            startExportAction(zipOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(validateAllowedValues.callCount).to.equal(1);

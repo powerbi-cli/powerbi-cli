@@ -26,7 +26,9 @@
 
 "use strict";
 
-const footer = "Created by the Power BI Community";
+const footer = `Created by the Power BI Community
+
+Need help, visit the Power BI CLI site: https://powerbi-cli.github.io/`;
 
 export function drawFooter(interactive: boolean): void {
     if (interactive) return;

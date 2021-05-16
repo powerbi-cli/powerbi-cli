@@ -25,15 +25,15 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
 import { validateGroupId } from "../lib/parameters";
 import { getGroupUrl } from "../lib/helpers";
 
-export async function createAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function createAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const groupId = await validateGroupId(options.W, false);
     if (!options.D) throw "error: missing option '--dashboard'";

@@ -32,7 +32,7 @@ import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
 import { ModuleCommand } from "../lib/command";
-import * as auth from "../lib/auth";
+import * as token from "../lib/token";
 import * as logging from "../lib/logging";
 
 import { logoutAction } from "./logout";
@@ -46,7 +46,7 @@ describe("logout/logout.ts", () => {
     const emptyOptions = {};
     const helpOptions = { H: true };
     beforeEach(() => {
-        removeAccessTokenMock = ImportMock.mockFunction(auth, "removeAccessToken");
+        removeAccessTokenMock = ImportMock.mockFunction(token, "removeAccessToken");
         debugMock = ImportMock.mockFunction(logging, "debug").returns(true);
     });
     afterEach(() => {
@@ -60,7 +60,7 @@ describe("logout/logout.ts", () => {
                 name: () => "logout",
                 opts: () => helpOptions,
             };
-            expect(logoutAction(cmdOptsMock as ModuleCommand)).not.to.throw;
+            expect(logoutAction(helpOptions, cmdOptsMock as ModuleCommand)).not.to.throw;
             expect(removeAccessTokenMock.callCount).to.equal(0);
         });
         it("logout with no options", () => {
@@ -69,7 +69,7 @@ describe("logout/logout.ts", () => {
                 name: () => "logout",
                 opts: () => emptyOptions,
             };
-            expect(logoutAction(cmdOptsMock as ModuleCommand)).not.to.throw;
+            expect(logoutAction(emptyOptions, cmdOptsMock as ModuleCommand)).not.to.throw;
             expect(removeAccessTokenMock.callCount).to.equal(1);
         });
     });

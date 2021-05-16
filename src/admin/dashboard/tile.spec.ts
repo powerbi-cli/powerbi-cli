@@ -64,7 +64,7 @@ describe("admin/dashboard/tile.ts", () => {
                 name: () => "tile",
                 opts: () => helpOptions,
             };
-            tileAction(cmdOptsMock as ModuleCommand).finally(() => {
+            tileAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminObjectIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -77,7 +77,7 @@ describe("admin/dashboard/tile.ts", () => {
                 name: () => "tile",
                 opts: () => emptyOptions,
             };
-            tileAction(cmdOptsMock as ModuleCommand).catch(() => {
+            tileAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminObjectIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("admin/dashboard/tile.ts", () => {
                 name: () => "tile",
                 opts: () => dashboardOptions,
             };
-            tileAction(cmdOptsMock as ModuleCommand).then(() => {
+            tileAction(dashboardOptions, cmdOptsMock as ModuleCommand).then(() => {
                 const request = executeAPICallMock.args[0][0] as api.APICall;
                 expect(request?.url?.indexOf("uuid")).to.greaterThan(-1);
                 expect(validateAdminObjectIdMock.callCount).to.equal(1);

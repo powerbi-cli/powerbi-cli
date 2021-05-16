@@ -77,7 +77,7 @@ describe("admin/group/update.ts", () => {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).finally(() => {
+            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -90,7 +90,7 @@ describe("admin/group/update.ts", () => {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -103,7 +103,7 @@ describe("admin/group/update.ts", () => {
                 name: () => "update",
                 opts: () => groupOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).catch(() => {
+            updateAction(groupOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -117,7 +117,7 @@ describe("admin/group/update.ts", () => {
                 name: () => "update",
                 opts: () => detailsOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(detailsOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -132,7 +132,7 @@ describe("admin/group/update.ts", () => {
                 name: () => "update",
                 opts: () => fileOptions,
             };
-            updateAction(cmdOptsMock as ModuleCommand).then(() => {
+            updateAction(fileOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAdminGroupIdMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

@@ -25,110 +25,205 @@
  */
 
 "use strict";
-
-import {
-    interactiveLoginWithAuthResponse,
-    AuthResponse,
-    loginWithServicePrincipalSecretWithAuthResponse,
-    AzureCliCredentials,
-} from "@azure/ms-rest-nodeauth";
-import { TokenResponse } from "@azure/ms-rest-nodeauth/dist/lib/credentials/tokenClientCredentials";
+import { OptionValues } from "commander";
+import { yellow } from "chalk";
+import { decode } from "jsonwebtoken";
 
 import { getConfig } from "../lib/config";
-import { storeAccessToken, getAccessToken } from "../lib/auth";
-import { ModuleCommand } from "../lib/command";
-import { debug, verbose } from "../lib/logging";
+import {
+    executeAuthRequest,
+    getAuthCode,
+    getTokenUrl,
+    Token,
+    AuthConfig,
+    AuthFlow,
+    getAuthConfig,
+    getDeviceCode,
+    AccessTokenResponse,
+    SilentTokenRequest,
+    getToken,
+    getAzureCLIToken,
+    TokenStore,
+    TokenType,
+} from "../lib/auth";
+import { debug } from "../lib/logging";
+import { consts, getConsts } from "../lib/consts";
+import { storeAccessToken } from "../lib/token";
 
-export async function loginAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function loginAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) {
         delete options.H;
         return;
     }
-    if (!(options.interactive || options.servicePrincipal || options.azurecli))
-        throw "error: missing option '--interactive' or '--azurecli' or '--service-principal'";
     debug("Login in to Power BI and retrieve an access token");
-    let accessToken = "";
+    const { tenant } = getConfig(options);
+    const consts = getConsts();
+    let accessToken: TokenStore | undefined = undefined;
     if (options.azurecli) {
-        accessToken = await loginAzureCLI();
-    } else if (options.interactive) {
-        accessToken = await loginInteractive(cmd, options);
+        accessToken = {
+            flow: AuthFlow.AzureCli,
+            powerbi: (await loginAzureCLI(consts, TokenType.POWERBI)) as Token,
+            azure: options.azure ? ((await loginAzureCLI(consts, TokenType.AZURE)) as Token) : undefined,
+        };
+        const decodeToken = decode(accessToken.powerbi.accessToken) as { [key: string]: unknown };
+        if (decodeToken !== null && decodeToken.appid !== consts.adal_client_id) accessToken.xmla = accessToken.powerbi;
     } else if (options.servicePrincipal) {
-        accessToken = await loginWithServicePrincipal(cmd, options);
+        accessToken = {
+            flow: AuthFlow.Credentials,
+            powerbi: (await loginWithServicePrincipal(options, consts, TokenType.POWERBI)) as Token,
+            azure: options.azure
+                ? ((await loginWithServicePrincipal(options, consts, TokenType.AZURE)) as Token)
+                : undefined,
+        };
+        // We can reuse the SP token for the XMLA commands
+        accessToken.xmla = options.xmla ? accessToken.powerbi : undefined;
+    } else if (options.useDeviceCode) {
+        accessToken = {
+            flow: AuthFlow.DeviceCode,
+            powerbi: (await loginWithDeviceCode(options, consts, TokenType.POWERBI)) as Token,
+        };
+        // We can use the refreshToken to silent get a token for the embedded commands
+        accessToken.azure = options.azure
+            ? ((await loginWithRefreshToken(
+                  {
+                      refreshToken: accessToken.powerbi.refreshToken as string,
+                      tenant: tenant,
+                      tokenType: TokenType.AZURE,
+                  },
+                  consts
+              )) as Token)
+            : undefined;
+        console.info(
+            yellow(`Currently the access token for the XMLA command cannot be retrieved 'silent' and 
+can be retrived via a new request.`)
+        );
+        accessToken.xmla = options.xmla
+            ? ((await loginWithDeviceCode(options, consts, TokenType.XMLA)) as Token)
+            : undefined;
+    } else {
+        accessToken = {
+            flow: AuthFlow.AuthCode,
+            powerbi: (await loginInteractive(options, consts)) as Token,
+        };
+        accessToken.azure = options.azure
+            ? ((await loginWithRefreshToken(
+                  {
+                      refreshToken: accessToken.powerbi.refreshToken as string,
+                      tenant: tenant,
+                      tokenType: TokenType.AZURE,
+                  },
+                  consts
+              )) as Token)
+            : undefined;
+        if (options.xmla) {
+            console.info(
+                yellow(`Currently the access token for the XMLA command cannot be retrieved 'silent' and 
+can be retrived via the 'device code' flow.`)
+            );
+            accessToken.xmla = (await loginWithDeviceCode(options, consts, TokenType.XMLA)) as Token;
+        }
     }
-    if (accessToken === "") return;
+
+    if (!accessToken) throw "Error empty access token";
     storeAccessToken(accessToken);
 }
 
-async function loginAzureCLI(): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        AzureCliCredentials.create({ resource: "https://analysis.windows.net/powerbi/api" })
-            .then((value: AzureCliCredentials) => {
-                value
-                    .getToken()
-                    .then((value: TokenResponse) => {
-                        resolve(value.accessToken);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            })
-            .catch(() => {
-                reject("Authentication error. Please login via Azure CLI with command `az login`");
-            });
-    });
+export async function loginSilent(
+    options: OptionValues,
+    consts: consts,
+    silentTokenRequest: SilentTokenRequest
+): Promise<Token | undefined> {
+    if (options.servicePrincipal) {
+        return loginWithServicePrincipal(options, consts, silentTokenRequest.tokenType);
+    } else {
+        return await loginWithRefreshToken(silentTokenRequest, consts);
+    }
 }
 
-async function loginInteractive(cmd: ModuleCommand, options: unknown): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        const { tenant } = getConfig(options);
-        interactiveLoginWithAuthResponse({
-            tokenAudience: "https://analysis.windows.net/powerbi/api",
-            domain: tenant,
-        })
-            .then((authres: AuthResponse) => {
-                authres.credentials
-                    .getToken()
-                    .then((value: TokenResponse) => {
-                        resolve(value.accessToken);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            })
-            .catch((err) => {
-                reject(err);
-            });
-    });
+async function loginAzureCLI(consts: consts, tokenType: TokenType): Promise<Token | undefined> {
+    const config = getAuthConfig(AuthFlow.AzureCli, tokenType, consts);
+    return getAzureCLIToken(consts, config);
 }
 
-async function loginWithServicePrincipal(cmd: ModuleCommand, options: unknown): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-        const { principal, secret, tenant } = getConfig(options);
-        if (!principal) return reject("error: missing option '--principal'");
-        if (!secret) return reject("error: missing option '--secret'");
-        if (!tenant) return reject("error: missing option '--tenant'");
-        const storedToken = getAccessToken();
-        console.log(`dd: ${storedToken}`);
-        if (storedToken !== "") {
-            verbose("Used stored access token");
-            return storedToken;
-        }
-        loginWithServicePrincipalSecretWithAuthResponse(principal, secret, tenant, {
-            tokenAudience: "https://analysis.windows.net/powerbi/api",
-        })
-            .then((authres: AuthResponse) => {
-                authres.credentials
-                    .getToken()
-                    .then((value: TokenResponse) => {
-                        resolve(value.accessToken);
-                    })
-                    .catch((err) => {
-                        reject(err);
-                    });
-            })
-            .catch((err) => {
-                reject(err);
-            });
-    });
+async function loginWithRefreshToken(
+    refreshTokenRequest: SilentTokenRequest,
+    consts: consts
+): Promise<Token | undefined> {
+    let clientId, scope;
+    switch (refreshTokenRequest.tokenType) {
+        case TokenType.XMLA:
+            clientId = consts.adomd_client_id;
+            scope = consts.pbiScope;
+            break;
+        case TokenType.AZURE:
+            clientId = consts.adal_client_id;
+            scope = consts.azureScope;
+            break;
+        case TokenType.POWERBI:
+        default:
+            clientId = consts.adal_client_id;
+            scope = consts.pbiScope;
+            break;
+    }
+    const config: AuthConfig = {
+        clientId,
+        scope,
+        refreshToken: refreshTokenRequest.refreshToken,
+    };
+    const tokenResponse = (await executeAuthRequest(
+        getTokenUrl(refreshTokenRequest.tenant, consts),
+        config,
+        AuthFlow.RefreshToken
+    )) as AccessTokenResponse;
+    return getToken(tokenResponse, refreshTokenRequest.tenant);
+}
+
+async function loginWithDeviceCode(
+    options: OptionValues,
+    consts: consts,
+    tokenType: TokenType
+): Promise<Token | undefined> {
+    const { tenant } = getConfig(options);
+    return await getDeviceCode(tenant, consts, tokenType);
+}
+
+async function loginInteractive(options: OptionValues, consts: consts): Promise<Token | undefined> {
+    const { tenant } = getConfig(options);
+    const code = await getAuthCode(tenant, consts);
+    const config: AuthConfig = {
+        clientId: consts.adal_client_id,
+        code: code,
+        scope: consts.pbiScope,
+        redirectUri: consts.redirectUri,
+    };
+    const tokenResponse = (await executeAuthRequest(
+        getTokenUrl(tenant, consts),
+        config,
+        AuthFlow.AuthCode
+    )) as AccessTokenResponse;
+    return getToken(tokenResponse, tenant);
+}
+
+async function loginWithServicePrincipal(
+    options: OptionValues,
+    consts: consts,
+    tokenType: TokenType
+): Promise<Token | undefined> {
+    const { principal, secret, tenant } = getConfig(options);
+
+    if (!principal) throw "error: missing option '--principal'";
+    if (!secret) throw "error: missing option '--secret'";
+    if (!tenant) throw "error: missing option '--tenant'";
+
+    const config = getAuthConfig(AuthFlow.Credentials, tokenType, consts);
+    config.clientId = principal;
+    config.clientSecret = secret;
+
+    const tokenResponse = (await executeAuthRequest(
+        getTokenUrl(tenant, consts),
+        config,
+        AuthFlow.Credentials
+    )) as AccessTokenResponse;
+    return getToken(tokenResponse, tenant);
 }

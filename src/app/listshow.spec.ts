@@ -67,7 +67,7 @@ describe("app/listshow.ts", () => {
                 name: () => "list",
                 opts: () => helpOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).finally(() => {
+            listshowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateAppIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -80,7 +80,7 @@ describe("app/listshow.ts", () => {
                 name: () => "list",
                 opts: () => emptyOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAppIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -93,7 +93,7 @@ describe("app/listshow.ts", () => {
                 name: () => "list",
                 opts: () => myOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(myOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAppIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -106,7 +106,7 @@ describe("app/listshow.ts", () => {
                 name: () => "list",
                 opts: () => guidOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(guidOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAppIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -119,7 +119,7 @@ describe("app/listshow.ts", () => {
                 name: () => "show",
                 opts: () => emptyOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateAppIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
@@ -132,7 +132,7 @@ describe("app/listshow.ts", () => {
                 name: () => "show",
                 opts: () => myOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(myOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAppIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
@@ -145,7 +145,7 @@ describe("app/listshow.ts", () => {
                 name: () => "show",
                 opts: () => guidOptions,
             };
-            listshowAction(cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(guidOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateAppIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();

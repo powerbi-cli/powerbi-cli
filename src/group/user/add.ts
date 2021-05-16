@@ -25,16 +25,16 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { accessRights, principalTypes } from "../../lib/helpers";
 import { validateParameter, validateGroupId } from "../../lib/parameters";
 import { validateAllowedValues } from "../../lib/parameters";
 
-export async function addUserAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function addUserAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
 
     const groupId = await validateGroupId(options.W, true);

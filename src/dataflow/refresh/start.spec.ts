@@ -72,7 +72,7 @@ describe("dataflow/refresh/start.ts", () => {
                 name: () => "start",
                 opts: () => helpOptions,
             };
-            startAction(cmdOptsMock as ModuleCommand).finally(() => {
+            startAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateDataflowIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,7 +87,7 @@ describe("dataflow/refresh/start.ts", () => {
                 name: () => "start",
                 opts: () => emptyOptions,
             };
-            startAction(cmdOptsMock as ModuleCommand).catch(() => {
+            startAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -102,7 +102,7 @@ describe("dataflow/refresh/start.ts", () => {
                 name: () => "start",
                 opts: () => missingOptions,
             };
-            startAction(cmdOptsMock as ModuleCommand).catch(() => {
+            startAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -117,7 +117,7 @@ describe("dataflow/refresh/start.ts", () => {
                 name: () => "start",
                 opts: () => allOptions,
             };
-            startAction(cmdOptsMock as ModuleCommand).then(() => {
+            startAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

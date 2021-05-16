@@ -30,20 +30,19 @@ import { ImportMock } from "ts-mock-imports";
 import chai from "chai";
 import { SinonStub } from "sinon";
 
-import { storeAccessToken, getAccessToken, removeAccessToken } from "./auth";
+import { storeAccessToken, getAccessToken, removeAccessToken } from "./token";
 
 import fs from "fs";
-import jsonwebtoken from "jsonwebtoken";
+import { TokenStore, TokenType } from "./auth";
 
 const expect = chai.expect;
 
-describe("auth.ts", () => {
+describe("token.ts", () => {
     let existsSyncMock: SinonStub<unknown[], unknown>;
     let writeFileSyncMock: SinonStub<unknown[], unknown>;
     let mkdirSyncMock: SinonStub<unknown[], unknown>;
     let readFileSyncMock: SinonStub<unknown[], unknown>;
     let unlinkSyncMock: SinonStub<unknown[], unknown>;
-    let decodeMock: SinonStub<unknown[], unknown>;
     let consoleDebugMock: SinonStub<unknown[], unknown>;
     beforeEach(() => {
         existsSyncMock = ImportMock.mockFunction(fs, "existsSync");
@@ -51,7 +50,6 @@ describe("auth.ts", () => {
         mkdirSyncMock = ImportMock.mockFunction(fs, "mkdirSync");
         readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
         unlinkSyncMock = ImportMock.mockFunction(fs, "unlinkSync");
-        decodeMock = ImportMock.mockFunction(jsonwebtoken, "decode");
         consoleDebugMock = ImportMock.mockFunction(console, "debug", true);
     });
     afterEach(() => {
@@ -60,14 +58,13 @@ describe("auth.ts", () => {
         mkdirSyncMock.restore();
         readFileSyncMock.restore();
         unlinkSyncMock.restore();
-        decodeMock.restore();
         consoleDebugMock.restore();
     });
     describe("storeAccessToken()", () => {
         it("normal flow", () => {
             existsSyncMock.returns(true);
             writeFileSyncMock.returns(true);
-            storeAccessToken("");
+            storeAccessToken(({ powerbi: { accessToken: "token" } } as unknown) as TokenStore);
             expect(existsSyncMock.callCount).equal(1);
             expect(writeFileSyncMock.callCount).equal(1);
         });
@@ -76,54 +73,76 @@ describe("auth.ts", () => {
             existsSyncMock.returns(false);
             mkdirSyncMock.returns(true);
             writeFileSyncMock.returns(true);
-            storeAccessToken("");
+            storeAccessToken(({ powerbi: { accessToken: "token" } } as unknown) as TokenStore);
             expect(existsSyncMock.callCount).equal(1);
             expect(mkdirSyncMock.callCount).equal(1);
             expect(writeFileSyncMock.callCount).equal(1);
         });
     });
     describe("getAccessToken()", () => {
-        it("valid stored token", () => {
+        it("valid stored token", (done) => {
+            const expiresOn = new Date().getTime() + 3599;
             existsSyncMock.returns(true);
-            readFileSyncMock.returns("token");
-            decodeMock.returns({ exp: Math.floor(((new Date() as unknown) as number) / 1000) + 3599 });
-            expect(getAccessToken()).equal("token");
-            expect(existsSyncMock.callCount).equal(1);
-            expect(readFileSyncMock.callCount).equal(1);
-            expect(decodeMock.callCount).equal(1);
+            readFileSyncMock.returns(
+                JSON.stringify({
+                    powerbi: {
+                        accessToken: "token",
+                        expiresOn,
+                    },
+                })
+            );
+            getAccessToken(TokenType.POWERBI).then((token) => {
+                expect(token).equal("token");
+                expect(existsSyncMock.callCount).equal(1);
+                expect(readFileSyncMock.callCount).equal(1);
+                done();
+            });
         });
-        it("expired stored token", () => {
+        it("expired stored token", (done) => {
+            const expiresOn = new Date().getTime() - 60;
             existsSyncMock.returns(true);
-            readFileSyncMock.returns("token");
-            decodeMock.returns({ exp: Math.floor(((new Date() as unknown) as number) / 1000) - 60 });
-            expect(getAccessToken()).equal("");
-            expect(existsSyncMock.callCount).equal(1);
-            expect(readFileSyncMock.callCount).equal(1);
-            expect(decodeMock.callCount).equal(1);
+            readFileSyncMock.returns(
+                JSON.stringify({
+                    powerbi: {
+                        accessToken: "token",
+                        expiresOn,
+                    },
+                })
+            );
+            getAccessToken(TokenType.POWERBI).then((token) => {
+                expect(token).equal("");
+                expect(existsSyncMock.callCount).equal(1);
+                expect(readFileSyncMock.callCount).equal(1);
+                done();
+            });
         });
-        it("exception during validation", () => {
-            existsSyncMock.returns(true);
-            readFileSyncMock.returns("token");
-            decodeMock.throws();
-            expect(getAccessToken()).equal("");
-            expect(existsSyncMock.callCount).equal(4);
-            expect(readFileSyncMock.callCount).equal(2);
-            expect(decodeMock.callCount).equal(1);
+        it("no token stored", (done) => {
+            existsSyncMock.returns(false);
+            getAccessToken(TokenType.POWERBI).then((token) => {
+                expect(token).equal("");
+                expect(existsSyncMock.callCount).equal(1);
+                expect(readFileSyncMock.callCount).equal(0);
+                done();
+            });
         });
-        it("no token stored", () => {
+        it("no correct token stored", (done) => {
             existsSyncMock.returns(true);
             readFileSyncMock.returns("");
-            expect(getAccessToken()).equal("");
-            expect(existsSyncMock.callCount).equal(1);
-            expect(readFileSyncMock.callCount).equal(1);
-            expect(decodeMock.callCount).equal(0);
+            getAccessToken(TokenType.POWERBI).then((token) => {
+                expect(token).equal("");
+                expect(existsSyncMock.callCount).equal(1);
+                expect(readFileSyncMock.callCount).equal(1);
+                done();
+            });
         });
-        it("missing directory", () => {
+        it("missing directory", (done) => {
             existsSyncMock.returns(false);
-            expect(getAccessToken()).equal("");
-            expect(existsSyncMock.callCount).equal(1);
-            expect(readFileSyncMock.callCount).equal(0);
-            expect(decodeMock.callCount).equal(0);
+            getAccessToken(TokenType.POWERBI).then((token) => {
+                expect(token).equal("");
+                expect(existsSyncMock.callCount).equal(1);
+                expect(readFileSyncMock.callCount).equal(0);
+                done();
+            });
         });
     });
     describe("removeAccessToken()", () => {

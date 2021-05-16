@@ -75,7 +75,7 @@ describe("report/delete.ts", () => {
                 name: () => "delete",
                 opts: () => helpOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).finally(() => {
+            deleteAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -90,7 +90,7 @@ describe("report/delete.ts", () => {
                 name: () => "delete",
                 opts: () => emptyOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).catch(() => {
+            deleteAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -105,7 +105,7 @@ describe("report/delete.ts", () => {
                 name: () => "delete",
                 opts: () => myOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).catch(() => {
+            deleteAction(myOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -120,7 +120,7 @@ describe("report/delete.ts", () => {
                 name: () => "delete",
                 opts: () => missingOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).catch(() => {
+            deleteAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -135,7 +135,7 @@ describe("report/delete.ts", () => {
                 name: () => "delete",
                 opts: () => allOptions,
             };
-            deleteAction(cmdOptsMock as ModuleCommand).then(() => {
+            deleteAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

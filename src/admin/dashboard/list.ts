@@ -25,7 +25,7 @@
  */
 
 "use strict";
-
+import { OptionValues } from "commander";
 import { stringify, ParsedUrlQueryInput } from "querystring";
 
 import { ModuleCommand } from "../../lib/command";
@@ -34,8 +34,9 @@ import { APICall, executeAPICall } from "../../lib/api";
 import { expandAdminDashboards, getGroupUrl } from "../../lib/helpers";
 import { validateAllowedValues, validateGroupId } from "../../lib/parameters";
 
-export async function listAction(cmd: ModuleCommand): Promise<void> {
-    const options = cmd.opts();
+export async function listAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const groupId = await validateGroupId(options.W, false);
     const filter = options.filter;
