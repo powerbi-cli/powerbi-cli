@@ -12,7 +12,6 @@ Home of the Power BI CLI, a multiplatform CLI (command line interface) for inter
 ## Prerequisits
 
 -   NodeJS > v10.12.0, LTS release advised: [download](https://nodejs.org).
--   [Optional] Azure CLI v2+ for easier login [installation](docs.microsoft.com/en-us/cli/azure/install-azure-cli?view=azure-cli-latest)
 
 ## Installing
 
@@ -32,12 +31,7 @@ To use the `powerbi-cli` type
 
 To login to the Power BI REST API use:
 
-`pbicli login [options]`
-
-Recommended login is leverage the `Azure CLI` login flow via:
-
--   `az login`
--   `pbicli login --azurecli`
+`pbicli login`
 
 For all available commands and options:
 
