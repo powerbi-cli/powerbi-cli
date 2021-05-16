@@ -244,6 +244,7 @@ export function getAuthConfig(authFlow: AuthFlow, tokenType: TokenType, consts: 
 
 export async function getAuthCode(tenantId: string, consts: consts): Promise<string> {
     let server: Server | undefined = undefined;
+    let authenticateUrl: URL | undefined = undefined;
 
     // Set up a temporary local endpoint that can wait for the authentication redirect to be sent to the local redirect URI.
     const authCodePromise = new Promise<string>((resolve, reject) => {
@@ -278,10 +279,10 @@ export async function getAuthCode(tenantId: string, consts: consts): Promise<str
         server.setTimeout(1000);
 
         // Direct the user to the authentication URI either by opening a browser (desktop and mobile apps) or redirecting their browser using a Location header (web apps and APIs).
-        const authenticateUrl = getAuthorizeUrl(tenantId, consts);
+        authenticateUrl = new URL(getAuthorizeUrl(tenantId, consts));
         server.on("listening", async () => {
             try {
-                await open(authenticateUrl);
+                await open((authenticateUrl as URL).href);
             } catch {
                 if (server) {
                     (server as Server).close();
@@ -292,8 +293,9 @@ export async function getAuthCode(tenantId: string, consts: consts): Promise<str
             }
         });
     });
+    const url = authenticateUrl ? `${(authenticateUrl as URL).origin}${(authenticateUrl as URL).pathname}` : ``;
     console.info(
-        yellow(`The default web browser has been opened at ${consts.redirectUri}. Please continue the login in the web browser.
+        yellow(`The default web browser has been opened at ${url}. Please continue the login in the web browser.
 If no web browser is available or if the web browser fails to open, use device code flow 
 with 'pbicli login --use-device-code'`)
     );

@@ -33,34 +33,34 @@ import { updateAction } from "./update";
 
 export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
-        .description("Lists all the Dedicated capacities for the given subscription")
+        .description("Lists all the dedicated capacities for the given subscription")
         .action(listshowAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "(Optional) Name or ID of the Azure Resource group");
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
-        .description("Gets details about the specified dedicated capacity.")
+        .description("Gets details about the specified dedicated capacity")
         .action(listshowAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")
         .option("--capacity -c <name>", "Name of the Azure dedicated capacity");
     showCommand.addGlobalOptions();
     const startCommand = new ModuleCommand("start")
-        .description("Starts the specified dedicated capacity.")
+        .description("Starts the specified dedicated capacity")
         .action(startstopAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")
         .option("--capacity -c <name>", "Name of the Azure dedicated capacity");
     startCommand.addGlobalOptions();
     const stopCommand = new ModuleCommand("stop")
-        .description("Stops the specified dedicated capacity.")
+        .description("Stops the specified dedicated capacity")
         .action(startstopAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")
         .option("--capacity -c <name>", "Name of the Azure dedicated capacity");
     stopCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
-        .description("Changes the specific capacity information.")
+        .description("Changes the specific capacity information")
         .action(updateAction)
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")

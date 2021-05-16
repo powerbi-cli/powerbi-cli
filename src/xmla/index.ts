@@ -32,7 +32,7 @@ import { queryAction } from "./query";
 
 export function getCommands(): ModuleCommand {
     const queryCommand = new ModuleCommand("query")
-        .description("Lists all the Dedicated capacities for the given subscription")
+        .description("Execute an XMLA query against the Power BI XMLA endpoint")
         .action(queryAction)
         .option("--connection -c <connection>", "XMLA Endpoint or workspace connection")
         .option("--dataset -d <dataset>", "Name of the Power BI dataset")

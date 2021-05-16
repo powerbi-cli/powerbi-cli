@@ -94,7 +94,8 @@ export function formatAndPrintOutputStream(
     query?: string
 ): void {
     let hasResult = false,
-        hasRows = false;
+        hasRows = false,
+        breaker = "";
     const isHeader = outputType === OutputType.json || outputType === OutputType.csv;
     const isCsv = outputType === OutputType.csv;
 
@@ -134,25 +135,28 @@ export function formatAndPrintOutputStream(
                         case OutputType.json:
                         default:
                             result = `${JSON.stringify([data], null, 2).slice(0, -2).substring(1)}`;
+                            breaker = ",";
                             break;
                         case OutputType.yml:
                             result = dump(JSON.parse(`[${JSON.stringify(data)}]`)).slice(0, -1);
+                            breaker = "\n";
                             break;
                         case OutputType.tsv:
                         case OutputType.csv:
                             try {
                                 const json2csvParser = new Parser({
-                                    header: isCsv && isHeader,
+                                    header: isCsv && isHeader && !hasRows,
                                     delimiter: isCsv ? "," : "\t",
                                     quote: isCsv ? "'" : "",
                                 });
                                 result = json2csvParser.parse(data);
+                                breaker = "\n";
                             } catch {
                                 console.error(red("Error parsing data to tsv format."));
                             }
                             break;
                     }
-                    this.push(`${hasRows ? "," : ""}${result}`);
+                    this.push(`${hasRows ? breaker : ""}${result}`);
                     hasRows = true;
                 }
             }
