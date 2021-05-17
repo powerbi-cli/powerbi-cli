@@ -56,6 +56,7 @@ export const expandAdminDashboards = ["tiles"];
 export const expandAdminImports = ["datasets", "reports"];
 export const expandRefreshes = ["capacity", "workspace"];
 export const workloadState = ["enabled", "disabled"];
+export const powerBIClouds = ["Public", "GCC", "GCCHigh", "DoD", "Germany", "China"];
 
 const { powerBIRestURL } = getConsts();
 
@@ -232,6 +233,53 @@ export function getReportID(groupName: string | undefined, name: string): Promis
                     resolve(output[0].id);
                 } catch {
                     reject(`No report found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getScorecardID(groupName: string | undefined, name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        groupName = getGroupUrl(groupName);
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${powerBIRestURL}${groupName}/scorecards`,
+        };
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                console.log("d");
+                const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No scorecard found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getScorecardGoalID(
+    groupName: string | undefined,
+    scorecardName: string | undefined,
+    name: string
+): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        groupName = getGroupUrl(groupName);
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${powerBIRestURL}${groupName}/scorecards/${scorecardName}/goals`,
+        };
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No scorecard goal found with name '${name}'`);
                 }
             })
             .catch((err) => reject(err));

@@ -48,6 +48,8 @@ import {
     getAdminGroupInfo,
     getAdminCapacityID,
     getAdminObjectInfo,
+    getScorecardID,
+    getScorecardGoalID,
 } from "./helpers";
 
 chai.use(chaiAsPromise);
@@ -193,6 +195,39 @@ describe("helpers.ts", () => {
         it("exception in executeRestCall", () => {
             executeRestCallMock.rejects();
             expect(getReportID(uuid, "reportName")).eventually.to.rejected;
+        });
+    });
+    describe("getScorecardID()", () => {
+        it("scorecard found ", () => {
+            executeRestCallMock.resolves([{ name: "scorecardName", id: uuid }]);
+            expect(getScorecardID(uuid, "scorecardName")).eventually.to.equal(uuid);
+        });
+        it("report not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getScorecardID(uuid, "scorecardName")).eventually.to.rejectedWith(
+                "No report found with name 'scorecardName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getScorecardID(uuid, "scorecardName")).eventually.to.rejected;
+        });
+    });
+
+    describe("getScorecardGoalID()", () => {
+        it("scorecard goal found ", () => {
+            executeRestCallMock.resolves([{ title: "goalName", id: uuid }]);
+            expect(getScorecardGoalID(uuid, "scorecardName", "goalName")).eventually.to.equal(uuid);
+        });
+        it("scorecard goal not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getScorecardGoalID(uuid, "scorecardName", "goalName")).eventually.to.rejectedWith(
+                "No scorecard goal found with name 'goalName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getScorecardGoalID(uuid, "scorecardName", "goalName")).eventually.to.rejected;
         });
     });
 

@@ -42,7 +42,10 @@ import {
     getAdminGroupInfo,
     getAdminCapacityID,
     getAdminObjectInfo,
+    getScorecardID,
+    getScorecardGoalID,
 } from "./helpers";
+import { getDefault } from "./config";
 
 export interface Parameter {
     name?: string;
@@ -54,6 +57,7 @@ export interface Parameter {
 }
 
 export async function validateGroupId(group: string | undefined, isRequired: boolean): Promise<string | undefined> {
+    if (!group) group = getDefault("workspace");
     return validateParameter({
         name: group,
         isName: () => getGroupID(group as string),
@@ -67,6 +71,7 @@ export async function validateAdminGroupId(
     isRequired: boolean,
     filterState: string | undefined = undefined
 ): Promise<string | undefined> {
+    if (!group) group = getDefault("workspace");
     return validateParameter({
         name: group,
         isName: () => getAdminGroupInfo(group as string, filterState).then((result) => Promise.resolve(result[0])),
@@ -159,6 +164,7 @@ export async function validateDashboardId(
     dashboard: string | undefined,
     isRequired: boolean
 ): Promise<string | undefined> {
+    if (!dashboard) dashboard = getDefault("dashboard");
     return validateParameter({
         name: dashboard,
         isName: () => getDashboardID(groupId, dashboard as string),
@@ -204,6 +210,7 @@ export async function validateImportId(
 }
 
 export async function validateGatewayId(gateway: string | undefined, isRequired: boolean): Promise<string | undefined> {
+    if (!gateway) gateway = getDefault("gateway");
     return validateParameter({
         name: gateway,
         isName: () => getGatewayID(gateway as string),
@@ -225,10 +232,39 @@ export async function validateGatewayDatasourceId(
     });
 }
 
+export async function validateScorecardId(
+    groupId: string | undefined,
+    scorecard: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    if (!scorecard) scorecard = getDefault("scorecard");
+    return validateParameter({
+        name: scorecard,
+        isName: () => getScorecardID(groupId, scorecard as string),
+        missing: "error: missing option '--scorecard'",
+        isRequired,
+    });
+}
+
+export async function validateScorecardGoalId(
+    groupId: string | undefined,
+    scorecard: string | undefined,
+    goal: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    return validateParameter({
+        name: goal,
+        isName: () => getScorecardGoalID(groupId, scorecard as string, goal as string),
+        missing: "error: missing option '--goal'",
+        isRequired,
+    });
+}
+
 export async function validateSubscriptionId(
     subscription: string | undefined,
     isRequired: boolean
 ): Promise<string | undefined> {
+    if (!subscription) subscription = getDefault("subscription");
     return validateParameter({
         name: subscription,
         isName: () => Promise.reject("error: '--subscription' should be a unique identifier"),
@@ -241,6 +277,7 @@ export async function validateResourceGroupId(
     resourceGroup: string | undefined,
     isRequired: boolean
 ): Promise<string | undefined> {
+    if (!resourceGroup) resourceGroup = getDefault("resourceGroup");
     return validateParameter({
         name: resourceGroup,
         isId: () => Promise.reject("error: '--resource' should be a name"),
