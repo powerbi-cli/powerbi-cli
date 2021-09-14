@@ -45,7 +45,7 @@ export async function startExportAction(...args: unknown[]): Promise<void> {
     const format = await validateAllowedValues((options.format as string).toUpperCase(), allowedExportFormat);
     const isPbix = pbiDownloads.some((f) => f === format);
     const isPbiExport = pbiExports.some((f) => f === format);
-    const config = options.config || (options.configFile === undefined ? undefined : readFileSync(options.configFile));
+    const config = options.config ? JSON.parse(options.config) : readFileSync(options.configFile, "utf8");
     debug(
         `Start the export of a Power BI report (${reportId}) in workspace (${groupId || "my"}) to format (${format})`
     );

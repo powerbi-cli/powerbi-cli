@@ -33,7 +33,7 @@ import https from "https";
 import FormData from "form-data";
 
 import { getAccessToken } from "./token";
-import { debug } from "./logging";
+import { debug, verbose } from "./logging";
 import { TokenType } from "./auth";
 
 const silentMethods: string[] = ["DELETE", "PUT", "POST", "PATCH"];
@@ -51,6 +51,7 @@ export function executeRestCall(
             }
             const creds = new TokenCredentials(token);
             try {
+                verbose(`Execute REST [${request.method}] call to ${request.url}`);
                 const client = new AzureServiceClient(creds);
                 client
                     .sendRequest(request)

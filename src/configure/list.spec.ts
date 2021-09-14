@@ -26,37 +26,41 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import { ImportMock } from "ts-mock-imports";
+import chai from "chai";
+import chaiAsPromise from "chai-as-promised";
+import { SinonStub } from "sinon";
 
-export const programModules: [string, boolean][] = [
-    ["admin", false],
-    ["app", false],
-    ["capacity", false],
-    ["cloud", false],
-    ["configure", false],
-    ["dashboard", false],
-    ["dataflow", false],
-    ["dataset", false],
-    ["embedded", false],
-    ["feature", false],
-    ["gateway", false],
-    ["import", false],
-    ["report", false],
-    ["scorecard", false],
-    ["group", false], // workspace
-    ["xmla", true],
-    ["login", false],
-    ["logout", false],
-];
+import { ModuleCommand } from "../lib/command";
+import * as parameters from "../lib/parameters";
+import * as api from "../lib/api";
 
-export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
+import { listAction } from "./list";
 
-    modules.forEach((module: [string, boolean]) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
+chai.use(chaiAsPromise);
+const expect = chai.expect;
+
+describe("cloud/list.ts", () => {
+    const emptyOptions = {};
+    const helpOptions = { H: true };
+    describe("listAction()", () => {
+        it("list with --help", (done) => {
+            const cmdOptsMock: unknown = {
+                name: () => "list",
+                opts: () => helpOptions,
+            };
+            listAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
+                done();
+            });
+        });
+        it("list with no options", (done) => {
+            const cmdOptsMock: unknown = {
+                name: () => "list",
+                opts: () => emptyOptions,
+            };
+            listAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
+                done();
+            });
+        });
     });
-
-    program.addGlobalOptions();
-    return program;
-}
+});

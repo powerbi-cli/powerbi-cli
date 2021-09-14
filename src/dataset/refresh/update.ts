@@ -41,7 +41,9 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.refreshSchedule === undefined && options.refreshScheduleFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
-    const refreshSchedule = options.refreshSchedule || readFileSync(options.refreshScheduleFile);
+    const refreshSchedule = options.refreshSchedule
+        ? JSON.parse(options.refreshSchedule)
+        : readFileSync(options.refreshScheduleFile, "utf8");
     debug(`Update the refresch schedule of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const connectionType = options.directQuery ? "directQueryRefreshSchedule" : "refreshSchedule";
     const request: APICall = {

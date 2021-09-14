@@ -39,5 +39,5 @@ export async function setAction(...args: unknown[]): Promise<void> {
     const cloud = await validateAllowedValues(options.name, powerBIClouds);
     debug(`Set configured cloud to ${cloud}`);
 
-    storeConfig([`cloud=${cloud}`], "core");
+    storeConfig([`cloud=${cloud}`]);
 }

@@ -25,38 +25,28 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "./command";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
+import { validateGroupId } from "../lib/parameters";
+import { getGroupUrl } from "../lib/helpers";
 
-export const programModules: [string, boolean][] = [
-    ["admin", false],
-    ["app", false],
-    ["capacity", false],
-    ["cloud", false],
-    ["configure", false],
-    ["dashboard", false],
-    ["dataflow", false],
-    ["dataset", false],
-    ["embedded", false],
-    ["feature", false],
-    ["gateway", false],
-    ["import", false],
-    ["report", false],
-    ["scorecard", false],
-    ["group", false], // workspace
-    ["xmla", true],
-    ["login", false],
-    ["logout", false],
-];
-
-export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: [string, boolean]) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
-    });
-
-    program.addGlobalOptions();
-    return program;
+export async function createAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
+    if (options.H) return;
+    const groupId = await validateGroupId(options.W, false);
+    if (!options.S) throw "error: missing option '--scorecard'";
+    debug(`Creates a Power BI scorecard in workspace (${groupId}) with name (${options.S})`);
+    const request: APICall = {
+        method: "POST",
+        url: `${getGroupUrl(groupId)}/scorecards`,
+        body: {
+            name: options.S,
+            groupId,
+            description: options.description,
+            contact: options.contact,
+        },
+    };
+    await executeAPICall(request);
 }

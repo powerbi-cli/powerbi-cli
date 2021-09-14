@@ -27,14 +27,21 @@
 "use strict";
 
 import { ModuleCommand } from "../lib/command";
-import { configureAction } from "./configure";
+import { listAction } from "./list";
+import { setAction } from "./set";
 
 export function getCommands(): ModuleCommand {
+    const listCommand = new ModuleCommand("list").action(listAction).description("List all applicable defaults");
+    listCommand.addGlobalOptions();
+    const setCommand = new ModuleCommand("set")
+        .action(setAction)
+        .description("Set the defaults arguments")
+        .option("--defaults -d <default...>", "Space-separated 'name=value' pairs for common argument defaults");
+    setCommand.addGlobalOptions();
     const configureCommand = new ModuleCommand("configure")
         .description("Manage Power BI CLI configuration")
-        .action(configureAction)
-        .option("--defaults -d <default...>", "Space-separated 'name=value' pairs for common argument defaults")
-        .option("--list-defaults -l", "List all applicable defaults");
+        .addCommand(listCommand)
+        .addCommand(setCommand);
     configureCommand.addGlobalOptions();
 
     return configureCommand;

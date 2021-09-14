@@ -222,6 +222,7 @@ describe("report/export/start.ts", () => {
             validateGroupIdMock.resolves(xlsxOptionsFile.W);
             validateReportIdMock.resolves(xlsxOptionsFile.R);
             validateAllowedValues.resolves("XLSX");
+            readFileSyncMock.resolves("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "start",

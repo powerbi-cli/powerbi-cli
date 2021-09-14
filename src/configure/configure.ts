@@ -26,20 +26,26 @@
 
 "use strict";
 import { OptionValues } from "commander";
+import { ModuleCommand } from "../lib/command";
 
 import { displayConfig, storeConfig } from "../lib/config";
 import { debug } from "../lib/logging";
 
 export async function configureAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
+    let noOptions = false;
     if (options.H) return;
 
     if (options.L) {
+        noOptions = true;
         debug("Display current stored config values");
         displayConfig("defaults");
     }
     if (options.D) {
+        noOptions = true;
         debug("Store new default");
-        storeConfig(options.D, "defaults");
+        storeConfig(options.D);
     }
+
+    if (!noOptions) (args[args.length - 1] as ModuleCommand).help();
 }

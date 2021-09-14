@@ -26,36 +26,31 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { readFileSync } from "fs";
 
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { validateGroupId, validateScorecardId, validateScorecardGoalId } from "../../lib/parameters";
+import { getGroupUrl } from "../../lib/helpers";
 
-export async function updateAction(...args: unknown[]): Promise<void> {
+export async function listshowAction(...args: unknown[]): Promise<void> {
     const cmd = args[args.length - 1] as ModuleCommand;
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
-        throw "error: missing option '--update-details' or '--update-details-file'";
-    const body = options.updateDetails
-        ? JSON.parse(options.updateDetails)
-        : readFileSync(options.updateDetailsFile, "utf8");
-    debug(`Updates the specified workspace properties`);
+    const groupId = await validateGroupId(options.W, false);
+    const scorecardId = await validateScorecardId(groupId as string, options.S, true);
+    const goalId = await validateScorecardGoalId(
+        groupId as string,
+        scorecardId as string,
+        options.G,
+        cmd.name() === "show"
+    );
+    debug(`Retrieves Power BI group of the scorecard (${groupId})`);
     const request: APICall = {
-        method: "PATCH",
-        url: `/admin/groups/${groupId}`,
-        body,
-        containsValue: false,
+        method: "GET",
+        url: `${getGroupUrl(groupId)}/scorecards/${scorecardId}/goals/${goalId ? `${goalId}` : ""}`,
+        containsValue: goalId ? false : true,
     };
+    debug(`Retrieve Power BI scorecard (${scorecardId})`);
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }

@@ -25,38 +25,21 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "./command";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
+import { validateGroupId, validateScorecardId } from "../lib/parameters";
 
-export const programModules: [string, boolean][] = [
-    ["admin", false],
-    ["app", false],
-    ["capacity", false],
-    ["cloud", false],
-    ["configure", false],
-    ["dashboard", false],
-    ["dataflow", false],
-    ["dataset", false],
-    ["embedded", false],
-    ["feature", false],
-    ["gateway", false],
-    ["import", false],
-    ["report", false],
-    ["scorecard", false],
-    ["group", false], // workspace
-    ["xmla", true],
-    ["login", false],
-    ["logout", false],
-];
-
-export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: [string, boolean]) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
-    });
-
-    program.addGlobalOptions();
-    return program;
+export async function deleteAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
+    if (options.H) return;
+    const groupId = await validateGroupId(options.W, false);
+    const scorecardId = await validateScorecardId(groupId as string, options.S, true);
+    debug(`Delete Power BI scorecard (${scorecardId})`);
+    const request: APICall = {
+        method: "DELETE",
+        url: `/scorecards(${scorecardId})`,
+    };
+    await executeAPICall(request);
 }

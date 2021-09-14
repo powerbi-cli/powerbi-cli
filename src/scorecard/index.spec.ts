@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Jan Pieter Posthuma / DataScenarios
+ * Copyright (c) 2021 Jan Pieter Posthuma / DataScenarios
  *
  * All rights reserved.
  *
@@ -26,37 +26,17 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import chai from "chai";
 
-export const programModules: [string, boolean][] = [
-    ["admin", false],
-    ["app", false],
-    ["capacity", false],
-    ["cloud", false],
-    ["configure", false],
-    ["dashboard", false],
-    ["dataflow", false],
-    ["dataset", false],
-    ["embedded", false],
-    ["feature", false],
-    ["gateway", false],
-    ["import", false],
-    ["report", false],
-    ["scorecard", false],
-    ["group", false], // workspace
-    ["xmla", true],
-    ["login", false],
-    ["logout", false],
-];
+import { getCommands } from "./index";
 
-export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const should = chai.should();
 
-    modules.forEach((module: [string, boolean]) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
+describe("goal/index.ts", () => {
+    describe("getCommands()", () => {
+        it("normal execution", () => {
+            getCommands().should.not.throw;
+        });
     });
-
-    program.addGlobalOptions();
-    return program;
-}
+});

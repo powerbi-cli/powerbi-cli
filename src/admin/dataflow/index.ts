@@ -46,7 +46,7 @@ export function getCommands(): ModuleCommand {
         .option("--top <number>", "Returns only the first <number> results. Default: 5000")
         .option("--skip <number>", "Skips the first <number> results");
     listCommand.addGlobalOptions();
-    const showCommand = new ModuleCommand("show")
+    const showCommand = new ModuleCommand("export")
         .description("Exports the specified dataflow definition")
         .action(exportAction)
         .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");

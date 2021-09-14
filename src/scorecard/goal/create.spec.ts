@@ -35,111 +35,109 @@ import { ModuleCommand } from "../../lib/command";
 import * as parameters from "../../lib/parameters";
 import * as api from "../../lib/api";
 
-import { updateAction } from "./update";
-
-import fs from "fs";
+import { createAction } from "./create";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("admin/group/update.ts", () => {
-    let validateAdminGroupIdMock: SinonStub<unknown[], unknown>;
+describe("scorecard/goal/create.ts", () => {
+    let validateGroupIdMock: SinonStub<unknown[], unknown>;
+    let validateScorecardIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
-    let readFileSyncMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
-    const groupOptions = {
+    const missingOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
-    const detailsOptions = {
-        W: "name",
-        updateDetails: "{}",
+    const twoOptions = {
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        S: "scorecardName",
     };
-    const fileOptions = {
-        W: "name",
-        updateDetailsFile: "file.json",
+    const allOptions = {
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        S: "scorecardName",
+        G: "goal",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateAdminGroupIdMock = ImportMock.mockFunction(parameters, "validateAdminGroupId");
+        validateGroupIdMock = ImportMock.mockFunction(parameters, "validateGroupId");
+        validateScorecardIdMock = ImportMock.mockFunction(parameters, "validateScorecardId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
-        readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
     });
     afterEach(() => {
-        validateAdminGroupIdMock.restore();
+        validateGroupIdMock.restore();
+        validateScorecardIdMock.restore();
         executeAPICallMock.restore();
-        readFileSyncMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+    describe("createAction()", () => {
+        it("create with --help", (done) => {
+            validateGroupIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
+                name: () => "create",
                 opts: () => helpOptions,
             };
-            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(0);
+            createAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("create with no options", (done) => {
+            validateGroupIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
+                name: () => "create",
                 opts: () => emptyOptions,
             };
-            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            createAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with 'group' options", (done) => {
-            validateAdminGroupIdMock.resolves(undefined);
+        it("create with missing options", (done) => {
+            validateGroupIdMock.resolves(missingOptions.W);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => groupOptions,
+                name: () => "create",
+                opts: () => missingOptions,
             };
-            updateAction(groupOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+            createAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateScorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with 'group' and 'details' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            readFileSyncMock.resolves("{}");
+        it("create with two options", (done) => {
+            validateGroupIdMock.resolves(twoOptions.W);
+            validateScorecardIdMock.resolves(twoOptions.S);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => detailsOptions,
+                name: () => "create",
+                opts: () => twoOptions,
             };
-            updateAction(detailsOptions, cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(0);
+            createAction(twoOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateScorecardIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(0);
+                done();
+            });
+        });
+        it("create with all options", (done) => {
+            validateGroupIdMock.resolves(allOptions.W);
+            validateScorecardIdMock.resolves(allOptions.S);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "create",
+                opts: () => allOptions,
+            };
+            createAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateScorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
-        });
-        it("update with 'group' and 'details file' options", (done) => {
-            validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            readFileSyncMock.resolves("{}");
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => fileOptions,
-            };
-            updateAction(fileOptions, cmdOptsMock as ModuleCommand)
-                .then(() => {
-                    expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                    expect(readFileSyncMock.callCount).to.equal(1);
-                    expect(executeAPICallMock.callCount).to.equal(1);
-                    done();
-                })
-                .catch((err) => console.log(err));
         });
     });
 });

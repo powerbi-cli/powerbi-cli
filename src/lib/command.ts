@@ -37,7 +37,6 @@ import { currentVersion } from "./version";
 
 export class ModuleCommand extends Command {
     private errorMsg: string | undefined;
-    private _parent: ModuleCommand | undefined;
 
     constructor(name: string) {
         super(name);
@@ -158,7 +157,7 @@ export class ModuleCommand extends Command {
         if (!command.parent) {
             return command.args;
         } else {
-            return this.getAllArgs(command.parent);
+            return this.getAllArgs(command.parent as ModuleCommand);
         }
     }
 
@@ -200,14 +199,6 @@ export class ModuleCommand extends Command {
 
     public set errorMessage(value: string | undefined) {
         this.errorMsg = value;
-    }
-
-    public set parent(value: ModuleCommand | undefined) {
-        this._parent = value;
-    }
-
-    public get parent(): ModuleCommand | undefined {
-        return this._parent;
     }
 
     private validateOutput(value: string | null): OutputType {

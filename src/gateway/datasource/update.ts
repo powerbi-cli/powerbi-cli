@@ -39,7 +39,9 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const datasourceId = await validateGatewayDatasourceId(gatewayId as string, options.D, true);
     if (options.credential === undefined && options.credentialFile === undefined)
         throw "error: missing option '--credential' or '--credential-file'";
-    const credential = options.credential || readFileSync(options.credentialFile);
+    const credential = options.credential
+        ? JSON.parse(options.credential)
+        : readFileSync(options.credentialFile, "utf8");
     debug(`Update the credentials of a Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "PATCH",

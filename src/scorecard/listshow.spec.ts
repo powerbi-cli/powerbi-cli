@@ -31,160 +31,141 @@ import chai from "chai";
 import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
-import { ModuleCommand } from "../../lib/command";
-import * as parameters from "../../lib/parameters";
-import * as api from "../../lib/api";
+import { ModuleCommand } from "../lib/command";
+import * as parameters from "../lib/parameters";
+import * as api from "../lib/api";
 
-import { updateAction } from "./update";
-
-import fs from "fs";
+import { listshowAction } from "./listshow";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("dataflow/refresh/update.ts", () => {
+describe("scorecard/listshow.ts", () => {
     let validateGroupIdMock: SinonStub<unknown[], unknown>;
-    let validateDataflowIdMock: SinonStub<unknown[], unknown>;
+    let validatescorecardIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
-    let readFileSyncMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
-    const missingOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        F: "dataflowName",
-    };
     const allOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        F: "dataflowName",
-        refreshSchedule: "",
-    };
-    const allFileOptions = {
-        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        F: "dataflowName",
-        refreshScheduleFile: "",
+        S: "scorecardName",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
         validateGroupIdMock = ImportMock.mockFunction(parameters, "validateGroupId");
-        validateDataflowIdMock = ImportMock.mockFunction(parameters, "validateDataflowId");
+        validatescorecardIdMock = ImportMock.mockFunction(parameters, "validateScorecardId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
-        readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
     });
     afterEach(() => {
         validateGroupIdMock.restore();
-        validateDataflowIdMock.restore();
+        validatescorecardIdMock.restore();
         executeAPICallMock.restore();
-        readFileSyncMock.restore();
     });
-    describe("updateAction()", () => {
-        it("update with --help", (done) => {
+    describe("listshowAction()", () => {
+        it("list with --help", (done) => {
             validateGroupIdMock.resolves(undefined);
-            validateDataflowIdMock.resolves(undefined);
+            validatescorecardIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
+                name: () => "list",
                 opts: () => helpOptions,
             };
-            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
+            listshowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
-                expect(validateDataflowIdMock.callCount).to.equal(0);
+                expect(validatescorecardIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options ('my')", (done) => {
+        it("list with no options", (done) => {
             validateGroupIdMock.resolves(undefined);
-            validateDataflowIdMock.rejects();
+            validatescorecardIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
+                name: () => "list",
                 opts: () => emptyOptions,
             };
-            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateDataflowIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("update with no options ('uuid')", (done) => {
-            validateGroupIdMock.rejects();
-            validateDataflowIdMock.rejects();
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => emptyOptions,
-            };
-            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateDataflowIdMock.callCount).to.equal(0);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("update with one options", (done) => {
+        it("list with one options", (done) => {
             validateGroupIdMock.resolves(oneOptions.W);
-            validateDataflowIdMock.rejects();
+            validatescorecardIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "update",
+                name: () => "list",
                 opts: () => oneOptions,
             };
-            updateAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateDataflowIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("update with missing options", (done) => {
-            validateGroupIdMock.resolves(missingOptions.W);
-            validateDataflowIdMock.resolves(missingOptions.F);
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => missingOptions,
-            };
-            updateAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateDataflowIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("update with all options", (done) => {
+        it("list with all options", (done) => {
             validateGroupIdMock.resolves(allOptions.W);
-            validateDataflowIdMock.resolves(allOptions.F);
+            validatescorecardIdMock.resolves(allOptions.S);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
-                name: () => "update",
+                name: () => "list",
                 opts: () => allOptions,
             };
-            updateAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateDataflowIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("update with all options (file)", (done) => {
-            validateGroupIdMock.resolves(allOptions.W);
-            validateDataflowIdMock.resolves(allOptions.F);
+        it("show with no options", (done) => {
+            validateGroupIdMock.rejects();
+            validatescorecardIdMock.rejects();
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => allFileOptions,
+                name: () => "show",
+                opts: () => emptyOptions,
             };
-            updateAction(allFileOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateDataflowIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(0);
+                expect(executeAPICallMock.callCount).to.equal(0);
+                done();
+            });
+        });
+        it("show with one options", (done) => {
+            validateGroupIdMock.resolves(oneOptions.W);
+            validatescorecardIdMock.rejects();
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "show",
+                opts: () => oneOptions,
+            };
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(0);
+                done();
+            });
+        });
+        it("show with all options", (done) => {
+            validateGroupIdMock.resolves(allOptions.W);
+            validatescorecardIdMock.resolves(allOptions.S);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "show",
+                opts: () => allOptions,
+            };
+            listshowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
                 done();
             });
         });

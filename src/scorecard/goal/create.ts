@@ -28,34 +28,33 @@
 import { OptionValues } from "commander";
 import { readFileSync } from "fs";
 
-import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { validateAdminGroupId } from "../../lib/parameters";
-import { checkUUID } from "../../lib/validate";
+import { validateGroupId, validateScorecardId } from "../../lib/parameters";
+import { getGroupUrl } from "../../lib/helpers";
 
-export async function updateAction(...args: unknown[]): Promise<void> {
-    const cmd = args[args.length - 1] as ModuleCommand;
+export async function createAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
-    let groupId;
-    const groupLookup = await validateAdminGroupId(options.W, true, "Active");
-    if (checkUUID(groupLookup as string)) {
-        groupId = groupLookup;
-    } else {
-        groupId = options.W;
-    }
-    if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
-        throw "error: missing option '--update-details' or '--update-details-file'";
-    const body = options.updateDetails
-        ? JSON.parse(options.updateDetails)
-        : readFileSync(options.updateDetailsFile, "utf8");
-    debug(`Updates the specified workspace properties`);
+    const groupId = await validateGroupId(options.W, false);
+    const scorecardId = await validateScorecardId(groupId as string, options.S, true);
+    if (options.G === undefined && options.definition === undefined && options.definitionFile === undefined)
+        throw "error: missing option '--goal', '--definition' or '--definition-file'";
+    const definition = options.definition
+        ? JSON.parse(options.definition)
+        : options.definitionFile
+        ? readFileSync(options.definitionFile, "utf8")
+        : {};
+    if (options.G) definition["name"] = options.G;
+    debug(
+        `Creates a goal in a Power BI scorecard (${scorecardId}) in workspace (${groupId || "my"}) with name (${
+            options.G || ""
+        })`
+    );
     const request: APICall = {
-        method: "PATCH",
-        url: `/admin/groups/${groupId}`,
-        body,
-        containsValue: false,
+        method: "POST",
+        url: `${getGroupUrl(groupId)}/scorecards/${scorecardId}/goals`,
+        body: definition,
     };
-    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
+    await executeAPICall(request);
 }

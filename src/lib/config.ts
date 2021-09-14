@@ -26,13 +26,27 @@
 
 "use strict";
 
-import rc from "rc";
-import { EncodeOptions, parse, stringify } from "ini";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { homedir } from "os";
 
+type Scopes = "defaults" | "core";
+type ConfigFile = {
+    defaults: { [key: string]: string };
+    core: {
+        cloud: string;
+        [key: string]: string;
+    };
+};
+
+const DefaultConfig: ConfigFile = {
+    defaults: {},
+    core: {
+        cloud: "public",
+    },
+};
+
 const location = homedir() + "/.powerbi-cli";
-const file = "config";
+const file = "config.json";
 
 const cloudPowerBIUrls = {
     public: "api.powerbi.com",
@@ -58,9 +72,9 @@ export interface config {
     tenant: string;
 }
 
-// eslint-disable-next-line
-export function getConfig(options: any): config {
-    const rcConfig = rc("pbicli", {}) as config;
+export function getConfig(options: { [key: string]: string }): config {
+    const rcFile = ".pbiclirc";
+    const rcConfig = (existsSync(rcFile) ? JSON.parse(readFileSync(rcFile).toString()) : {}) as config;
     const principal = process.env.PBICLI_PRINCIPAL;
     const secret = process.env.PBICLI_SECRET;
     const tenant = process.env.PBICLI_TENANT;
@@ -70,9 +84,9 @@ export function getConfig(options: any): config {
     return rcConfig;
 }
 
-export function displayConfig(scope: string, key?: string): void {
+export function displayConfig(scope: Scopes, key?: string): void {
     const config = getConfigFromFile();
-    const keys = Object.keys(config[scope] || {});
+    const keys = Object.keys(config[scope]);
 
     if (key) console.info(`${key}: ${config[scope][key]}`);
     else {
@@ -84,17 +98,16 @@ export function displayConfig(scope: string, key?: string): void {
     }
 }
 
-export function storeConfig(defs: string[], scope: string): void {
+export function storeConfig(defs: string[]): void {
     const config = getConfigFromFile();
-    if (!config.defaults) config.defaults = {};
 
-    defs.forEach((d: string) => {
-        const values = d.split("=");
-        if (values[1] === "") delete config.defaults[values[0]];
-        else config.defaults[values[0]] = values[1];
+    defs.forEach((def: string) => {
+        const values = def.split("=");
+        if (values[1] === "") delete config.defaults[values[0].toLowerCase()];
+        else config.defaults[values[0].toLowerCase()] = values[1];
     });
 
-    writeFileSync(getConfigFile(), stringify(config));
+    writeFileSync(getConfigFile(), JSON.stringify(config));
 }
 
 export function getDefault(value: string): string | undefined {
@@ -116,11 +129,15 @@ function getUrl(urls: never): string {
     return urls[cloud.toLowerCase()];
 }
 
-function getConfigFromFile() {
-    if (!existsSync(getConfigFile()))
-        writeFileSync(getConfigFile(), stringify({ cloud: "Public" }, { section: "core" } as EncodeOptions));
-    const config = parse(readFileSync(getConfigFile(), "utf-8"));
-    return config;
+function getConfigFromFile(): ConfigFile {
+    if (existsSync(getConfigFile())) {
+        const config = readFileSync(getConfigFile(), "utf-8");
+        try {
+            return JSON.parse(config);
+        } catch {
+            return DefaultConfig;
+        }
+    } else return DefaultConfig;
 }
 
 function getConfigFile(): string {
