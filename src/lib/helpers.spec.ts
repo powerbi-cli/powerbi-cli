@@ -50,6 +50,7 @@ import {
     getAdminObjectInfo,
     getScorecardID,
     getScorecardGoalID,
+    getPipelineID,
 } from "./helpers";
 
 chai.use(chaiAsPromise);
@@ -294,6 +295,23 @@ describe("helpers.ts", () => {
         it("exception in executeRestCall", () => {
             executeRestCallMock.rejects();
             expect(getGatewayDatasourceID(uuid, "datasourceName")).eventually.to.rejected;
+        });
+    });
+
+    describe("getPipelineID()", () => {
+        it("pipeline found ", () => {
+            executeRestCallMock.resolves([{ name: "pipelineName", id: uuid }]);
+            expect(getPipelineID("pipelineName")).eventually.to.equal(uuid);
+        });
+        it("pipeline not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getPipelineID("pipelineName")).eventually.to.rejectedWith(
+                "No pipeline found with name 'pipelineName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getPipelineID("pipelineName")).eventually.to.rejected;
         });
     });
 

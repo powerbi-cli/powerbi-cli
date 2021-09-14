@@ -53,6 +53,7 @@ import {
     capitalize,
     validateScorecardId,
     validateScorecardGoalId,
+    validatePipelineId,
 } from "./parameters";
 
 chai.use(chaiAsPromise);
@@ -505,6 +506,27 @@ describe("parameters.ts", () => {
                 "error: missing option '--datasource'"
             );
             expect(mockGetGatewayDatasourceID.callCount).equal(0);
+        });
+    });
+    describe("validatePipelineId()", () => {
+        let mockGetPipelineId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetPipelineId = ImportMock.mockFunction(helpers, "getPipelineID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetPipelineId.restore();
+        });
+        it("pipeline, required", () => {
+            validatePipelineId("pipeline", true).should.eventually.be.equal(uuid);
+            expect(mockGetPipelineId.callCount).equal(1);
+        });
+        it("empty pipeline, required", () => {
+            validatePipelineId(undefined, true).should.eventually.be.rejectedWith("error: missing option '--pipeline'");
+            expect(mockGetPipelineId.callCount).equal(0);
+        });
+        it("empty pipeline, not required", () => {
+            validateGatewayId(undefined, false).should.eventually.be.equal(undefined);
+            expect(mockGetPipelineId.callCount).equal(0);
         });
     });
     describe("validateImportId()", () => {

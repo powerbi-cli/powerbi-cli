@@ -32,15 +32,20 @@ import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
 import { ModuleCommand } from "../lib/command";
-import * as parameters from "../lib/parameters";
-import * as api from "../lib/api";
+import * as config from "../lib/config";
 
 import { listAction } from "./list";
 
 chai.use(chaiAsPromise);
-const expect = chai.expect;
 
 describe("cloud/list.ts", () => {
+    let displayConfigMock: SinonStub<unknown[], unknown>;
+    beforeEach(() => {
+        displayConfigMock = ImportMock.mockFunction(config, "displayConfig", config.DefaultConfig);
+    });
+    afterEach(() => {
+        displayConfigMock.restore();
+    });
     const emptyOptions = {};
     const helpOptions = { H: true };
     describe("listAction()", () => {

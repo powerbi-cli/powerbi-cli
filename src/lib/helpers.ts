@@ -249,7 +249,6 @@ export function getScorecardID(groupName: string | undefined, name: string): Pro
         executeRestCall(lookUpRequest, true, TokenType.POWERBI)
             .then((response: string) => {
                 name = name.replace(/['"]+/g, "");
-                console.log("d");
                 const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
                 try {
                     resolve(output[0].id);
@@ -366,6 +365,26 @@ export function getGatewayDatasourceID(gatewayId: string, name: string): Promise
                     resolve(output[0].id);
                 } catch {
                     reject(`No datasource found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getPipelineID(name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${powerBIRestURL}/pipelines`,
+        };
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No pipeline found with name '${name}'`);
                 }
             })
             .catch((err) => reject(err));

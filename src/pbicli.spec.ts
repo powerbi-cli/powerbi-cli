@@ -27,7 +27,7 @@
 "use strict";
 import { ImportMock, MockManager } from "ts-mock-imports";
 import chai from "chai";
-import { SinonSpy, SinonStub, match } from "sinon";
+import { SinonSpy, SinonStub, match, replace, fake, stub } from "sinon";
 
 import { initializeProgram, programModules } from "./lib/program";
 import { ModuleCommand } from "./lib/command";
@@ -35,8 +35,9 @@ import { ModuleCommand } from "./lib/command";
 import * as auth from "./lib/auth";
 
 import * as azureserviceclient from "@azure/ms-rest-azure-js";
-import fs from "fs";
+import fs, { PathOrFileDescriptor } from "fs";
 import jsonwebtoken from "jsonwebtoken";
+import { DefaultConfig } from "./lib/config";
 
 const expect = chai.expect;
 const modules = programModules;
@@ -52,6 +53,7 @@ describe("pbicli.ts:", () => {
     let existsSyncMock: SinonStub<unknown[], unknown>;
     let mkdirSyncMock: SinonStub<unknown[], unknown>;
     let readFileSyncMock: SinonStub<unknown[], unknown>;
+    let readFileSyncStub: SinonStub;
     let writeFileSyncMock: SinonStub<unknown[], unknown>;
 
     let decodeMock: SinonStub<unknown[], unknown>;
@@ -114,20 +116,23 @@ describe("pbicli.ts:", () => {
 
         existsSyncMock = ImportMock.mockFunction(fs, "existsSync").returns(true);
         mkdirSyncMock = ImportMock.mockFunction(fs, "mkdirSync").returns(true);
-        readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
-        readFileSyncMock.returns(
-            JSON.stringify({
-                powerbi: {
-                    accessToken: "token",
-                    expiresOn: new Date().getTime() + 3599,
-                },
-            })
-        );
+        readFileSyncStub = stub(fs, "readFileSync").callsFake((path: unknown) => {
+            if ((path as string).indexOf("accessTokens.json") !== -1) {
+                return JSON.stringify({
+                    powerbi: {
+                        accessToken: "token",
+                        expiresOn: new Date().getTime() + 3599,
+                    },
+                });
+            } else {
+                return JSON.stringify(DefaultConfig);
+            }
+        });
         writeFileSyncMock = ImportMock.mockFunction(fs, "writeFileSync");
         writeFileSyncMock.returns(true);
 
         decodeMock = ImportMock.mockFunction(jsonwebtoken, "decode");
-        decodeMock.returns({ exp: Math.floor(((new Date() as unknown) as number) / 1000) + 3599 });
+        decodeMock.returns({ exp: Math.floor((new Date() as unknown as number) / 1000) + 3599 });
 
         consoleInfoMock = ImportMock.mockFunction(console, "info", true);
         consoleErrorMock = ImportMock.mockFunction(console, "error", true);
@@ -142,7 +147,8 @@ describe("pbicli.ts:", () => {
 
         existsSyncMock.restore();
         mkdirSyncMock.restore();
-        readFileSyncMock.restore();
+        readFileSyncStub.restore();
+        //readFileSyncMock.restore();
         writeFileSyncMock.restore();
 
         decodeMock.restore();
@@ -211,11 +217,17 @@ describe("pbicli.ts:", () => {
         });
 
         it("list", (done) => {
-            program.parseAsync(["workspace", "list"], { from: "user" }).then(() => {
-                expect(consoleInfoMock.calledWith(match(JSON.stringify(workspaceListValue, null, " ")))).be.true;
-                expect(consoleInfoMock.callCount).equal(1);
-                done();
-            });
+            program
+                .parseAsync(["workspace", "list"], { from: "user" })
+                .then(() => {
+                    expect(consoleInfoMock.calledWith(match(JSON.stringify(workspaceListValue, null, " ")))).be.true;
+                    expect(consoleInfoMock.callCount).equal(1);
+                    done();
+                })
+                .catch((e) => {
+                    console.log(e);
+                    done();
+                });
         });
 
         it("list --query", (done) => {

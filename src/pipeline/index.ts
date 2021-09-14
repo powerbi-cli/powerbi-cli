@@ -26,38 +26,25 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import { ModuleCommand } from "../lib/command";
+import { listshowAction } from "./listshow";
+import { getCommands as getStageCommands } from "./stage/index";
+import { getCommands as getOperationCommands } from "./operation/index";
 
-export const programModules: [string, boolean][] = [
-    ["admin", false],
-    ["app", false],
-    ["capacity", false],
-    ["cloud", false],
-    ["configure", false],
-    ["dashboard", false],
-    ["dataflow", false],
-    ["dataset", false],
-    ["embedded", false],
-    ["feature", false],
-    ["gateway", false],
-    ["import", false],
-    ["report", false],
-    ["pipeline", false],
-    ["scorecard", false],
-    ["group", false], // workspace
-    ["xmla", true],
-    ["login", false],
-    ["logout", false],
-];
-
-export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: [string, boolean]) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
-    });
-
-    program.addGlobalOptions();
-    return program;
+export function getCommands(): ModuleCommand {
+    const listCommand = new ModuleCommand("list").description("List Power BI pipelines").action(listshowAction);
+    listCommand.addGlobalOptions();
+    const showCommand = new ModuleCommand("show")
+        .description("Get the details of a Power BI pipeline")
+        .action(listshowAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
+    showCommand.addGlobalOptions();
+    const pipelineCommand = new ModuleCommand("pipeline")
+        .description("Manage Power BI pipelines")
+        .addCommand(listCommand)
+        .addCommand(showCommand)
+        .addCommand(getStageCommands())
+        .addCommand(getOperationCommands());
+    pipelineCommand.addGlobalOptions();
+    return pipelineCommand;
 }

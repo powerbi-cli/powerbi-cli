@@ -64,7 +64,7 @@ describe("token.ts", () => {
         it("normal flow", () => {
             existsSyncMock.returns(true);
             writeFileSyncMock.returns(true);
-            storeAccessToken(({ powerbi: { accessToken: "token" } } as unknown) as TokenStore);
+            storeAccessToken({ powerbi: { accessToken: "token" } } as unknown as TokenStore);
             expect(existsSyncMock.callCount).equal(1);
             expect(writeFileSyncMock.callCount).equal(1);
         });
@@ -73,7 +73,7 @@ describe("token.ts", () => {
             existsSyncMock.returns(false);
             mkdirSyncMock.returns(true);
             writeFileSyncMock.returns(true);
-            storeAccessToken(({ powerbi: { accessToken: "token" } } as unknown) as TokenStore);
+            storeAccessToken({ powerbi: { accessToken: "token" } } as unknown as TokenStore);
             expect(existsSyncMock.callCount).equal(1);
             expect(mkdirSyncMock.callCount).equal(1);
             expect(writeFileSyncMock.callCount).equal(1);

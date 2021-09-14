@@ -26,38 +26,26 @@
 
 "use strict";
 
-import { ModuleCommand } from "./command";
+import { ModuleCommand } from "../../lib/command";
+import { artifactAction } from "./artifact";
+import { listshowAction } from "./list";
 
-export const programModules: [string, boolean][] = [
-    ["admin", false],
-    ["app", false],
-    ["capacity", false],
-    ["cloud", false],
-    ["configure", false],
-    ["dashboard", false],
-    ["dataflow", false],
-    ["dataset", false],
-    ["embedded", false],
-    ["feature", false],
-    ["gateway", false],
-    ["import", false],
-    ["report", false],
-    ["pipeline", false],
-    ["scorecard", false],
-    ["group", false], // workspace
-    ["xmla", true],
-    ["login", false],
-    ["logout", false],
-];
-
-export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
-    const program = new ModuleCommand("pbicli");
-
-    modules.forEach((module: [string, boolean]) => {
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
-    });
-
-    program.addGlobalOptions();
-    return program;
+export function getCommands(): ModuleCommand {
+    const artifactCommand = new ModuleCommand("artifact")
+        .description("List the artifacts of a Power BI pipeline stage")
+        .action(artifactAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--stage -s <number>", "Number of the Power BI pipeline stage");
+    artifactCommand.addGlobalOptions();
+    const listCommand = new ModuleCommand("list")
+        .description("List the stages of a Power BI pipeline")
+        .action(listshowAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
+    listCommand.addGlobalOptions();
+    const pipelineStageCommand = new ModuleCommand("stage")
+        .description("Manage stages of Power BI pipelines")
+        .addCommand(artifactCommand)
+        .addCommand(listCommand);
+    pipelineStageCommand.addGlobalOptions();
+    return pipelineStageCommand;
 }

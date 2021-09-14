@@ -38,7 +38,7 @@ type ConfigFile = {
     };
 };
 
-const DefaultConfig: ConfigFile = {
+export const DefaultConfig: ConfigFile = {
     defaults: {},
     core: {
         cloud: "public",

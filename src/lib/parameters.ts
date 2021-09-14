@@ -44,6 +44,7 @@ import {
     getAdminObjectInfo,
     getScorecardID,
     getScorecardGoalID,
+    getPipelineID,
 } from "./helpers";
 import { getDefault } from "./config";
 
@@ -256,6 +257,19 @@ export async function validateScorecardGoalId(
         name: goal,
         isName: () => getScorecardGoalID(groupId, scorecard as string, goal as string),
         missing: "error: missing option '--goal'",
+        isRequired,
+    });
+}
+
+export async function validatePipelineId(
+    pipeline: string | undefined,
+    isRequired: boolean
+): Promise<string | undefined> {
+    if (!pipeline) pipeline = getDefault("pipeline");
+    return validateParameter({
+        name: pipeline,
+        isName: () => getPipelineID(pipeline as string),
+        missing: "error: missing option '--pipeline'",
         isRequired,
     });
 }
