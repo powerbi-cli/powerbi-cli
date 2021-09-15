@@ -27,11 +27,20 @@
 "use strict";
 
 import { ModuleCommand } from "../lib/command";
+import { deployAction } from "./deploy";
 import { listshowAction } from "./listshow";
 import { getCommands as getStageCommands } from "./stage/index";
 import { getCommands as getOperationCommands } from "./operation/index";
 
 export function getCommands(): ModuleCommand {
+    const deployCommand = new ModuleCommand("deploy")
+        .description("Start a deploy from a specific stage in a Power BI pipeline")
+        .action(deployAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--partial", "")
+        .option("--options <data>", "String with the deploy options in JSON format")
+        .option("--options-file <file>", "File with the deploy options in JSON format");
+    deployCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list").description("List Power BI pipelines").action(listshowAction);
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
@@ -41,6 +50,7 @@ export function getCommands(): ModuleCommand {
     showCommand.addGlobalOptions();
     const pipelineCommand = new ModuleCommand("pipeline")
         .description("Manage Power BI pipelines")
+        .addCommand(deployCommand)
         .addCommand(listCommand)
         .addCommand(showCommand)
         .addCommand(getStageCommands())

@@ -27,7 +27,7 @@
 "use strict";
 import { ImportMock, MockManager } from "ts-mock-imports";
 import chai from "chai";
-import { SinonSpy, SinonStub, match, replace, fake, stub } from "sinon";
+import { SinonSpy, SinonStub, match, stub } from "sinon";
 
 import { initializeProgram, programModules } from "./lib/program";
 import { ModuleCommand } from "./lib/command";
@@ -35,7 +35,7 @@ import { ModuleCommand } from "./lib/command";
 import * as auth from "./lib/auth";
 
 import * as azureserviceclient from "@azure/ms-rest-azure-js";
-import fs, { PathOrFileDescriptor } from "fs";
+import fs from "fs";
 import jsonwebtoken from "jsonwebtoken";
 import { DefaultConfig } from "./lib/config";
 
@@ -52,7 +52,6 @@ describe("pbicli.ts:", () => {
 
     let existsSyncMock: SinonStub<unknown[], unknown>;
     let mkdirSyncMock: SinonStub<unknown[], unknown>;
-    let readFileSyncMock: SinonStub<unknown[], unknown>;
     let readFileSyncStub: SinonStub;
     let writeFileSyncMock: SinonStub<unknown[], unknown>;
 

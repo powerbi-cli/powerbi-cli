@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Jan Pieter Posthuma / DataScenarios
+ * Copyright (c) 2021 Jan Pieter Posthuma / DataScenarios
  *
  * All rights reserved.
  *
@@ -25,37 +25,29 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
+import { readFileSync } from "fs";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
+import { validatePipelineId } from "../lib/parameters";
 
-import fetch from "node-fetch";
-import { gt } from "semver";
-import { yellow } from "chalk";
+export async function deployAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
+    if (options.H) return;
 
-import { verbose } from "./logging";
+    const pipelineId = await validatePipelineId(options.P, true);
 
-export const currentVersion = "1.2.0-preview.3";
-const versionUrl = "https://powerbicli.azureedge.net/version.json";
+    if (options.options === undefined && options.optionsFile === undefined)
+        throw "error: missing option '--options' or '--options-file'";
+    const deployOptions = options.options ? JSON.parse(options.options) : readFileSync(options.optionsFile, "utf8");
 
-interface version {
-    version: string;
-}
+    debug(`Deploy from a specific stage in a Power BI pipeline (${pipelineId})`);
 
-export async function checkVersion(args: string[]): Promise<void> {
-    if (!args.some((arg: string) => arg === "version")) return;
-    try {
-        const latestVersion: version = await getVersion();
-        if (gt(latestVersion.version, currentVersion))
-            console.info(
-                yellow(
-                    `New version available: ${latestVersion.version}. Run 'npm i -g @powerbi-cli/powerbi-cli' to update\n`
-                )
-            );
-    } catch (e) {
-        verbose(`Error validating version: ${e}`);
-    }
-}
+    const request: APICall = {
+        method: "POST",
+        url: `/pipelines/${pipelineId}/${options.partial ? `deploy` : `deployAll`}`,
+        body: deployOptions,
+    };
 
-async function getVersion(): Promise<version> {
-    const response = await fetch(versionUrl);
-    const latestVersion = (await response.json()) as version;
-    return latestVersion;
+    await executeAPICall(request);
 }
