@@ -28,8 +28,8 @@ _Last update: September 14, 2021_
 | Get Refresh History In Group                  | refresh history    | v1.0           |
 | Get Refresh Schedule                          | refresh show       | v1.0           |
 | Get Refresh Schedule In Group                 | refresh show       | v1.0           |
-| Refresh Dataset                               | -                  |                |
-| Refresh Dataset In Group                      | -                  |                |
+| Refresh Dataset                               | refresh start      | v1.2           |
+| Refresh Dataset In Group                      | refresh start      | v1.2           |
 | Take Over In Group                            | set-owner          | v1.0           |
 | Update Datasources                            | datasource update  | v1.0           |
 | Update Datasources In Group                   | datasource update  | v1.0           |

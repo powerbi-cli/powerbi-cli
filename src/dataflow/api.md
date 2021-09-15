@@ -4,7 +4,7 @@ _Last update: September 14, 2021_
 
 | API                             | PBI CLI Command | PBICLI Version |
 | ------------------------------- | --------------- | -------------- |
-| Cancel Dataflow Transaction     |                 |                |
+| Cancel Dataflow Transaction     | -               |                |
 | Delete Dataflow                 | delete          | v1.0           |
 | Get Dataflow                    | show            | v1.0           |
 | Get Dataflow Data Sources       | show            | v1.0           |

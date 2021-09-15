@@ -30,6 +30,8 @@ import { ModuleCommand } from "../../lib/command";
 import { showAction } from "./show";
 import { historyAction } from "./listhistory";
 import { updateAction } from "./update";
+import { startAction } from "./start";
+import { refreshNotify } from "../../lib/helpers";
 
 export function getCommands(): ModuleCommand {
     const historyCommand = new ModuleCommand("history")
@@ -54,11 +56,19 @@ export function getCommands(): ModuleCommand {
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--direct-query", "Dataset is a direct query or live connection");
     showCommand.addGlobalOptions();
+    const startCommand = new ModuleCommand("start")
+        .description("Triggers a Power BI dataset refresh ")
+        .action(startAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
+        .option("--notify <option>", `Allowed values: ${refreshNotify.join(", ")}`);
+    startCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("refresh")
         .description("Manage Power BI refresh schedule")
         .addCommand(historyCommand)
         .addCommand(updateCommand)
-        .addCommand(showCommand);
+        .addCommand(showCommand)
+        .addCommand(startCommand);
     datassetCommand.addGlobalOptions();
     return datassetCommand;
 }
