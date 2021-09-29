@@ -31,6 +31,7 @@ import { listshowAction } from "./listshow";
 import { dataflowAction } from "./dataflow";
 import { deleteAction } from "./delete";
 import { setOwnerAction } from "./set-owner";
+import { queryAction } from "./query";
 import { getCommands as getParameterCommands } from "./parameter/index";
 import { getCommands as getGatewayCommands } from "./gateway/index";
 import { getCommands as getDatasourceCommands } from "./datasource/index";
@@ -69,6 +70,15 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset");
     dataflowCommand.addGlobalOptions();
+    const queryCommand = new ModuleCommand("query")
+        .description("Execute an DAX query against the Power BI XMLA endpoint")
+        .action(queryAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. Optional if dataset is provided as ID.")
+        .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
+        .option("--dax <query>", "String with the DAX query to be executed")
+        .option("--script <script>", "String with the raw query statement in JSON format")
+        .option("--script-file <file>", "File with the raw query statement in JSON format");
+    queryCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("dataset")
         .description("Manage Power BI datasets")
         .addCommand(deleteCommand)
@@ -76,6 +86,7 @@ export function getCommands(): ModuleCommand {
         .addCommand(setOwnerCommand)
         .addCommand(showCommand)
         .addCommand(dataflowCommand)
+        .addCommand(queryCommand)
         .addCommand(getDatasourceCommands())
         .addCommand(getGatewayCommands())
         .addCommand(getParameterCommands())

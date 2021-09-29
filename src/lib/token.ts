@@ -131,6 +131,7 @@ async function validateToken(tokenType: TokenType, token?: Token): Promise<Token
     if (!token) return;
     if (token.expiresOn - new Date().getTime() > 0) return token;
     if (token.refreshToken) {
+        verbose("Trying to get new token...");
         return await loginSilent({} as OptionValues, getConsts(), {
             tokenType,
             refreshToken: token.refreshToken as string,

@@ -27,11 +27,12 @@
 "use strict";
 
 import { RequestPrepareOptions } from "@azure/ms-rest-js";
+import stripBomStream from "strip-bom-stream";
+
 import { TokenType } from "./auth";
 import { getConsts } from "./consts";
-
-import { formatAndPrintOutput, OutputType } from "./output";
-import { executeRestCall, executeDownloadCall, executeUploadCall } from "./rest";
+import { formatAndPrintOutput, formatAndPrintOutputStream, OutputType } from "./output";
+import { executeRestCall, executeDownloadCall, executeUploadCall, executeRestCallStream } from "./rest";
 
 export interface APICall extends RequestPrepareOptions {
     containsValue?: boolean;
@@ -90,4 +91,30 @@ export function executeAPICall(
             reject(err);
         }
     });
+}
+
+export async function executeAPICallStream(
+    apiRequest: APICall,
+    outputFormat?: OutputType,
+    outputFile?: string,
+    jmsePath?: string
+): Promise<unknown> {
+    let url;
+    const { azureRestURL, powerBIRestURL } = getConsts();
+    switch (apiRequest.tokenType) {
+        case TokenType.AZURE:
+            url = `${azureRestURL}${apiRequest.url}`;
+            break;
+        case TokenType.POWERBI:
+        default:
+            url = `${powerBIRestURL}${apiRequest.url}`;
+    }
+    const request: RequestPrepareOptions = {
+        method: apiRequest.method,
+        headers: apiRequest.headers,
+        url,
+        body: apiRequest.body,
+    };
+    const result = await executeRestCallStream(request, apiRequest.tokenType || TokenType.POWERBI);
+    return formatAndPrintOutputStream(result.pipe(stripBomStream()), outputFormat, outputFile, jmsePath);
 }

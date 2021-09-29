@@ -10,7 +10,7 @@ _Last update: September 14, 2021_
 | Delete Dataset In Group                       | delete             | v1.0           |
 | Discover Gateways                             | gateway list       | v1.0           |
 | Discover Gateways In Group                    | gateway list       | v1.0           |
-| Execute Queries                               | -                  |                |
+| Execute Queries                               | query              | v1.2           |
 | Get Dataset                                   | show               | v1.0           |
 | Get Dataset In Group                          | show               | v1.0           |
 | Get Datasets                                  | list               | v1.0           |
