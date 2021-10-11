@@ -94,7 +94,8 @@ export function formatAndPrintOutputStream(
     query?: string
 ): void {
     let hasRows = false,
-        breaker = "";
+        breaker = "",
+        rawData = "";
     const isHeader = outputType === OutputType.json || outputType === OutputType.csv;
     const isCsv = outputType === OutputType.csv;
 
@@ -103,8 +104,12 @@ export function formatAndPrintOutputStream(
         return;
     }
     const outputStream = new Transform({
-        transform(this: Transform, chunk: string, encoding: BufferEncoding, next: TransformCallback) {
-            let data = JSON.parse(chunk),
+        transform(this: Transform, chunk: string, encoding: BufferEncoding, callback: TransformCallback) {
+            rawData += chunk;
+            callback();
+        },
+        flush(this: Transform, callback: TransformCallback) {
+            let data = JSON.parse(rawData),
                 result = "";
             if (query) {
                 try {
@@ -143,7 +148,7 @@ export function formatAndPrintOutputStream(
                 this.push(`${hasRows ? breaker : ""}${result}`);
                 hasRows = true;
             }
-            next();
+            callback();
         },
     });
     response.on("error", (err) => {
