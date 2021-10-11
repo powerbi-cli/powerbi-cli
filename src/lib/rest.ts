@@ -37,7 +37,6 @@ import FormData from "form-data";
 import { getAccessToken } from "./token";
 import { debug, verbose } from "./logging";
 import { TokenType } from "./auth";
-import stripBom from "strip-bom";
 
 const silentMethods: string[] = ["DELETE", "PUT", "POST", "PATCH"];
 

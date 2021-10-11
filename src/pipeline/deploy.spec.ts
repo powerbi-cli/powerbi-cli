@@ -91,7 +91,7 @@ describe("pipeline/deploy.ts", () => {
                 opts: () => emptyOptions,
             };
             deployAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validatepipelineIdMock.callCount).to.equal(0);
+                expect(validatepipelineIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });

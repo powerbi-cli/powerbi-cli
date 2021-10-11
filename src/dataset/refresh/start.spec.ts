@@ -58,7 +58,7 @@ describe("dataset/refresh/start.ts", () => {
     const allOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
-        options: "aways",
+        notify: "always",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
@@ -97,10 +97,10 @@ describe("dataset/refresh/start.ts", () => {
                 name: () => "start",
                 opts: () => emptyOptions,
             };
-            startAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
+            startAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
