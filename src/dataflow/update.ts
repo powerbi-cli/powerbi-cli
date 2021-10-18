@@ -26,36 +26,28 @@
 
 "use strict";
 import { OptionValues } from "commander";
+import { readFileSync } from "fs";
 
-import { debug } from "../../lib/logging";
-import { APICall, executeAPICall } from "../../lib/api";
-import { getGroupUrl, refreshNotify } from "../../lib/helpers";
-import { validateGroupId, validateDataflowId, validateParameter, validateAllowedValues } from "../../lib/parameters";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
+import { getGroupUrl } from "../lib/helpers";
+import { validateGroupId, validateDataflowId } from "../lib/parameters";
 
-export async function startAction(...args: unknown[]): Promise<void> {
+export async function updateAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
+
     const groupId = await validateGroupId(options.W, true);
     const dataflowId = await validateDataflowId(groupId as string, options.F, true);
+    if (options.update === undefined && options.updateFile === undefined)
+        throw "error: missing option '--update' or '--update-file'";
+    const updateSettings = options.update ? JSON.parse(options.update) : readFileSync(options.updateFile, "utf8");
 
-    const notify =
-        (await validateParameter({
-            name: options.notify,
-            isName: () => validateAllowedValues(options.notify, refreshNotify),
-            missing: "error: missing option '--notify'",
-            isRequired: false,
-        })) || "MailOnFailure";
-
-    const notifyOption =
-        notify === "always" ? "MailOnCompletion" : notify === "none" ? "NoNotification" : "MailOnFailure";
-
-    debug(`Start a refresh of a Power BI dataflow (${dataflowId}) in workspace (${groupId})`);
+    debug(`Updates a Power BI dataflow (${dataflowId}) in workspace ${groupId}`);
     const request: APICall = {
-        method: "POST",
-        url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}/refreshes`,
-        body: {
-            notifyOption: notifyOption,
-        },
+        method: "PATCH",
+        url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}`,
+        body: updateSettings,
     };
     await executeAPICall(request);
 }

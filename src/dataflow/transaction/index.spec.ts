@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Jan Pieter Posthuma / DataScenarios
+ * Copyright (c) 2020 Jan Pieter Posthuma / DataScenarios
  *
  * All rights reserved.
  *
@@ -25,22 +25,18 @@
  */
 
 "use strict";
-import { OptionValues } from "commander";
 
-import { debug } from "../lib/logging";
-import { APICall, executeAPICall } from "../lib/api";
-import { getGroupUrl } from "../lib/helpers";
-import { validateGroupId, validateDataflowId } from "../lib/parameters";
+import chai from "chai";
 
-export async function deleteAction(...args: unknown[]): Promise<void> {
-    const options = args[args.length - 2] as OptionValues;
-    if (options.H) return;
-    const groupId = await validateGroupId(options.W, true);
-    const dataflowId = await validateDataflowId(groupId as string, options.F, true);
-    debug(`Delete Power BI dataflow (${dataflowId}) in workspace ${groupId}`);
-    const request: APICall = {
-        method: "DELETE",
-        url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}`,
-    };
-    await executeAPICall(request);
-}
+import { getCommands } from "./index";
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const should = chai.should();
+
+describe("dataflow/transaction/index.ts", () => {
+    describe("getCommands()", () => {
+        it("normal execution", () => {
+            getCommands().should.not.throw;
+        });
+    });
+});

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Jan Pieter Posthuma / DataScenarios
+ * Copyright (c) 2021 Jan Pieter Posthuma / DataScenarios
  *
  * All rights reserved.
  *
@@ -29,33 +29,18 @@ import { OptionValues } from "commander";
 
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { getGroupUrl, refreshNotify } from "../../lib/helpers";
-import { validateGroupId, validateDataflowId, validateParameter, validateAllowedValues } from "../../lib/parameters";
+import { validateGroupId } from "../../lib/parameters";
 
-export async function startAction(...args: unknown[]): Promise<void> {
+export async function cancelAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
     const groupId = await validateGroupId(options.W, true);
-    const dataflowId = await validateDataflowId(groupId as string, options.F, true);
-
-    const notify =
-        (await validateParameter({
-            name: options.notify,
-            isName: () => validateAllowedValues(options.notify, refreshNotify),
-            missing: "error: missing option '--notify'",
-            isRequired: false,
-        })) || "MailOnFailure";
-
-    const notifyOption =
-        notify === "always" ? "MailOnCompletion" : notify === "none" ? "NoNotification" : "MailOnFailure";
-
-    debug(`Start a refresh of a Power BI dataflow (${dataflowId}) in workspace (${groupId})`);
+    if (options.transaction === undefined) throw "error: missing option '--transaction'";
+    const transactionId = options.transaction;
+    debug(`Cancel a Power BI dataflow transaction (${transactionId}) in workspace (${groupId})`);
     const request: APICall = {
         method: "POST",
-        url: `${getGroupUrl(groupId)}/dataflows/${dataflowId}/refreshes`,
-        body: {
-            notifyOption: notifyOption,
-        },
+        url: `/groups/${groupId}/dataflows/transactions/${transactionId}/cancel`,
     };
     await executeAPICall(request);
 }

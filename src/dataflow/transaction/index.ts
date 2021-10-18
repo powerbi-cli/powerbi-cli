@@ -27,30 +27,26 @@
 "use strict";
 
 import { ModuleCommand } from "../../lib/command";
-import { updateAction } from "./update";
-import { startAction } from "./start";
-import { refreshNotify } from "../../lib/helpers";
+import { cancelAction } from "./cancel";
+import { listAction } from "./list";
 
 export function getCommands(): ModuleCommand {
-    const startCommand = new ModuleCommand("start")
-        .description("Start a refresh of a Power BI dataflow")
-        .action(startAction)
+    const assignCommand = new ModuleCommand("cancel")
+        .description("Attempts to cancel a Power BI group dataflow transaction")
+        .action(cancelAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
+        .option("--transaction <transaction>", "ID of the Power BI dataflow transaction");
+    assignCommand.addGlobalOptions();
+    const listCommand = new ModuleCommand("list")
+        .description("List Power BI dataflow Transactions")
+        .action(listAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
-        .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow")
-        .option("--notify <option>", `Allowed values: ${refreshNotify.join(", ")}`);
-    startCommand.addGlobalOptions();
-    const updateCommand = new ModuleCommand("update")
-        .description("Update a Power BI refresh schedule")
-        .action(updateAction)
-        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
-        .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow")
-        .option("--refresh-schedule <data>", "String with the refresh schedule in JSON format")
-        .option("--refresh-schedule-file <file>", "File with the refresh schedule in JSON format");
-    updateCommand.addGlobalOptions();
-    const refreshCommand = new ModuleCommand("refresh")
-        .description("Manage Power BI refresh schedule")
-        .addCommand(startCommand)
-        .addCommand(updateCommand);
+        .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
+    listCommand.addGlobalOptions();
+    const refreshCommand = new ModuleCommand("transaction")
+        .description("Manage Power BI dataflow Transactions")
+        .addCommand(assignCommand)
+        .addCommand(listCommand);
     refreshCommand.addGlobalOptions();
     return refreshCommand;
 }

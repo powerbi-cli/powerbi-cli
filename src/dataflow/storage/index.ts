@@ -40,6 +40,7 @@ export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
         .description("List Power BI dataflow storage accounts")
         .action(listAction);
+    listCommand.addGlobalOptions();
     const unassignCommand = new ModuleCommand("unassign")
         .description("Unassign a Power BI group to a dataflow storage account")
         .action(assignAction)

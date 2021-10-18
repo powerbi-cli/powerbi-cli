@@ -26,11 +26,11 @@
 
 "use strict";
 import { OptionValues } from "commander";
+import { readFileSync } from "fs";
 
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { getGroupUrl } from "../../lib/helpers";
-import { readFileSync } from "fs";
 import { validateGroupId, validateDataflowId } from "../../lib/parameters";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
