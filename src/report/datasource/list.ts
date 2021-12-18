@@ -27,20 +27,28 @@
 "use strict";
 import { OptionValues } from "commander";
 
-import { debug } from "../lib/logging";
-import { APICall, executeAPICall } from "../lib/api";
-import { validateGroupId, validateDatasetId } from "../lib/parameters";
+import { ModuleCommand } from "../../lib/command";
+import { debug } from "../../lib/logging";
+import { APICall, executeAPICall } from "../../lib/api";
+import { getGroupUrl } from "../../lib/helpers";
+import { validateGroupId, validateReportId } from "../../lib/parameters";
 
-export async function setOwnerAction(...args: unknown[]): Promise<void> {
+export async function listDatasourceAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
     const options = args[args.length - 2] as OptionValues;
+    // Additional check due to default command
+    if (!Object.keys(options).length) {
+        cmd.outputHelp();
+        return;
+    }
     if (options.H) return;
-
-    const groupId = await validateGroupId(options.W, true);
-    const datasetId = await validateDatasetId(groupId as string, options.D, true);
-    debug(`Retrieve Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
+    const groupId = await validateGroupId(options.W, false);
+    const reportId = await validateReportId(groupId as string, options.R, true);
+    debug(`Retrieves Power BI report datasources of the group (${groupId || "my"})`);
     const request: APICall = {
-        method: "POST",
-        url: `/groups/${groupId}/datasets/${datasetId}/Default.TakeOver`,
+        method: "GET",
+        url: `${getGroupUrl(groupId)}/reports/${reportId}/datasources`,
+        containsValue: true,
     };
-    await executeAPICall(request);
+    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }

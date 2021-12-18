@@ -58,7 +58,7 @@ describe("dataset/refresh/update.ts", () => {
     const allOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         D: "datasetName",
-        refreshSchedule: "",
+        refreshSchedule: "{}",
     };
     const allFileOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
@@ -158,7 +158,6 @@ describe("dataset/refresh/update.ts", () => {
             validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("");
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allOptions,
@@ -167,7 +166,7 @@ describe("dataset/refresh/update.ts", () => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDatasetIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(0);
                 done();
             });
         });
@@ -175,7 +174,7 @@ describe("dataset/refresh/update.ts", () => {
             validateGroupIdMock.resolves(allOptions.W);
             validateDatasetIdMock.resolves(allOptions.D);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("");
+            readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allFileOptions,

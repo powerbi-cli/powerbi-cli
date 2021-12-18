@@ -31,11 +31,11 @@ import chai from "chai";
 import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
-import { ModuleCommand } from "../lib/command";
-import * as parameters from "../lib/parameters";
-import * as api from "../lib/api";
+import { ModuleCommand } from "../../lib/command";
+import * as parameters from "../../lib/parameters";
+import * as api from "../../lib/api";
 
-import { datasourceAction } from "./datasource";
+import { listDatasourceAction } from "./list";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
@@ -72,7 +72,7 @@ describe("report/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => helpOptions,
             };
-            datasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
+            listDatasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
                 expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
@@ -87,10 +87,10 @@ describe("report/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => emptyOptions,
             };
-            datasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateReportIdMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(1);
+            listDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(0);
+                expect(validateReportIdMock.callCount).to.equal(0);
+                expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
@@ -102,7 +102,7 @@ describe("report/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => oneOptions,
             };
-            datasourceAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listDatasourceAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
@@ -117,7 +117,7 @@ describe("report/datasource.ts", () => {
                 name: () => "datasource",
                 opts: () => allOptions,
             };
-            datasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listDatasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);

@@ -58,7 +58,7 @@ describe("dataflow/refresh/update.ts", () => {
     const allOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         F: "dataflowName",
-        refreshSchedule: "",
+        refreshSchedule: "{}",
     };
     const allFileOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
@@ -158,7 +158,6 @@ describe("dataflow/refresh/update.ts", () => {
             validateGroupIdMock.resolves(allOptions.W);
             validateDataflowIdMock.resolves(allOptions.F);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allOptions,
@@ -167,7 +166,7 @@ describe("dataflow/refresh/update.ts", () => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
                 expect(validateDataflowIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(0);
                 done();
             });
         });

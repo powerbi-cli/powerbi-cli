@@ -52,7 +52,7 @@ describe("pipeline/deploy.ts", () => {
     };
     const allOptions = {
         P: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        options: "",
+        options: "{}",
     };
     const allFileOptions = {
         P: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
@@ -112,7 +112,6 @@ describe("pipeline/deploy.ts", () => {
         it("deploy with all options", (done) => {
             validatepipelineIdMock.resolves(allOptions.P);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("");
             const cmdOptsMock: unknown = {
                 name: () => "deploy",
                 opts: () => allOptions,
@@ -120,14 +119,14 @@ describe("pipeline/deploy.ts", () => {
             deployAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validatepipelineIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(0);
                 done();
             });
         });
         it("deploy with all options (file)", (done) => {
             validatepipelineIdMock.resolves(allOptions.P);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("");
+            readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
                 name: () => "deploy",
                 opts: () => allFileOptions,

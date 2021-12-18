@@ -29,18 +29,18 @@ import { OptionValues } from "commander";
 
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
-import { validateGroupId, validateDatasetId } from "../lib/parameters";
+import { validateGroupId, validateReportId } from "../lib/parameters";
 
 export async function setOwnerAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
 
     const groupId = await validateGroupId(options.W, true);
-    const datasetId = await validateDatasetId(groupId as string, options.D, true);
-    debug(`Retrieve Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
+    const reportId = await validateReportId(groupId as string, options.D, true);
+    debug(`Retrieve Power BI report (${reportId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",
-        url: `/groups/${groupId}/datasets/${datasetId}/Default.TakeOver`,
+        url: `/groups/${groupId}/reports/${reportId}/Default.TakeOver`,
     };
     await executeAPICall(request);
 }

@@ -56,7 +56,7 @@ describe("admin/group/update.ts", () => {
     };
     const fileOptions = {
         W: "name",
-        updateDetailsFile: "file.json",
+        updateDetailsFile: "",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
@@ -111,7 +111,6 @@ describe("admin/group/update.ts", () => {
         });
         it("update with 'group' and 'details' options", (done) => {
             validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            readFileSyncMock.resolves("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
@@ -126,20 +125,18 @@ describe("admin/group/update.ts", () => {
         });
         it("update with 'group' and 'details file' options", (done) => {
             validateAdminGroupIdMock.resolves("c2a995d2-cd03-4b32-be5b-3bf93d211a56");
-            readFileSyncMock.resolves("{}");
+            readFileSyncMock.returns("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => fileOptions,
             };
-            updateAction(fileOptions, cmdOptsMock as ModuleCommand)
-                .then(() => {
-                    expect(validateAdminGroupIdMock.callCount).to.equal(1);
-                    expect(readFileSyncMock.callCount).to.equal(1);
-                    expect(executeAPICallMock.callCount).to.equal(1);
-                    done();
-                })
-                .catch((err) => console.log(err));
+            updateAction(fileOptions, cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateAdminGroupIdMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
         });
     });
 });

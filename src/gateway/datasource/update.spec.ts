@@ -58,7 +58,7 @@ describe("gateway/datasource/update.ts", () => {
     const allOptions = {
         G: "gatewayName",
         D: "datasourceName",
-        credential: "",
+        credential: "{}",
     };
     const allOptionsFile = {
         G: "gatewayName",
@@ -144,7 +144,6 @@ describe("gateway/datasource/update.ts", () => {
         it("update with all options", (done) => {
             validateGatewayIdMock.resolves(allOptions.G);
             validateGatewayDatasourceIdMock.resolves(allOptions.D);
-            readFileSyncMock.returns("");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
@@ -153,7 +152,7 @@ describe("gateway/datasource/update.ts", () => {
             updateAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
                 expect(validateGatewayDatasourceIdMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
@@ -161,7 +160,7 @@ describe("gateway/datasource/update.ts", () => {
         it("update with all options (file)", (done) => {
             validateGatewayIdMock.resolves(allOptionsFile.G);
             validateGatewayDatasourceIdMock.resolves(allOptionsFile.D);
-            readFileSyncMock.returns("");
+            readFileSyncMock.returns("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",

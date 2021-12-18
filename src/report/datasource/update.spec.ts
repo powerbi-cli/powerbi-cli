@@ -31,164 +31,157 @@ import chai from "chai";
 import chaiAsPromise from "chai-as-promised";
 import { SinonStub } from "sinon";
 
-import { ModuleCommand } from "../lib/command";
-import * as parameters from "../lib/parameters";
-import * as api from "../lib/api";
+import { ModuleCommand } from "../../lib/command";
+import * as parameters from "../../lib/parameters";
+import * as api from "../../lib/api";
 
-import { updateAction } from "./update";
+import { updateDatasourceAction } from "./update";
 
 import fs from "fs";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("embedded/update.ts", () => {
-    let validateSubscriptionMock: SinonStub<unknown[], unknown>;
-    let validateResourceGroupMock: SinonStub<unknown[], unknown>;
+describe("report/datasource/update.ts", () => {
+    let validateGroupIdMock: SinonStub<unknown[], unknown>;
+    let validateReportIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     let readFileSyncMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
-        S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-    };
-    const missingtwoOptions = {
-        S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        R: "resourcegroup",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const missingOptions = {
-        S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        R: "resourcegroup",
-        C: "capacity",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        R: "reportName",
     };
     const allOptions = {
-        S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        R: "resourcegroup",
-        C: "capacity",
-        parameter: "{}",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        R: "reportName",
+        updateDetails: "{}",
     };
     const allFileOptions = {
-        S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        R: "resourcegroup",
-        C: "capacity",
-        parameterFile: "",
+        W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        R: "reportName",
+        updateDetailsFile: "",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
-        validateSubscriptionMock = ImportMock.mockFunction(parameters, "validateSubscriptionId");
-        validateResourceGroupMock = ImportMock.mockFunction(parameters, "validateResourceGroupId");
+        validateGroupIdMock = ImportMock.mockFunction(parameters, "validateGroupId");
+        validateReportIdMock = ImportMock.mockFunction(parameters, "validateReportId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
         readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
     });
     afterEach(() => {
-        validateSubscriptionMock.restore();
-        validateResourceGroupMock.restore();
+        validateGroupIdMock.restore();
+        validateReportIdMock.restore();
         executeAPICallMock.restore();
         readFileSyncMock.restore();
     });
-    describe("updateAction()", () => {
+    describe("updateDatasourceAction()", () => {
         it("update with --help", (done) => {
-            validateSubscriptionMock.resolves(undefined);
-            validateResourceGroupMock.resolves(undefined);
+            validateGroupIdMock.resolves(undefined);
+            validateReportIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => helpOptions,
             };
-            updateAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(0);
-                expect(validateResourceGroupMock.callCount).to.equal(0);
+            updateDatasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
+                expect(validateGroupIdMock.callCount).to.equal(0);
+                expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with no options", (done) => {
-            validateSubscriptionMock.rejects();
-            validateResourceGroupMock.rejects();
+        it("update with no options ('my')", (done) => {
+            validateGroupIdMock.resolves(undefined);
+            validateReportIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => emptyOptions,
             };
-            updateAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(1);
-                expect(validateResourceGroupMock.callCount).to.equal(0);
+            updateDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateReportIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(0);
+                done();
+            });
+        });
+        it("update with no options ('uuid')", (done) => {
+            validateGroupIdMock.rejects();
+            validateReportIdMock.rejects();
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "update",
+                opts: () => emptyOptions,
+            };
+            updateDatasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateReportIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("update with one options", (done) => {
-            validateSubscriptionMock.resolves(oneOptions.S);
-            validateResourceGroupMock.rejects();
+            validateGroupIdMock.resolves(oneOptions.W);
+            validateReportIdMock.rejects();
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => oneOptions,
             };
-            updateAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(1);
-                expect(validateResourceGroupMock.callCount).to.equal(1);
+            updateDatasourceAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("update with two missing options", (done) => {
-            validateSubscriptionMock.resolves(missingOptions.S);
-            validateResourceGroupMock.resolves(missingOptions.R);
-            executeAPICallMock.resolves(true);
-            const cmdOptsMock: unknown = {
-                name: () => "update",
-                opts: () => missingtwoOptions,
-            };
-            updateAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(1);
-                expect(validateResourceGroupMock.callCount).to.equal(1);
-                expect(executeAPICallMock.callCount).to.equal(0);
-                done();
-            });
-        });
-        it("update with one missing options", (done) => {
-            validateSubscriptionMock.resolves(missingOptions.S);
-            validateResourceGroupMock.resolves(missingOptions.R);
+        it("update with missing options", (done) => {
+            validateGroupIdMock.resolves(missingOptions.W);
+            validateReportIdMock.resolves(missingOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => missingOptions,
             };
-            updateAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(1);
-                expect(validateResourceGroupMock.callCount).to.equal(1);
+            updateDatasourceAction(missingOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
         it("update with all options", (done) => {
-            validateSubscriptionMock.resolves(allOptions.S);
-            validateResourceGroupMock.resolves(allOptions.R);
+            validateGroupIdMock.resolves(allOptions.W);
+            validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allOptions,
             };
-            updateAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(1);
-                expect(validateResourceGroupMock.callCount).to.equal(1);
+            updateDatasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(0);
                 done();
             });
         });
         it("update with all options (file)", (done) => {
-            validateSubscriptionMock.resolves(allOptions.S);
-            validateResourceGroupMock.resolves(allOptions.R);
+            validateGroupIdMock.resolves(allOptions.W);
+            validateReportIdMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
             readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allFileOptions,
             };
-            updateAction(allFileOptions, cmdOptsMock as ModuleCommand).then(() => {
-                expect(validateSubscriptionMock.callCount).to.equal(1);
-                expect(validateResourceGroupMock.callCount).to.equal(1);
+            updateDatasourceAction(allFileOptions, cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validateReportIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 expect(readFileSyncMock.callCount).to.equal(1);
                 done();

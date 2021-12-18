@@ -46,6 +46,7 @@ describe("dataflow/transaction/cancel.ts", () => {
     const emptyOptions = {};
     const allOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        transaction: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
     };
     const helpOptions = { H: true };
     beforeEach(() => {

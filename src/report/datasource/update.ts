@@ -27,23 +27,28 @@
 "use strict";
 import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../lib/command";
-import { debug } from "../lib/logging";
-import { APICall, executeAPICall } from "../lib/api";
-import { getGroupUrl } from "../lib/helpers";
-import { validateGroupId, validateReportId } from "../lib/parameters";
+import { debug } from "../../lib/logging";
+import { APICall, executeAPICall } from "../../lib/api";
+import { getGroupUrl } from "../../lib/helpers";
+import { readFileSync } from "fs";
+import { validateGroupId, validateReportId } from "../../lib/parameters";
 
-export async function datasourceAction(...args: unknown[]): Promise<void> {
-    const cmd = args[args.length - 1] as ModuleCommand;
+export async function updateDatasourceAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
+
     const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
-    debug(`Retrieves Power BI report datasources of the group (${groupId || "my"})`);
+    if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
+        throw "error: missing option '--update-details' or '--update-details-file'";
+    const updateDetails = options.updateDetails
+        ? JSON.parse(options.updateDetails)
+        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
+    debug(`Update the parameters of a Power BI report (${reportId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
-        method: "GET",
-        url: `${getGroupUrl(groupId)}/reports/${reportId}/datasources`,
-        containsValue: true,
+        method: "POST",
+        url: `${getGroupUrl(groupId)}/reports/${reportId}/Default.UpdateDatasources`,
+        body: updateDetails,
     };
-    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
+    await executeAPICall(request);
 }
