@@ -41,10 +41,15 @@ export async function queryAction(...args: unknown[]): Promise<void> {
     const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
 
-    if (options.dax === undefined && options.script === undefined && options.scriptFile === undefined)
-        throw "error: missing option '--dax', '--script' or '--script-file'";
-    const script = options.dax || options.script || readFileSync(options.scriptFile);
-    const query = options.dax;
+    if (
+        options.dax === undefined &&
+        options.daxFile === undefined &&
+        options.script === undefined &&
+        options.scriptFile === undefined
+    )
+        throw "error: missing option '--dax', '--dax-file', '--script' or '--script-file'";
+    const script = options.script || options.scriptFile ? readFileSync(options.scriptFile) : undefined;
+    const query = options.dax || options.daxFile ? readFileSync(options.daxFile) : undefined;
 
     debug(`Execute query against Power BI dataset (${datasetId})`);
 
@@ -56,5 +61,10 @@ export async function queryAction(...args: unknown[]): Promise<void> {
             : script,
         containsValue: true,
     };
-    await executeAPICallStream(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
+    await executeAPICallStream(
+        request,
+        cmd.outputFormat,
+        cmd.outputFile,
+        cmd.jmsePath || "[results[0].tables[0].rows]"
+    );
 }

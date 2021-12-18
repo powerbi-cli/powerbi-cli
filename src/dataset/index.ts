@@ -76,6 +76,7 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. Optional if dataset is provided as ID.")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
         .option("--dax <query>", "String with the DAX query to be executed")
+        .option("--dax-file <file>", "File with the DAX query to be executed")
         .option("--script <script>", "String with the raw query statement in JSON format")
         .option("--script-file <file>", "File with the raw query statement in JSON format");
     queryCommand.addGlobalOptions();
