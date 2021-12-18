@@ -27,12 +27,34 @@
 "use strict";
 
 import { ModuleCommand } from "../lib/command";
+import { createAction } from "./create";
+import { deleteAction } from "./delete";
 import { deployAction } from "./deploy";
 import { listshowAction } from "./listshow";
+import { assignAction } from "./assign";
+import { updateAction } from "./update";
 import { getCommands as getStageCommands } from "./stage/index";
 import { getCommands as getOperationCommands } from "./operation/index";
+import { getCommands as getUserCommands } from "./user/index";
 
 export function getCommands(): ModuleCommand {
+    const assignCommand = new ModuleCommand("assign")
+        .description("Assigns the workspace to the specified deployment pipeline stage")
+        .action(assignAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--stage <number>", "The deployment pipeline stage order. Development (0), Test (1), Production (2)")
+        .option("--workspace -w <name>", "Name of the Power BI workspace");
+    assignCommand.addGlobalOptions();
+    const createCommand = new ModuleCommand("create")
+        .description("Creates a Power BI pipeline")
+        .action(createAction)
+        .option("--pipeline -p <name>", "Name of the Power BI pipeline");
+    createCommand.addGlobalOptions();
+    const deleteCommand = new ModuleCommand("delete")
+        .description("Delete a Power BI pipeline")
+        .action(deleteAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
+    deleteCommand.addGlobalOptions();
     const deployCommand = new ModuleCommand("deploy")
         .description("Start a deploy from a specific stage in a Power BI pipeline")
         .action(deployAction)
@@ -48,13 +70,31 @@ export function getCommands(): ModuleCommand {
         .action(listshowAction)
         .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
     showCommand.addGlobalOptions();
+    const unassignCommand = new ModuleCommand("unassign")
+        .description("Unassigns the workspace to the specified deployment pipeline stage")
+        .action(assignAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--stage <number>", "The deployment pipeline stage order. Development (0), Test (1), Production (2)");
+    unassignCommand.addGlobalOptions();
+    const updateCommand = new ModuleCommand("update")
+        .description("Update pipeline properties")
+        .action(updateAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--update <data>", "String with the update pipeline settings in JSON format")
+        .option("--update-file <file>", "File with the update pipeline settings in JSON format");
+    updateCommand.addGlobalOptions();
     const pipelineCommand = new ModuleCommand("pipeline")
         .description("Manage Power BI pipelines")
+        .addCommand(assignCommand)
+        .addCommand(createCommand)
+        .addCommand(deleteCommand)
         .addCommand(deployCommand)
         .addCommand(listCommand)
         .addCommand(showCommand)
+        .addCommand(unassignCommand)
+        .addCommand(getOperationCommands())
         .addCommand(getStageCommands())
-        .addCommand(getOperationCommands());
+        .addCommand(getUserCommands());
     pipelineCommand.addGlobalOptions();
     return pipelineCommand;
 }

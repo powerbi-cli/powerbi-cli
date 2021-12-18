@@ -31,6 +31,7 @@ import { listshowAction } from "./listshow";
 import { deleteAction } from "./delete";
 import { upstreamAction } from "./upstream";
 import { datasourceAction } from "./datasource";
+import { updateAction } from "./update";
 import { getCommands as getRefreshCommands } from "./refresh/index";
 import { getCommands as getStorageCommands } from "./storage/index";
 import { getCommands as getTransactionCommands } from "./transaction/index";
@@ -61,7 +62,7 @@ export function getCommands(): ModuleCommand {
     showCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Update dataflow properties, capabilities and settings")
-        .action(deleteAction)
+        .action(updateAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow")
         .option("--update <data>", "String with the update dataflow settings in JSON format")
