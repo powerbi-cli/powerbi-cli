@@ -43,7 +43,7 @@ export async function createAction(...args: unknown[]): Promise<void> {
     const definition = options.definition
         ? JSON.parse(options.definition)
         : options.definitionFile
-        ? readFileSync(options.definitionFile, "utf8")
+        ? JSON.parse(readFileSync(options.definitionFile, "utf8"))
         : {};
     if (options.G) definition["name"] = options.G;
     debug(

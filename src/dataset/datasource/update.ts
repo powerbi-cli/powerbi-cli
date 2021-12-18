@@ -43,7 +43,7 @@ export async function updateDatasourceAction(...args: unknown[]): Promise<void> 
         throw "error: missing option '--update-details' or '--update-details-file'";
     const updateDetails = options.updateDetails
         ? JSON.parse(options.updateDetails)
-        : readFileSync(options.updateDetailsFile, "utf8");
+        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
     debug(`Update the parameters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",

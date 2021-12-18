@@ -41,7 +41,9 @@ export async function updateParameterAction(...args: unknown[]): Promise<void> {
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.parameter === undefined && options.parameterFile === undefined)
         throw "error: missing option '--parameter' or '--parameter-file'";
-    const parameters = options.parameter ? JSON.parse(options.parameter) : readFileSync(options.parameterFile, "utf8");
+    const parameters = options.parameter
+        ? JSON.parse(options.parameter)
+        : JSON.parse(readFileSync(options.parameterFile, "utf8"));
     debug(`Update the parameters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",

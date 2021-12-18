@@ -42,7 +42,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
         throw "error: missing option '--refresh-schedule' or '--refresh-schedule-file'";
     const refreshSchedule = options.refreshSchedule
         ? JSON.parse(options.refreshSchedule)
-        : readFileSync(options.refreshScheduleFile, "utf8");
+        : JSON.parse(readFileSync(options.refreshScheduleFile, "utf8"));
     debug(`Update the refresch schedule of a Power BI dataflow (${dataflowId}) in workspace (${groupId})`);
     const request: APICall = {
         method: "PATCH",

@@ -40,7 +40,7 @@ export async function createAction(...args: unknown[]): Promise<void> {
         throw "error: missing option '--datasource' or '--datasource-file'";
     const datasource = options.datasource
         ? JSON.parse(options.datasource)
-        : readFileSync(options.datasourceFile, "utf8");
+        : JSON.parse(readFileSync(options.datasourceFile, "utf8"));
     debug(`Create Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "POST",

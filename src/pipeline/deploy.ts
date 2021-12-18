@@ -39,7 +39,9 @@ export async function deployAction(...args: unknown[]): Promise<void> {
 
     if (options.options === undefined && options.optionsFile === undefined)
         throw "error: missing option '--options' or '--options-file'";
-    const deployOptions = options.options ? JSON.parse(options.options) : readFileSync(options.optionsFile, "utf8");
+    const deployOptions = options.options
+        ? JSON.parse(options.options)
+        : JSON.parse(readFileSync(options.optionsFile, "utf8"));
 
     debug(`Deploy from a specific stage in a Power BI pipeline (${pipelineId})`);
 

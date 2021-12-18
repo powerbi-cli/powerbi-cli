@@ -44,7 +44,9 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     if (!capacity) throw "error: missing option '--capacity'";
     if (options.parameter === undefined && options.parameterFile === undefined)
         throw "error: missing option '--parameter' or '--parameter-file'";
-    const parameters = options.parameter ? JSON.parse(options.parameter) : readFileSync(options.parameterFile, "utf8");
+    const parameters = options.parameter
+        ? JSON.parse(options.parameter)
+        : JSON.parse(readFileSync(options.parameterFile, "utf8"));
     debug(`Lists all the Dedicated capacities for the given subscription`);
     const request: APICall = {
         method: "PATCH",

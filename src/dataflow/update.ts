@@ -41,7 +41,9 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const dataflowId = await validateDataflowId(groupId as string, options.F, true);
     if (options.update === undefined && options.updateFile === undefined)
         throw "error: missing option '--update' or '--update-file'";
-    const updateSettings = options.update ? JSON.parse(options.update) : readFileSync(options.updateFile, "utf8");
+    const updateSettings = options.update
+        ? JSON.parse(options.update)
+        : JSON.parse(readFileSync(options.updateFile, "utf8"));
 
     debug(`Updates a Power BI dataflow (${dataflowId}) in workspace ${groupId}`);
     const request: APICall = {

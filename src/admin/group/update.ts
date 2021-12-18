@@ -49,7 +49,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
         throw "error: missing option '--update-details' or '--update-details-file'";
     const body = options.updateDetails
         ? JSON.parse(options.updateDetails)
-        : readFileSync(options.updateDetailsFile, "utf8");
+        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
     debug(`Updates the specified workspace properties`);
     const request: APICall = {
         method: "PATCH",
