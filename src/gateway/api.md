@@ -1,6 +1,6 @@
 # Power BI Rest API coverage
 
-_Last update: September 14, 2021_
+_Last update: December 18, 2021_
 
 | API                    | PBI CLI Command        | PBICLI Version |
 | ---------------------- | ---------------------- | -------------- |
@@ -9,9 +9,9 @@ _Last update: September 14, 2021_
 | Delete Datasource      | datasource delete      | v1.0           |
 | Delete Datasource User | datasource user delete | v1.0           |
 | Get Datasource         | datasource show        | v1.0           |
-| Get Datasources        | datasource list        | v1.0           |
 | Get Datasource Status  | datasource status      | v1.0           |
 | Get Datasource Users   | datasource user ;oist  | v1.0           |
+| Get Datasources        | datasource list        | v1.0           |
 | Get Gateway            | show                   | v1.0           |
 | Get Gateways           | list                   | v1.0           |
 | Update Datasource      | datasource update      | v1.0           |

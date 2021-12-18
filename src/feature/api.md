@@ -1,6 +1,6 @@
 # Power BI Rest API coverage
 
-_Last update: September 14, 2021_
+_Last update: December 18, 2021_
 
 | API                           | PBI CLI Command | PBICLI Version |
 | ----------------------------- | --------------- | -------------- |

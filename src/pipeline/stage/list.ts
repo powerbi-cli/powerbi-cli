@@ -42,7 +42,7 @@ export async function listshowAction(...args: unknown[]): Promise<void> {
 
     const request: APICall = {
         method: "GET",
-        url: `/pipelines/${pipelineId}?$expand=stages`,
+        url: `/pipelines/${pipelineId}/stages`,
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, `stages${cmd.jmsePath || ""}`);
