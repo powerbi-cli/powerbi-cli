@@ -42,7 +42,7 @@ export async function statusAction(...args: unknown[]): Promise<void> {
     debug(`Retrieve Power BI datasource (${datasourceId}) status from gateway (${gatewayId})`);
     const request: APICall = {
         method: "GET",
-        url: `gateways/${gatewayId}/datasources/${datasourceId}/status`,
+        url: `/gateways/${gatewayId}/datasources/${datasourceId}/status`,
         containsValue: false,
     };
     await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

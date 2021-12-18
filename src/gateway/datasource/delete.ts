@@ -39,7 +39,7 @@ export async function deleteAction(...args: unknown[]): Promise<void> {
     debug(`Delete a Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "DELETE",
-        url: `gateways/${gatewayId}/datasources/${datasourceId}`,
+        url: `/gateways/${gatewayId}/datasources/${datasourceId}`,
     };
     await executeAPICall(request);
 }

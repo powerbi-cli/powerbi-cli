@@ -44,7 +44,7 @@ export async function createAction(...args: unknown[]): Promise<void> {
     debug(`Create Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "POST",
-        url: `gateways/${gatewayId}/datasources`,
+        url: `/gateways/${gatewayId}/datasources`,
         body: datasource,
     };
     await executeAPICall(request);

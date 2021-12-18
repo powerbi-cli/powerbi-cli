@@ -41,11 +41,11 @@ export async function updateAction(...args: unknown[]): Promise<void> {
         throw "error: missing option '--credential' or '--credential-file'";
     const credential = options.credential
         ? JSON.parse(options.credential)
-        : readFileSync(options.credentialFile, "utf8");
+        : JSON.parse(readFileSync(options.credentialFile, "utf8"));
     debug(`Update the credentials of a Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "PATCH",
-        url: `gateways/${gatewayId}/datasources/${datasourceId}`,
+        url: `/gateways/${gatewayId}/datasources/${datasourceId}`,
         body: credential,
     };
     await executeAPICall(request);
