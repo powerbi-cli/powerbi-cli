@@ -53,6 +53,7 @@ export const datasetNamingConflict = datasetNamingConflictPBIX
     .filter((v, i, s) => s.indexOf(v) === i)
     .sort();
 export const expandAdminGroups = ["dashboards", "datasets", "dataflows", "reports", "users", "workbooks"];
+export const expandAdminPipelines = ["users", "stages"];
 export const expandCapacity = ["tenantKey"];
 export const expandAdminDashboards = ["tiles"];
 export const expandAdminImports = ["datasets", "reports"];

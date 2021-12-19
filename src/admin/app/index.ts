@@ -27,41 +27,24 @@
 "use strict";
 
 import { ModuleCommand } from "../../lib/command";
-import { expandAdminDashboards } from "../../lib/helpers";
 import { listAction } from "./list";
 import { listUserAction } from "./list-user";
-import { tileAction } from "./tile";
 
 export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
-        .description("Returns a list of dashboards for the organization")
+        .description("Returns a list of apps in the organization")
         .action(listAction)
-        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
-        .option(
-            "--expand <entity>",
-            `Expands related entities inline, receives a comma-separated list of data types. Allowed values: ${expandAdminDashboards.join(
-                ", "
-            )}. Not used if --workspace is provided`
-        )
-        .option("--filter <filter>", "Filters the results based on a boolean condition")
-        .option("--top <number>", "Returns only the first <number> results. Default: 5000")
-        .option("--skip <number>", "Skips the first <number> results");
-    const listUserCommand = new ModuleCommand("list-user")
-        .description("Returns a list of users that have access to the specified dashboard")
-        .action(listUserAction)
-        .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
-    listUserCommand.addGlobalOptions();
+        .option("--top <number>", "Returns only the first <number> results. Default: 5000");
     listCommand.addGlobalOptions();
-    const tileCommand = new ModuleCommand("tile")
-        .description("Returns a list of tiles within the specified dashboard")
-        .action(tileAction)
-        .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
-    tileCommand.addGlobalOptions();
-    const appCommand = new ModuleCommand("dashboard")
-        .description("Manage dashboards as admin")
+    const listUserCommand = new ModuleCommand("list-user")
+        .description("Returns a list of users that have access to the specified app")
+        .action(listUserAction)
+        .option("--app -a <name>", "Name or ID of the Power BI app");
+    listUserCommand.addGlobalOptions();
+    const appCommand = new ModuleCommand("app")
+        .description("Manage apps as admin")
         .addCommand(listCommand)
-        .addCommand(listUserCommand)
-        .addCommand(tileCommand);
+        .addCommand(listUserCommand);
     appCommand.addGlobalOptions();
     return appCommand;
 }

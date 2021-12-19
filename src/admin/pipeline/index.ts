@@ -27,41 +27,51 @@
 "use strict";
 
 import { ModuleCommand } from "../../lib/command";
-import { expandAdminDashboards } from "../../lib/helpers";
+import { expandAdminPipelines, principalTypes, accessRightsPipeline } from "../../lib/helpers";
 import { listAction } from "./list";
+import { deleteUserAction } from "./deleteUser";
 import { listUserAction } from "./list-user";
-import { tileAction } from "./tile";
+import { updateUserAction } from "./updateUser";
 
 export function getCommands(): ModuleCommand {
+    const deleteUserCommand = new ModuleCommand("delete-user")
+        .description("Removes user permissions to the specified workspace")
+        .action(deleteUserAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--identifier <identifier>", "Identifier of the user or principal");
+    deleteUserCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
-        .description("Returns a list of dashboards for the organization")
+        .description("Returns a list of workspaces for the organization")
         .action(listAction)
-        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option(
             "--expand <entity>",
-            `Expands related entities inline, receives a comma-separated list of data types. Allowed values: ${expandAdminDashboards.join(
+            `Expands related entities inline, receives a comma-separated list of data types. Allowed values: ${expandAdminPipelines.join(
                 ", "
-            )}. Not used if --workspace is provided`
+            )}`
         )
         .option("--filter <filter>", "Filters the results based on a boolean condition")
         .option("--top <number>", "Returns only the first <number> results. Default: 5000")
         .option("--skip <number>", "Skips the first <number> results");
-    const listUserCommand = new ModuleCommand("list-user")
-        .description("Returns a list of users that have access to the specified dashboard")
-        .action(listUserAction)
-        .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
-    listUserCommand.addGlobalOptions();
     listCommand.addGlobalOptions();
-    const tileCommand = new ModuleCommand("tile")
-        .description("Returns a list of tiles within the specified dashboard")
-        .action(tileAction)
-        .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
-    tileCommand.addGlobalOptions();
-    const appCommand = new ModuleCommand("dashboard")
-        .description("Manage dashboards as admin")
+    const listUserCommand = new ModuleCommand("list-user")
+        .description("Returns a list of users that have access to the specified workspace")
+        .action(listUserAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
+    listUserCommand.addGlobalOptions();
+    const updateUserCommand = new ModuleCommand("update-user")
+        .description("Updates the specified workspace properties")
+        .action(updateUserAction)
+        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--identifier <identifier>", "Identifier of the user or principal")
+        .option("--access-right <right>", `Access right. Allowed values: ${accessRightsPipeline.join(", ")}`)
+        .option("--principal-type <type>", `Type of pricipal. Allowed values: ${principalTypes.join(", ")}`);
+    updateUserCommand.addGlobalOptions();
+    const appCommand = new ModuleCommand("pipeline")
+        .description("Manage pipelines as admin")
+        .addCommand(deleteUserCommand)
         .addCommand(listCommand)
         .addCommand(listUserCommand)
-        .addCommand(tileCommand);
+        .addCommand(updateUserCommand);
     appCommand.addGlobalOptions();
     return appCommand;
 }
