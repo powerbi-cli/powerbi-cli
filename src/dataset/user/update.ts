@@ -29,18 +29,18 @@ import { OptionValues } from "commander";
 
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { principalTypes, accessRightsPipeline } from "../../lib/helpers";
-import { validateParameter, validateAllowedValues, validatePipelineId } from "../../lib/parameters";
+import { principalTypes, accessRightsDataset, getGroupUrl } from "../../lib/helpers";
+import { validateParameter, validateAllowedValues, validateDatasetId, validateGroupId } from "../../lib/parameters";
 
 export async function updateUserAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
-
-    const pipelineId = await validatePipelineId(options.W, true);
+    const groupId = await validateGroupId(options.W, false);
+    const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (!options.identifier) throw "error: missing option '--identifier'";
     const accessRight = await validateParameter({
         name: options.accessRight,
-        isName: () => validateAllowedValues(options.accessRight, accessRightsPipeline),
+        isName: () => validateAllowedValues(options.accessRight, accessRightsDataset),
         missing: "error: missing option '--access-right'",
         isRequired: true,
     });
@@ -50,10 +50,10 @@ export async function updateUserAction(...args: unknown[]): Promise<void> {
         missing: "error: missing option '--principal-type'",
         isRequired: true,
     });
-    debug(`Update access of a user or service pricipal to the Power BI pipeline: ${options.W}`);
+    debug(`Update access of a user or service pricipal to the Power BI dataset: ${datasetId}`);
     const request: APICall = {
         method: "POST",
-        url: `/pipelines/${pipelineId}/users`,
+        url: `${getGroupUrl(groupId)}/datasets/${datasetId}/users`,
         body: {
             identifier: options.identifier,
             accessRight: accessRight,

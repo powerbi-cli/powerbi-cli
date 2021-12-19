@@ -36,7 +36,8 @@ import { TokenType } from "./auth";
 import { getConsts } from "./consts";
 
 export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
-export const pipelineAccessRights = ["Admin"];
+export const accessRightsPipeline = ["Admin"];
+export const accessRightsDataset = ["Read", "ReadExplore", "ReadReshare", "ReadReshareExplore"];
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];
 export const principalTypes = ["App", "User", "Group", "None"];
 export const pbiExports = ["PDF", "PPTX"];

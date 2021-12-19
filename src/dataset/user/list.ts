@@ -27,38 +27,23 @@
 "use strict";
 import { OptionValues } from "commander";
 
+import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
-import { principalTypes, accessRightsPipeline } from "../../lib/helpers";
-import { validateParameter, validateAllowedValues, validatePipelineId } from "../../lib/parameters";
+import { validateDatasetId, validateGroupId } from "../../lib/parameters";
+import { getGroupUrl } from "../../lib/helpers";
 
-export async function updateUserAction(...args: unknown[]): Promise<void> {
+export async function listUserAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
-
-    const pipelineId = await validatePipelineId(options.W, true);
-    if (!options.identifier) throw "error: missing option '--identifier'";
-    const accessRight = await validateParameter({
-        name: options.accessRight,
-        isName: () => validateAllowedValues(options.accessRight, accessRightsPipeline),
-        missing: "error: missing option '--access-right'",
-        isRequired: true,
-    });
-    const principalType = await validateParameter({
-        name: options.principalType,
-        isName: () => validateAllowedValues(options.principalType, principalTypes),
-        missing: "error: missing option '--principal-type'",
-        isRequired: true,
-    });
-    debug(`Update access of a user or service pricipal to the Power BI pipeline: ${options.W}`);
+    const groupId = await validateGroupId(options.W, false);
+    const datasetId = await validateDatasetId(groupId as string, options.D, true);
+    debug(`Returns a list of users that have access to the Power BI dataset: ${datasetId}`);
     const request: APICall = {
-        method: "POST",
-        url: `/pipelines/${pipelineId}/users`,
-        body: {
-            identifier: options.identifier,
-            accessRight: accessRight,
-            principalType: principalType,
-        },
+        method: "GET",
+        url: `${getGroupUrl(groupId)}/datasets/${datasetId}/users`,
+        containsValue: true,
     };
-    await executeAPICall(request);
+    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }

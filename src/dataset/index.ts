@@ -36,6 +36,7 @@ import { getCommands as getParameterCommands } from "./parameter/index";
 import { getCommands as getGatewayCommands } from "./gateway/index";
 import { getCommands as getDatasourceCommands } from "./datasource/index";
 import { getCommands as getRefreshCommands } from "./refresh/index";
+import { getCommands as getUserCommands } from "./user/index";
 
 export function getCommands(): ModuleCommand {
     const deleteCommand = new ModuleCommand("delete")
@@ -91,7 +92,8 @@ export function getCommands(): ModuleCommand {
         .addCommand(getDatasourceCommands())
         .addCommand(getGatewayCommands())
         .addCommand(getParameterCommands())
-        .addCommand(getRefreshCommands());
+        .addCommand(getRefreshCommands())
+        .addCommand(getUserCommands());
     datassetCommand.addGlobalOptions();
     return datassetCommand;
 }

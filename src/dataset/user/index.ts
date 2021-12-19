@@ -30,32 +30,35 @@ import { ModuleCommand } from "../../lib/command";
 import { listUserAction } from "./list";
 import { deleteUserAction } from "./delete";
 import { updateUserAction } from "./update";
-import { principalTypes, accessRightsPipeline } from "../../lib/helpers";
+import { principalTypes, accessRightsDataset } from "../../lib/helpers";
 
 export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
         .description("List user and service pricipal with access")
         .action(listUserAction)
-        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. Optional if dataset is provided as ID.")
+        .option("--dataset -d <name>", "Name or ID of the Power BI dataset");
     listCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Update access of a user or service pricipal")
         .action(updateUserAction)
-        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. Optional if dataset is provided as ID.")
+        .option("--dataset -d <name>", "Name or ID of the Power BI dataset")
         .option("--identifier <identifier>", "Identifier of the user or principal")
-        .option("--access-right <right>", `Access right. Allowed values: ${accessRightsPipeline.join(", ")}`)
+        .option("--access-right <right>", `Access right. Allowed values: ${accessRightsDataset.join(", ")}`)
         .option("--principal-type <type>", `Type of pricipal. Allowed values: ${principalTypes.join(", ")}`);
     updateCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
         .description("Revoke access of a user or service pricipal")
         .action(deleteUserAction)
-        .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. Optional if dataset is provided as ID.")
+        .option("--dataset -d <name>", "Name or ID of the Power BI dataset")
         .option("--identifier <identifier>", "Identifier of the user or principal");
     deleteCommand.addGlobalOptions();
     const userCommand = new ModuleCommand("user")
-        .description("Manage users of Power BI pipelines")
-        .addCommand(listCommand)
-        .addCommand(deleteCommand)
+        .description("Manage users of Power BI datasets")
+        //.addCommand(listCommand)
+        //.addCommand(deleteCommand)
         .addCommand(updateCommand);
     userCommand.addGlobalOptions();
     return userCommand;
