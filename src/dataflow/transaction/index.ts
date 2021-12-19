@@ -44,7 +44,7 @@ export function getCommands(): ModuleCommand {
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     listCommand.addGlobalOptions();
     const refreshCommand = new ModuleCommand("transaction")
-        .description("Manage Power BI dataflow Transactions")
+        .description("Operations for working with dataflow Transactions")
         .addCommand(assignCommand)
         .addCommand(listCommand);
     refreshCommand.addGlobalOptions();

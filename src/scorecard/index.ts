@@ -62,7 +62,7 @@ export function getCommands(): ModuleCommand {
         .option("--scorecard -s <name>", "Name or ID of the Power BI scorecard");
     showCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("scorecard")
-        .description("Manage Power BI scorecards (goals)")
+        .description("Operations for working with scorecards (goals)")
         .addCommand(createCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)

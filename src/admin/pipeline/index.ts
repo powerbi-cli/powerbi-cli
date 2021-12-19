@@ -67,7 +67,7 @@ export function getCommands(): ModuleCommand {
         .option("--principal-type <type>", `Type of pricipal. Allowed values: ${principalTypes.join(", ")}`);
     updateUserCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("pipeline")
-        .description("Manage pipelines as admin")
+        .description("Operations for working with pipelines as admin")
         .addCommand(deleteUserCommand)
         .addCommand(listCommand)
         .addCommand(listUserCommand)

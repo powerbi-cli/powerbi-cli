@@ -79,7 +79,7 @@ export function getCommands(): ModuleCommand {
         );
     unassignCommand.addGlobalOptions();
     const workloadCommand = new ModuleCommand("workload")
-        .description("Manage the the state of capacity workloads")
+        .description("Operations for working with the the state of capacity workloads")
         .action(workloadAction)
         .option("--capacity -c <name>", "Name or ID of the Power BI capacity")
         .option("--workload <name>", "Name the Power BI workload")
@@ -87,7 +87,7 @@ export function getCommands(): ModuleCommand {
         .option("--memory <number>", "The memory percentage maximum limit");
     workloadCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("capacity")
-        .description("Manage Power BI capacities")
+        .description("Operations for working with capacities")
         .addCommand(assignCommand)
         .addCommand(listCommand)
         .addCommand(refreshCommand)

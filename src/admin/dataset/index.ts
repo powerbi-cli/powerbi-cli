@@ -57,7 +57,7 @@ export function getCommands(): ModuleCommand {
         .option("--dataset -d <name>", "Name or ID of the Power BI dataset");
     listUserCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dataset")
-        .description("Manage datasets as admin")
+        .description("Operations for working with datasets as admin")
         .addCommand(dataflowCommand)
         .addCommand(datasourceCommand)
         .addCommand(listCommand)

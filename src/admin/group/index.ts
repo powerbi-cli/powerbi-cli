@@ -124,7 +124,7 @@ export function getCommands(): ModuleCommand {
         .option("--update-details-file <file>", "File with the update details in JSON format");
     updateCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("workspace")
-        .description("Manage workspaces as admin")
+        .description("Operations for working with workspaces as admin")
         .addCommand(addUserCommand)
         .addCommand(deleteUserCommand)
         .addCommand(listCommand)

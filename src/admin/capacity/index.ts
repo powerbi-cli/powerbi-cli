@@ -63,7 +63,7 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name(s) or ID(s) of the Power BI workspace. Use comma seperated if multiple");
     unassignCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("capacity")
-        .description("Manage capacities as admin")
+        .description("Operations for working with capacities as admin")
         .addCommand(assignCommand)
         .addCommand(listCommand)
         .addCommand(listUserCommand)

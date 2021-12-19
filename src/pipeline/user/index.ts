@@ -53,7 +53,7 @@ export function getCommands(): ModuleCommand {
         .option("--identifier <identifier>", "Identifier of the user or principal");
     deleteCommand.addGlobalOptions();
     const userCommand = new ModuleCommand("user")
-        .description("Manage users of Power BI pipelines")
+        .description("Operations for working with users of pipelines")
         .addCommand(listCommand)
         .addCommand(deleteCommand)
         .addCommand(updateCommand);

@@ -53,7 +53,7 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     showCommand.addGlobalOptions();
     const groupCommand = new ModuleCommand("workspace")
-        .description("Manage Power BI workspaces")
+        .description("Operations for working with workspaces")
         .addCommand(createCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)

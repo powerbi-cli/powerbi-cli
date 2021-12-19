@@ -40,7 +40,7 @@ export function getCommands(): ModuleCommand {
         .option("--script-file <file>", "File with the  actual script, query, or statement");
     queryCommand.addGlobalOptions();
     const embeddedCommand = new ModuleCommand("xmla")
-        .description("[OBSOLETE] Manage Power BI XMLA endpoint. Please use 'pbicli dataset query'")
+        .description("[OBSOLETE] Operations for working with XMLA endpoint. Please use 'pbicli dataset query'")
         .addCommand(queryCommand);
     embeddedCommand.addGlobalOptions();
     return embeddedCommand;

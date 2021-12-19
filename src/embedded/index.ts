@@ -69,7 +69,7 @@ export function getCommands(): ModuleCommand {
         .option("--parameter-file <file>", "File with the capacity parameters in JSON format");
     updateCommand.addGlobalOptions();
     const embeddedCommand = new ModuleCommand("embedded")
-        .description("Manage Power BI Embedded capacity")
+        .description("Operations for working with Embedded capacity")
         .addCommand(listCommand)
         .addCommand(showCommand)
         .addCommand(startCommand)

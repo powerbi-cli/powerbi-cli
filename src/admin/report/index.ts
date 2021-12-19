@@ -51,7 +51,7 @@ export function getCommands(): ModuleCommand {
         .option("--report -r <report>", "Name or ID of the Power BI report");
     subscriptionCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("report")
-        .description("Manage reports as admin")
+        .description("Operations for working with reports as admin")
         .addCommand(listCommand)
         .addCommand(listUserCommand)
         .addCommand(subscriptionCommand);

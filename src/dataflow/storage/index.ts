@@ -47,7 +47,7 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     unassignCommand.addGlobalOptions();
     const refreshCommand = new ModuleCommand("storage")
-        .description("Manage Power BI dataflow storage accounts")
+        .description("Operations for working with dataflow storage accounts")
         .addCommand(assignCommand)
         .addCommand(listCommand)
         .addCommand(unassignCommand);

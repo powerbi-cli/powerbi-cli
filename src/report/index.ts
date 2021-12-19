@@ -102,7 +102,7 @@ export function getCommands(): ModuleCommand {
         .option("--source-report <report>", "ID of the source Power BI report");
     updateCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("report")
-        .description("Manage Power BI reports")
+        .description("Operations for working with reports")
         .addCommand(deleteCommand)
         .addCommand(cloneCommand)
         .addCommand(listCommand)

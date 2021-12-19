@@ -42,7 +42,7 @@ export function getCommands(): ModuleCommand {
         .option("--operation <operationId>", "ID of the Power BI pipeline operation");
     showCommand.addGlobalOptions();
     const pipelineOperationCommand = new ModuleCommand("operation")
-        .description("Manage stages of Power BI pipeline operations")
+        .description("Operations for working with stages of pipeline operations")
         .addCommand(listCommand)
         .addCommand(showCommand);
     pipelineOperationCommand.addGlobalOptions();

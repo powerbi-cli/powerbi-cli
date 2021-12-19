@@ -39,7 +39,7 @@ export function getCommands(): ModuleCommand {
         .option("--name <name>", "Name of a registered cloud");
     setCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("cloud")
-        .description("Manage Power BI clouds")
+        .description("Operations for working with clouds")
         .addCommand(listCommand)
         .addCommand(setCommand);
     appCommand.addGlobalOptions();

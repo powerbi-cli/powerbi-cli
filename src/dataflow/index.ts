@@ -75,7 +75,7 @@ export function getCommands(): ModuleCommand {
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     upstreamCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dataflow")
-        .description("Manage Power BI dataflows")
+        .description("Operations for working with dataflows")
         .addCommand(datasourceCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)

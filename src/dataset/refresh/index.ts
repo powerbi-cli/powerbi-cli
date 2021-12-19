@@ -64,7 +64,7 @@ export function getCommands(): ModuleCommand {
         .option("--notify <option>", `Allowed values: ${refreshNotify.join(", ")}`);
     startCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("refresh")
-        .description("Manage Power BI refresh schedule")
+        .description("Operations for working with refresh schedule")
         .addCommand(historyCommand)
         .addCommand(updateCommand)
         .addCommand(showCommand)

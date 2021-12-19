@@ -52,7 +52,7 @@ export function getCommands(): ModuleCommand {
         .option("--dashboard -d <dashboard>", "Name or ID of the Power BI dashboard");
     showCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dashboard")
-        .description("Manage Power BI dashboards")
+        .description("Operations for working with dashboards")
         .addCommand(createCommand)
         .addCommand(listCommand)
         .addCommand(showCommand)

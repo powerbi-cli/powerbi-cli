@@ -25,24 +25,20 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
 import { ModuleCommand } from "../lib/command";
-import { listshowAction } from "./listshow";
+import { debug } from "../lib/logging";
+import { APICall, executeAPICall } from "../lib/api";
 
-export function getCommands(): ModuleCommand {
-    const listCommand = new ModuleCommand("list")
-        .description("Returns a list of available features for the user")
-        .action(listshowAction);
-    listCommand.addGlobalOptions();
-    const showCommand = new ModuleCommand("show")
-        .description("Returns the specified available feature for user by name")
-        .action(listshowAction)
-        .option("--feature <name>", "Name of the Power BI feature");
-    showCommand.addGlobalOptions();
-    const featureCommand = new ModuleCommand("feature")
-        .description("Operations for working with features")
-        .addCommand(listCommand)
-        .addCommand(showCommand);
-    featureCommand.addGlobalOptions();
-    return featureCommand;
+export async function refreshAction(...args: unknown[]): Promise<void> {
+    const cmd = args[args.length - 1] as ModuleCommand;
+    const options = args[args.length - 2] as OptionValues;
+    if (options.H) return;
+    debug(`Refreshes user permissions in Power BI`);
+    const request: APICall = {
+        method: "POST",
+        url: `/RefreshUserPermissions`,
+    };
+    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }

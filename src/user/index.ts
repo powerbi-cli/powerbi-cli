@@ -27,22 +27,16 @@
 "use strict";
 
 import { ModuleCommand } from "../lib/command";
-import { listshowAction } from "./listshow";
+import { refreshAction } from "./refresh";
 
 export function getCommands(): ModuleCommand {
-    const listCommand = new ModuleCommand("list")
-        .description("Returns a list of available features for the user")
-        .action(listshowAction);
-    listCommand.addGlobalOptions();
-    const showCommand = new ModuleCommand("show")
-        .description("Returns the specified available feature for user by name")
-        .action(listshowAction)
-        .option("--feature <name>", "Name of the Power BI feature");
-    showCommand.addGlobalOptions();
-    const featureCommand = new ModuleCommand("feature")
-        .description("Operations for working with features")
-        .addCommand(listCommand)
-        .addCommand(showCommand);
-    featureCommand.addGlobalOptions();
-    return featureCommand;
+    const refreshCommand = new ModuleCommand("refresh")
+        .description("Refreshes user permissions in Power BI")
+        .action(refreshAction);
+    refreshCommand.addGlobalOptions();
+    const appCommand = new ModuleCommand("user")
+        .description("Operations for working with users")
+        .addCommand(refreshCommand);
+    appCommand.addGlobalOptions();
+    return appCommand;
 }

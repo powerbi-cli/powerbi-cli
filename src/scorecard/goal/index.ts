@@ -54,7 +54,7 @@ export function getCommands(): ModuleCommand {
         .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goel");
     showCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("goal")
-        .description("Manage Power BI scorecard goals")
+        .description("Operations for working with scorecard goals")
         .addCommand(createCommand)
         .addCommand(listCommand)
         .addCommand(showCommand);

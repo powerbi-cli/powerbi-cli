@@ -45,6 +45,7 @@ export const programModules: [string, boolean][] = [
     ["pipeline", false],
     ["scorecard", false],
     ["group", false], // workspace
+    ["user", false],
     ["xmla", true],
     ["login", false],
     ["logout", false],

@@ -74,7 +74,7 @@ export function getCommands(): ModuleCommand {
         .option("--credential-file <file>", "File with the datasource credential definition in JSON format");
     updateCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("datasource")
-        .description("Manage datasources of a Power BI gateway")
+        .description("Operations for working with datasources of a Power BI gateway")
         .addCommand(createCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)

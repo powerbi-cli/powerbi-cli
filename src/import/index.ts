@@ -115,7 +115,7 @@ export function getCommands(): ModuleCommand {
         );
     tempCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("import")
-        .description("Manage Power BI imports")
+        .description("Operations for working with imports")
         .addCommand(dataflowCommand)
         .addCommand(listCommand)
         .addCommand(pbixCommand)

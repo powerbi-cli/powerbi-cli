@@ -48,7 +48,7 @@ export function getCommands(): ModuleCommand {
         .option("--refresh-schedule-file <file>", "File with the refresh schedule in JSON format");
     updateCommand.addGlobalOptions();
     const refreshCommand = new ModuleCommand("refresh")
-        .description("Manage Power BI refresh schedule")
+        .description("Operations for working with refresh schedule")
         .addCommand(startCommand)
         .addCommand(updateCommand);
     refreshCommand.addGlobalOptions();

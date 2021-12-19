@@ -56,12 +56,12 @@ export function getCommands(): ModuleCommand {
         .option("--tile -t <tile>", "Name or ID of the tile of the dashboard of the Power BI app");
     tileShowCommand.addGlobalOptions();
     const tileCommand = new ModuleCommand("tile")
-        .description("Manage dashboard tiles of a Power BI apps")
+        .description("Operations for working with dashboard tiles of a Power BI apps")
         .addCommand(tileListCommand)
         .addCommand(tileShowCommand);
     tileCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dashboard")
-        .description("Manage dashboards of a Power BI apps")
+        .description("Operations for working with dashboards of a Power BI apps")
         .addCommand(listCommand)
         .addCommand(showCommand)
         .addCommand(tileCommand);

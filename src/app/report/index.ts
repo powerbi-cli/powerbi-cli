@@ -42,7 +42,7 @@ export function getCommands(): ModuleCommand {
         .option("--report -r <report>", "Name or ID of the report of the Power BI app");
     showCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("report")
-        .description("Manage reports of a Power BI apps")
+        .description("Operations for working with reports of a Power BI apps")
         .addCommand(listCommand)
         .addCommand(showCommand);
     appCommand.addGlobalOptions();

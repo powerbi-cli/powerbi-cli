@@ -42,7 +42,7 @@ export function getCommands(): ModuleCommand {
         .option("--label-file <file>", "File with the artifact IDs to add the sensitivity labels in JSON format");
     setCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("label")
-        .description("Manage sensitivity labels as admin")
+        .description("Operations for working with sensitivity labels as admin")
         .addCommand(removeCommand)
         .addCommand(setCommand);
     appCommand.addGlobalOptions();

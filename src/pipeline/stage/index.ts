@@ -43,7 +43,7 @@ export function getCommands(): ModuleCommand {
         .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline");
     listCommand.addGlobalOptions();
     const pipelineStageCommand = new ModuleCommand("stage")
-        .description("Manage stages of Power BI pipelines")
+        .description("Operations for working with stages of pipelines")
         .addCommand(artifactCommand)
         .addCommand(listCommand);
     pipelineStageCommand.addGlobalOptions();

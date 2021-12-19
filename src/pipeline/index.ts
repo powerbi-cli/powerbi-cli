@@ -84,7 +84,7 @@ export function getCommands(): ModuleCommand {
         .option("--update-file <file>", "File with the update pipeline settings in JSON format");
     updateCommand.addGlobalOptions();
     const pipelineCommand = new ModuleCommand("pipeline")
-        .description("Manage Power BI pipelines")
+        .description("Operations for working with pipelines")
         .addCommand(assignCommand)
         .addCommand(createCommand)
         .addCommand(deleteCommand)

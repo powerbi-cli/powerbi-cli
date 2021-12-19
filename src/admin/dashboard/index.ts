@@ -58,7 +58,7 @@ export function getCommands(): ModuleCommand {
         .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
     tileCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dashboard")
-        .description("Manage dashboards as admin")
+        .description("Operations for working with dashboards as admin")
         .addCommand(listCommand)
         .addCommand(listUserCommand)
         .addCommand(tileCommand);

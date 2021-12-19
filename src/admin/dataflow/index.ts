@@ -64,7 +64,7 @@ export function getCommands(): ModuleCommand {
         .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");
     upstreamCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dataflow")
-        .description("Manage dataflows as admin")
+        .description("Operations for working with dataflows as admin")
         .addCommand(datasourceCommand)
         .addCommand(listCommand)
         .addCommand(listUserCommand)

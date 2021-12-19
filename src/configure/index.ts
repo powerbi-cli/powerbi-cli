@@ -39,7 +39,7 @@ export function getCommands(): ModuleCommand {
         .option("--defaults -d <default...>", "Space-separated 'name=value' pairs for common argument defaults");
     setCommand.addGlobalOptions();
     const configureCommand = new ModuleCommand("configure")
-        .description("Manage Power BI CLI configuration")
+        .description("Operations for working with CLI configuration")
         .addCommand(listCommand)
         .addCommand(setCommand);
     configureCommand.addGlobalOptions();

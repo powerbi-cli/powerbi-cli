@@ -39,7 +39,7 @@ export function getCommands(): ModuleCommand {
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway");
     showCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("gateway")
-        .description("Manage Power BI gateways")
+        .description("Operations for working with gateways")
         .addCommand(getDatasourcesCommands())
         .addCommand(listCommand)
         .addCommand(showCommand);

@@ -82,7 +82,7 @@ export function getCommands(): ModuleCommand {
         .option("--script-file <file>", "File with the raw query statement in JSON format");
     queryCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("dataset")
-        .description("Manage Power BI datasets")
+        .description("Operations for working with datasets")
         .addCommand(deleteCommand)
         .addCommand(listCommand)
         .addCommand(setOwnerCommand)
