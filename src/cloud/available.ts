@@ -25,29 +25,16 @@
  */
 
 "use strict";
+import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../lib/command";
-import { availableAction } from "./available";
-import { listAction } from "./list";
-import { setAction } from "./set";
+import { powerBIClouds } from "../lib/helpers";
+import { debug } from "../lib/logging";
 
-export function getCommands(): ModuleCommand {
-    const availableCommand = new ModuleCommand("available")
-        .action(availableAction)
-        .description("List available Power BI clouds");
-    availableCommand.addGlobalOptions();
-    const listCommand = new ModuleCommand("list").action(listAction).description("List active Power BI cloud");
-    listCommand.addGlobalOptions();
-    const setCommand = new ModuleCommand("set")
-        .action(setAction)
-        .description("Set the active Power BI cloud")
-        .option("--name <name>", "Name of a registered cloud");
-    setCommand.addGlobalOptions();
-    const appCommand = new ModuleCommand("cloud")
-        .description("Operations for working with clouds")
-        .addCommand(availableCommand)
-        .addCommand(listCommand)
-        .addCommand(setCommand);
-    appCommand.addGlobalOptions();
-    return appCommand;
+export async function availableAction(...args: unknown[]): Promise<void> {
+    const options = args[args.length - 2] as OptionValues;
+    if (options.H) return;
+
+    debug("List available cloud options");
+    console.info(`Available clouds`);
+    powerBIClouds.forEach((cloud) => console.info(`- ${cloud}`));
 }
