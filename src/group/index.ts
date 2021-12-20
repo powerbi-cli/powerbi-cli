@@ -34,21 +34,21 @@ import { getCommands as getUserCommands } from "./user/index";
 
 export function getCommands(): ModuleCommand {
     const createCommand = new ModuleCommand("create")
-        .description("Creates a Power BI group")
+        .description("Creates a Power BI workspace")
         .action(createAction)
         .option("--workspace -w <name>", "Name of the Power BI workspace");
     createCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
-        .description("Delete a Power BI group")
+        .description("Delete a Power BI workspace")
         .action(deleteAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
-        .description("List Power BI groups the user has access to")
+        .description("List Power BI workspaces the user has access to")
         .action(listshowAction);
     listCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
-        .description("Get detials of a Power BI group")
+        .description("Get detials of a Power BI workspace")
         .action(listshowAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     showCommand.addGlobalOptions();

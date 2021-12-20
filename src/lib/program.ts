@@ -28,6 +28,8 @@
 
 import { ModuleCommand } from "./command";
 
+import { addDocumenter } from "./document";
+
 export const programModules: [string, boolean][] = [
     ["admin", false],
     ["app", false],
@@ -60,5 +62,8 @@ export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
     });
 
     program.addGlobalOptions();
+
+    addDocumenter(program);
+
     return program;
 }
