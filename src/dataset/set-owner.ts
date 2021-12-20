@@ -40,7 +40,7 @@ export async function setOwnerAction(...args: unknown[]): Promise<void> {
     debug(`Retrieve Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",
-        url: `/groups/${groupId}/datasets${datasetId}/Default.TakeOver`,
+        url: `/groups/${groupId}/datasets/${datasetId}/Default.TakeOver`,
     };
     await executeAPICall(request);
 }

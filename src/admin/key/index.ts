@@ -54,7 +54,7 @@ export function getCommands(): ModuleCommand {
         .option("--keyVaultURI <uri>", "Uri to the version of the Azure Key Vault key to be used");
     rotateCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("key")
-        .description("Manage Power BI encryption keys")
+        .description("Operations for working with encryption keys")
         .addCommand(addCommand)
         .addCommand(listCommand)
         .addCommand(rotateCommand);

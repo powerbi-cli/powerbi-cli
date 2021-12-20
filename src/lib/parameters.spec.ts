@@ -51,6 +51,9 @@ import {
     validateAdminCapacityId,
     validateAdminObjectId,
     capitalize,
+    validateScorecardId,
+    validateScorecardGoalId,
+    validatePipelineId,
 } from "./parameters";
 
 chai.use(chaiAsPromise);
@@ -313,6 +316,60 @@ describe("parameters.ts", () => {
             expect(mockGetReportId.callCount).equal(0);
         });
     });
+    describe("validateScorecardId()", () => {
+        let mockGetScorecardId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetScorecardId = ImportMock.mockFunction(helpers, "getScorecardID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetScorecardId.restore();
+        });
+        it("workspace, scorecard, required", () => {
+            validateScorecardId("workspace", "scorecard", true).should.eventually.be.equal(uuid);
+            expect(mockGetScorecardId.callCount).equal(1);
+        });
+        it("workspace, no scorecard, required", () => {
+            validateScorecardId("workspace", undefined, true).should.eventually.be.rejectedWith(
+                "error: missing option '--scorecard'"
+            );
+            expect(mockGetScorecardId.callCount).equal(0);
+        });
+        it("no workspace, no scorecard, required", () => {
+            validateScorecardId(undefined, undefined, true).should.eventually.be.rejectedWith(
+                "error: missing option '--workspace'"
+            );
+            expect(mockGetScorecardId.callCount).equal(0);
+        });
+    });
+    describe("validateScorecardGoalId()", () => {
+        let mockGetScorecardGoalId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetScorecardGoalId = ImportMock.mockFunction(helpers, "getScorecardGoalID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetScorecardGoalId.restore();
+        });
+        it("workspace, scorecard, required", () => {
+            validateScorecardGoalId("workspace", "scorecard", "goal", true).should.eventually.be.equal(uuid);
+            expect(mockGetScorecardGoalId.callCount).equal(1);
+        });
+        it("workspace, scorecard, no goal required", () => {
+            validateScorecardGoalId("workspace", "scorecard", undefined, true).should.eventually.be.rejectedWith(
+                "error: missing option '--goal'"
+            );
+            expect(mockGetScorecardGoalId.callCount).equal(0);
+        });
+        it("empty workspace, scorecard, required", () => {
+            validateScorecardGoalId(undefined, "scorecard", "goal", true).should.eventually.be.equal(uuid);
+            expect(mockGetScorecardGoalId.callCount).equal(1);
+        });
+        it("empty workspace, no scorecard, required", () => {
+            validateScorecardGoalId(undefined, undefined, undefined, true).should.eventually.be.rejectedWith(
+                "error: missing option '--goal'"
+            );
+            expect(mockGetScorecardGoalId.callCount).equal(0);
+        });
+    });
     describe("validateDataflowId()", () => {
         let mockGetDataflowId: SinonSpy<unknown[], unknown>;
         beforeEach(() => {
@@ -449,6 +506,27 @@ describe("parameters.ts", () => {
                 "error: missing option '--datasource'"
             );
             expect(mockGetGatewayDatasourceID.callCount).equal(0);
+        });
+    });
+    describe("validatePipelineId()", () => {
+        let mockGetPipelineId: SinonSpy<unknown[], unknown>;
+        beforeEach(() => {
+            mockGetPipelineId = ImportMock.mockFunction(helpers, "getPipelineID").resolves(uuid);
+        });
+        afterEach(() => {
+            mockGetPipelineId.restore();
+        });
+        it("pipeline, required", () => {
+            validatePipelineId("pipeline", true).should.eventually.be.equal(uuid);
+            expect(mockGetPipelineId.callCount).equal(1);
+        });
+        it("empty pipeline, required", () => {
+            validatePipelineId(undefined, true).should.eventually.be.rejectedWith("error: missing option '--pipeline'");
+            expect(mockGetPipelineId.callCount).equal(0);
+        });
+        it("empty pipeline, not required", () => {
+            validateGatewayId(undefined, false).should.eventually.be.equal(undefined);
+            expect(mockGetPipelineId.callCount).equal(0);
         });
     });
     describe("validateImportId()", () => {

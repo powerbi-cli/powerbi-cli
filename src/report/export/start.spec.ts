@@ -70,7 +70,7 @@ describe("report/export/start.ts", () => {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         format: "pptx",
-        config: "",
+        config: "{}",
     };
     const xlsxOptionsFile = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
@@ -222,6 +222,7 @@ describe("report/export/start.ts", () => {
             validateGroupIdMock.resolves(xlsxOptionsFile.W);
             validateReportIdMock.resolves(xlsxOptionsFile.R);
             validateAllowedValues.resolves("XLSX");
+            readFileSyncMock.returns("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "start",

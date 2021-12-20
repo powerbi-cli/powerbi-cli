@@ -41,7 +41,9 @@ export async function updateDatasourceAction(...args: unknown[]): Promise<void> 
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
-    const updateDetails = options.updateDetails || readFileSync(options.updateDetailsFile);
+    const updateDetails = options.updateDetails
+        ? JSON.parse(options.updateDetails)
+        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
     debug(`Update the parameters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",

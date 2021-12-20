@@ -393,9 +393,8 @@ export async function getAzureCLIToken(consts: consts, config: AuthConfig): Prom
                     return;
                 } else {
                     responseData = obj.stdout;
-                    const response: { accessToken: string; expiresOn: string; tenant: string } = JSON.parse(
-                        responseData
-                    );
+                    const response: { accessToken: string; expiresOn: string; tenant: string } =
+                        JSON.parse(responseData);
                     const returnValue = {
                         accessToken: response.accessToken,
                         expiresOn: new Date(response.expiresOn).getTime(),

@@ -47,7 +47,9 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     }
     if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
-    const body = options.updateDetails || readFileSync(options.updateDetailsFile);
+    const body = options.updateDetails
+        ? JSON.parse(options.updateDetails)
+        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
     debug(`Updates the specified workspace properties`);
     const request: APICall = {
         method: "PATCH",

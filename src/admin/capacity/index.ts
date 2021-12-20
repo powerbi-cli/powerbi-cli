@@ -32,6 +32,7 @@ import { listAction } from "./list";
 import { assignAction } from "./assign";
 import { unassignAction } from "./unassign";
 import { updateAction } from "./update";
+import { listUserAction } from "./list-user";
 
 export function getCommands(): ModuleCommand {
     const assignCommand = new ModuleCommand("assign")
@@ -45,6 +46,11 @@ export function getCommands(): ModuleCommand {
         .action(listAction)
         .option("--expand <entity>", `Expands related entities inline. Allowed values: ${expandCapacity.join(", ")}`);
     listCommand.addGlobalOptions();
+    const listUserCommand = new ModuleCommand("list-user")
+        .description("Returns a list of users that have access to the specified dashboard")
+        .action(listUserAction)
+        .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
+    listUserCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Changes the specific capacity information.")
         .action(updateAction)
@@ -57,9 +63,10 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name(s) or ID(s) of the Power BI workspace. Use comma seperated if multiple");
     unassignCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("capacity")
-        .description("Manage capacities as admin")
+        .description("Operations for working with capacities as admin")
         .addCommand(assignCommand)
         .addCommand(listCommand)
+        .addCommand(listUserCommand)
         .addCommand(updateCommand)
         .addCommand(unassignCommand);
     appCommand.addGlobalOptions();

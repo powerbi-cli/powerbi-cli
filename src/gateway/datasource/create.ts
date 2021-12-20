@@ -38,11 +38,13 @@ export async function createAction(...args: unknown[]): Promise<void> {
     const gatewayId = await validateGatewayId(options.G, true);
     if (options.datasource === undefined && options.datasourceFile === undefined)
         throw "error: missing option '--datasource' or '--datasource-file'";
-    const datasource = options.datasource || readFileSync(options.datasourceFile);
+    const datasource = options.datasource
+        ? JSON.parse(options.datasource)
+        : JSON.parse(readFileSync(options.datasourceFile, "utf8"));
     debug(`Create Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "POST",
-        url: `gateways/${gatewayId}/datasources`,
+        url: `/gateways/${gatewayId}/datasources`,
         body: datasource,
     };
     await executeAPICall(request);

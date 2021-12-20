@@ -30,6 +30,7 @@ import { ModuleCommand } from "../../lib/command";
 import { datasourceAction } from "./datasource";
 import { exportAction } from "./export";
 import { listAction } from "./list";
+import { listUserAction } from "./list-user";
 import { upstreamAction } from "./upstream";
 
 export function getCommands(): ModuleCommand {
@@ -46,7 +47,12 @@ export function getCommands(): ModuleCommand {
         .option("--top <number>", "Returns only the first <number> results. Default: 5000")
         .option("--skip <number>", "Skips the first <number> results");
     listCommand.addGlobalOptions();
-    const showCommand = new ModuleCommand("show")
+    const listUserCommand = new ModuleCommand("list-user")
+        .description("Returns a list of users that have access to the specified dataflow")
+        .action(listUserAction)
+        .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");
+    listUserCommand.addGlobalOptions();
+    const showCommand = new ModuleCommand("export")
         .description("Exports the specified dataflow definition")
         .action(exportAction)
         .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");
@@ -58,9 +64,10 @@ export function getCommands(): ModuleCommand {
         .option("--dataflow -d <name>", "Name or ID of the Power BI dataflow");
     upstreamCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dataflow")
-        .description("Manage dataflows as admin")
+        .description("Operations for working with dataflows as admin")
         .addCommand(datasourceCommand)
         .addCommand(listCommand)
+        .addCommand(listUserCommand)
         .addCommand(showCommand)
         .addCommand(upstreamCommand);
     appCommand.addGlobalOptions();

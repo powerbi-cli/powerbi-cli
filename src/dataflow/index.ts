@@ -31,8 +31,10 @@ import { listshowAction } from "./listshow";
 import { deleteAction } from "./delete";
 import { upstreamAction } from "./upstream";
 import { datasourceAction } from "./datasource";
+import { updateAction } from "./update";
 import { getCommands as getRefreshCommands } from "./refresh/index";
 import { getCommands as getStorageCommands } from "./storage/index";
+import { getCommands as getTransactionCommands } from "./transaction/index";
 
 export function getCommands(): ModuleCommand {
     const datasourceCommand = new ModuleCommand("datasource")
@@ -58,6 +60,14 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     showCommand.addGlobalOptions();
+    const updateCommand = new ModuleCommand("update")
+        .description("Update dataflow properties, capabilities and settings")
+        .action(updateAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow")
+        .option("--update <data>", "String with the update dataflow settings in JSON format")
+        .option("--update-file <file>", "File with the update dataflow settings in JSON format");
+    updateCommand.addGlobalOptions();
     const upstreamCommand = new ModuleCommand("upstream")
         .description("Get the upstream dataflows of a Power BI dataflow")
         .action(upstreamAction)
@@ -65,14 +75,16 @@ export function getCommands(): ModuleCommand {
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow");
     upstreamCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("dataflow")
-        .description("Manage Power BI dataflows")
+        .description("Operations for working with dataflows")
         .addCommand(datasourceCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)
         .addCommand(showCommand)
+        .addCommand(updateCommand)
         .addCommand(upstreamCommand)
         .addCommand(getRefreshCommands())
-        .addCommand(getStorageCommands());
+        .addCommand(getStorageCommands())
+        .addCommand(getTransactionCommands());
     appCommand.addGlobalOptions();
     return appCommand;
 }

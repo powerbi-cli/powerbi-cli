@@ -40,7 +40,7 @@ export function getCommands(): ModuleCommand {
         .option("--app -a <app>", "Name or ID of the Power BI app");
     showCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("app")
-        .description("Manage Power BI apps")
+        .description("Operations for working with apps")
         .addCommand(listCommand)
         .addCommand(showCommand)
         .addCommand(getDashboardCommands())

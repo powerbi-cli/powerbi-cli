@@ -29,17 +29,19 @@
 import { TokenCredentials, RequestPrepareOptions, HttpOperationResponse } from "@azure/ms-rest-js";
 import { AzureServiceClient } from "@azure/ms-rest-azure-js";
 import { createWriteStream, unlink, readFileSync } from "fs";
-import https from "https";
+import { OutgoingHttpHeaders } from "http";
+import { get, request, RequestOptions } from "https";
+import { Readable } from "stream";
 import FormData from "form-data";
 
 import { getAccessToken } from "./token";
-import { debug } from "./logging";
+import { debug, verbose } from "./logging";
 import { TokenType } from "./auth";
 
 const silentMethods: string[] = ["DELETE", "PUT", "POST", "PATCH"];
 
 export function executeRestCall(
-    request: RequestPrepareOptions,
+    executeRequestOptions: RequestPrepareOptions,
     containsValue: boolean,
     tokenType: TokenType
 ): Promise<unknown> {
@@ -51,9 +53,10 @@ export function executeRestCall(
             }
             const creds = new TokenCredentials(token);
             try {
+                verbose(`Execute REST [${executeRequestOptions.method}] call to ${executeRequestOptions.url}`);
                 const client = new AzureServiceClient(creds);
                 client
-                    .sendRequest(request)
+                    .sendRequest(executeRequestOptions)
                     .then((response: HttpOperationResponse) => {
                         if (response.status === 401) {
                             reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
@@ -61,7 +64,9 @@ export function executeRestCall(
                             reject(
                                 "Authorisation error. Please validate the API rights of the user / service principal."
                             );
-                        } else if (silentMethods.some((silentMethod: string) => silentMethod === request.method)) {
+                        } else if (
+                            silentMethods.some((silentMethod: string) => silentMethod === executeRequestOptions.method)
+                        ) {
                             //if (response.status === 202 && request.method === "POST")
                             if (response.parsedBody) {
                                 const errorResponse = JSON.parse(JSON.stringify(response.parsedBody));
@@ -76,7 +81,7 @@ export function executeRestCall(
                             const content = containsValue ? body.value : body;
                             const callNextLink = async (link?: string) => {
                                 if (!link) return;
-                                const nextRequest = request;
+                                const nextRequest = executeRequestOptions;
                                 nextRequest.url = link;
                                 const nextResponse = await executeNextLink(client, nextRequest);
                                 const nextBody = JSON.parse(JSON.stringify(nextResponse.parsedBody));
@@ -99,7 +104,51 @@ export function executeRestCall(
     });
 }
 
-export function executeDownloadCall(request: RequestPrepareOptions, outputFile: string): Promise<unknown> {
+export function executeRestCallStream(
+    executeRequestOptions: RequestPrepareOptions,
+    tokenType: TokenType
+): Promise<Readable> {
+    return new Promise<Readable>((resolve, reject) => {
+        getAccessToken(tokenType).then((token) => {
+            if (token === "") {
+                reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
+                return;
+            }
+            const options: RequestOptions = {
+                method: executeRequestOptions.method,
+                headers: Object.assign(
+                    {
+                        "Content-Type": "application/json",
+                        "Content-Length": executeRequestOptions.body ? executeRequestOptions.body.length : 0,
+                        Authorization: `Bearer ${token}`,
+                    },
+                    executeRequestOptions.headers
+                ) as OutgoingHttpHeaders,
+            };
+            verbose(`Execute REST [${executeRequestOptions.method}] call to ${executeRequestOptions.url}`);
+            const req = request(executeRequestOptions.url as string, options, (response) => {
+                if (response.statusCode !== 200) {
+                    if (response.statusCode === 401)
+                        reject("Not authenticated. Please run 'pbicli login' to login to Power BI.");
+                    else reject("Internal error during post request");
+                    return;
+                }
+                resolve(response);
+            });
+            req.on("error", (err) => {
+                verbose(`Error while calling the Power BI REST API: ${err.message}`);
+                reject(`Request: ${err}`);
+            });
+            if (executeRequestOptions.body) req.write(executeRequestOptions.body);
+            req.end();
+        });
+    });
+}
+
+export function executeDownloadCall(
+    executeRequestOptions: RequestPrepareOptions,
+    outputFile: string
+): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {
         getAccessToken(TokenType.POWERBI).then((token) => {
             if (token === "") {
@@ -107,11 +156,11 @@ export function executeDownloadCall(request: RequestPrepareOptions, outputFile: 
                 return;
             }
             try {
-                const options: https.RequestOptions = {
+                const options: RequestOptions = {
                     headers: { authorization: `Bearer ${token}` },
                 };
                 const file = createWriteStream(outputFile);
-                const req = https.get(request.url as string, options, (response) => {
+                const req = get(executeRequestOptions.url as string, options, (response) => {
                     if (response.statusCode === 404) {
                         reject("Download this report is not supported");
                         return;
@@ -134,7 +183,7 @@ export function executeDownloadCall(request: RequestPrepareOptions, outputFile: 
     });
 }
 
-export function executeUploadCall(request: RequestPrepareOptions, inputFile: string): Promise<unknown> {
+export function executeUploadCall(executeRequestOptions: RequestPrepareOptions, inputFile: string): Promise<unknown> {
     return new Promise<unknown>((resolve, reject) => {
         getAccessToken(TokenType.POWERBI).then((token) => {
             if (token === "") {
@@ -144,7 +193,7 @@ export function executeUploadCall(request: RequestPrepareOptions, inputFile: str
             try {
                 const form = new FormData();
                 form.append("file0", readFileSync(inputFile));
-                const url = new URL(request.url as string);
+                const url = new URL(executeRequestOptions.url as string);
                 const options = {
                     method: "POST",
                     host: url.host,
@@ -154,7 +203,7 @@ export function executeUploadCall(request: RequestPrepareOptions, inputFile: str
                         form.getHeaders()
                     ),
                 };
-                const req = https.request(options);
+                const req = request(options);
                 form.pipe(req);
                 req.on("response", (response) => {
                     if (response.statusCode !== 200 && response.statusCode !== 202) {
@@ -171,10 +220,13 @@ export function executeUploadCall(request: RequestPrepareOptions, inputFile: str
     });
 }
 
-function executeNextLink(client: AzureServiceClient, request: RequestPrepareOptions): Promise<HttpOperationResponse> {
+function executeNextLink(
+    client: AzureServiceClient,
+    executeRequestOptions: RequestPrepareOptions
+): Promise<HttpOperationResponse> {
     return new Promise<HttpOperationResponse>((resolve, reject) => {
         client
-            .sendRequest(request)
+            .sendRequest(executeRequestOptions)
             .then((response: HttpOperationResponse) => {
                 resolve(response);
             })

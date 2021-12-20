@@ -65,7 +65,7 @@ export function getCommands(): ModuleCommand {
         .option("--identifier <identifier>", "Identifier of the principal");
     deleteCommand.addGlobalOptions();
     const userCommand = new ModuleCommand("user")
-        .description("Manage users of Power BI workspaces")
+        .description("Operations for working with users of Power BI workspaces")
         .addCommand(listCommand)
         .addCommand(addCommand)
         .addCommand(deleteCommand)

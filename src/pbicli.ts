@@ -87,14 +87,14 @@ if (args?.length === 2) {
                     if (input.startsWith("-")) break;
                     args = input.split(" ");
                     program.helpPrompt = args.some((arg: string) => arg === "help") ? "true" : "false";
-                    if (modules.some((mod: string) => input === mod)) {
+                    if (modules.some((mod: [string, boolean]) => input === mod[0])) {
                         activeModule = [input];
                     } else {
                         args = fixHelpOptions(args, true);
                         try {
                             await program.parseAsync(activeModule.concat(args), { from: "user" });
-                        } catch (err) {
-                            program.errorMessage = err;
+                        } catch (err: unknown) {
+                            program.errorMessage = err as string;
                             program.showHelpOrError(true);
                         }
                     }

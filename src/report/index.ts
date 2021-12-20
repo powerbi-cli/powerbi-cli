@@ -31,9 +31,10 @@ import { listshowAction } from "./listshow";
 import { pageAction } from "./page";
 import { deleteAction } from "./delete";
 import { cloneAction } from "./clone";
-import { datasourceAction } from "./datasource";
 import { rebindAction } from "./rebind";
+import { setOwnerAction } from "./set-owner";
 import { updateAction } from "./update";
+import { getCommands as getDatasourceCommands } from "./datasource/index";
 import { getCommands as getExportCommands } from "./export/index";
 
 export function getCommands(): ModuleCommand {
@@ -52,12 +53,6 @@ export function getCommands(): ModuleCommand {
             "ID of the Power BI group for the cloned report. If not provided, the same group is used and if [workspaceId] is not provided 'My workspace' is used"
         );
     cloneCommand.addGlobalOptions();
-    const datasourceCommand = new ModuleCommand("datasource")
-        .description("Datasources of a Power BI report from a group")
-        .action(datasourceAction)
-        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
-        .option("--report -r <report>", "Name or ID of the Power BI report");
-    datasourceCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
         .description("Deletes a Power BI report from a group")
         .action(deleteAction)
@@ -92,6 +87,12 @@ export function getCommands(): ModuleCommand {
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--report -r <report>", "Name or ID of the Power BI report");
     showCommand.addGlobalOptions();
+    const setOwnerCommand = new ModuleCommand("set-owner")
+        .description("Set the owner of a Power BI paginated report to the current user / service principal")
+        .action(setOwnerAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--report -r <report>", "Name or ID of the Power BI report");
+    setOwnerCommand.addGlobalOptions();
     const updateCommand = new ModuleCommand("update")
         .description("Updates a Power BI report with to a dataset")
         .action(updateAction)
@@ -101,8 +102,7 @@ export function getCommands(): ModuleCommand {
         .option("--source-report <report>", "ID of the source Power BI report");
     updateCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("report")
-        .description("Manage Power BI reports")
-        .addCommand(datasourceCommand)
+        .description("Operations for working with reports")
         .addCommand(deleteCommand)
         .addCommand(cloneCommand)
         .addCommand(listCommand)
@@ -110,6 +110,7 @@ export function getCommands(): ModuleCommand {
         .addCommand(rebindCommand)
         .addCommand(showCommand)
         .addCommand(updateCommand)
+        .addCommand(getDatasourceCommands())
         .addCommand(getExportCommands());
     datassetCommand.addGlobalOptions();
     return datassetCommand;

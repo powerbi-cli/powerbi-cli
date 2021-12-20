@@ -28,6 +28,8 @@
 
 import { ModuleCommand } from "../../lib/command";
 import { listAction } from "./list";
+import { listUserAction } from "./list-user";
+import { subscriptionAction } from "./subscription";
 
 export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
@@ -38,7 +40,21 @@ export function getCommands(): ModuleCommand {
         .option("--top <number>", "Returns only the first <number> results. Default: 5000")
         .option("--skip <number>", "Skips the first <number> results");
     listCommand.addGlobalOptions();
-    const appCommand = new ModuleCommand("report").description("Manage reports as admin").addCommand(listCommand);
+    const listUserCommand = new ModuleCommand("list-user")
+        .description("Returns a list of users that have access to the specified dataset")
+        .action(listUserAction)
+        .option("--report -r <report>", "Name or ID of the Power BI report");
+    listUserCommand.addGlobalOptions();
+    const subscriptionCommand = new ModuleCommand("subscription")
+        .description("Returns a list of users that have access to the specified dataset")
+        .action(subscriptionAction)
+        .option("--report -r <report>", "Name or ID of the Power BI report");
+    subscriptionCommand.addGlobalOptions();
+    const appCommand = new ModuleCommand("report")
+        .description("Operations for working with reports as admin")
+        .addCommand(listCommand)
+        .addCommand(listUserCommand)
+        .addCommand(subscriptionCommand);
     appCommand.addGlobalOptions();
     return appCommand;
 }

@@ -64,7 +64,7 @@ describe("embedded/update.ts", () => {
         S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
         R: "resourcegroup",
         C: "capacity",
-        parameter: "",
+        parameter: "{}",
     };
     const allFileOptions = {
         S: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
@@ -165,7 +165,6 @@ describe("embedded/update.ts", () => {
             validateSubscriptionMock.resolves(allOptions.S);
             validateResourceGroupMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("");
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allOptions,
@@ -174,7 +173,7 @@ describe("embedded/update.ts", () => {
                 expect(validateSubscriptionMock.callCount).to.equal(1);
                 expect(validateResourceGroupMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(0);
                 done();
             });
         });
@@ -182,7 +181,7 @@ describe("embedded/update.ts", () => {
             validateSubscriptionMock.resolves(allOptions.S);
             validateResourceGroupMock.resolves(allOptions.R);
             executeAPICallMock.resolves(true);
-            readFileSyncMock.returns("");
+            readFileSyncMock.returns("{}");
             const cmdOptsMock: unknown = {
                 name: () => "update",
                 opts: () => allFileOptions,

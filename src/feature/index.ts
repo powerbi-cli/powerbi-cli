@@ -40,7 +40,7 @@ export function getCommands(): ModuleCommand {
         .option("--feature <name>", "Name of the Power BI feature");
     showCommand.addGlobalOptions();
     const featureCommand = new ModuleCommand("feature")
-        .description("Manage Power BI features")
+        .description("Operations for working with features")
         .addCommand(listCommand)
         .addCommand(showCommand);
     featureCommand.addGlobalOptions();

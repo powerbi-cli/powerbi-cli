@@ -48,6 +48,9 @@ import {
     getAdminGroupInfo,
     getAdminCapacityID,
     getAdminObjectInfo,
+    getScorecardID,
+    getScorecardGoalID,
+    getPipelineID,
 } from "./helpers";
 
 chai.use(chaiAsPromise);
@@ -195,6 +198,39 @@ describe("helpers.ts", () => {
             expect(getReportID(uuid, "reportName")).eventually.to.rejected;
         });
     });
+    describe("getScorecardID()", () => {
+        it("scorecard found ", () => {
+            executeRestCallMock.resolves([{ name: "scorecardName", id: uuid }]);
+            expect(getScorecardID(uuid, "scorecardName")).eventually.to.equal(uuid);
+        });
+        it("report not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getScorecardID(uuid, "scorecardName")).eventually.to.rejectedWith(
+                "No report found with name 'scorecardName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getScorecardID(uuid, "scorecardName")).eventually.to.rejected;
+        });
+    });
+
+    describe("getScorecardGoalID()", () => {
+        it("scorecard goal found ", () => {
+            executeRestCallMock.resolves([{ title: "goalName", id: uuid }]);
+            expect(getScorecardGoalID(uuid, "scorecardName", "goalName")).eventually.to.equal(uuid);
+        });
+        it("scorecard goal not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getScorecardGoalID(uuid, "scorecardName", "goalName")).eventually.to.rejectedWith(
+                "No scorecard goal found with name 'goalName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getScorecardGoalID(uuid, "scorecardName", "goalName")).eventually.to.rejected;
+        });
+    });
 
     describe("getDashboardID()", () => {
         it("dashboard found ", () => {
@@ -259,6 +295,23 @@ describe("helpers.ts", () => {
         it("exception in executeRestCall", () => {
             executeRestCallMock.rejects();
             expect(getGatewayDatasourceID(uuid, "datasourceName")).eventually.to.rejected;
+        });
+    });
+
+    describe("getPipelineID()", () => {
+        it("pipeline found ", () => {
+            executeRestCallMock.resolves([{ name: "pipelineName", id: uuid }]);
+            expect(getPipelineID("pipelineName")).eventually.to.equal(uuid);
+        });
+        it("pipeline not found", () => {
+            executeRestCallMock.resolves([]);
+            expect(getPipelineID("pipelineName")).eventually.to.rejectedWith(
+                "No pipeline found with name 'pipelineName'"
+            );
+        });
+        it("exception in executeRestCall", () => {
+            executeRestCallMock.rejects();
+            expect(getPipelineID("pipelineName")).eventually.to.rejected;
         });
     });
 

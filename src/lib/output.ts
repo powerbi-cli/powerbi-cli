@@ -93,6 +93,77 @@ export function formatAndPrintOutputStream(
     outputFile?: string,
     query?: string
 ): void {
+    let hasRows = false,
+        breaker = "",
+        rawData = "";
+    const isHeader = outputType === OutputType.json || outputType === OutputType.csv;
+    const isCsv = outputType === OutputType.csv;
+
+    if (!response) return;
+    if (outputType === OutputType.raw || outputType === OutputType.none) {
+        return;
+    }
+    const outputStream = new Transform({
+        transform(this: Transform, chunk: string, encoding: BufferEncoding, callback: TransformCallback) {
+            rawData += chunk;
+            callback();
+        },
+        flush(this: Transform, callback: TransformCallback) {
+            let data = JSON.parse(rawData),
+                result = "";
+            if (query) {
+                try {
+                    data = jmespath.search(data, query)[0];
+                } catch (err) {
+                    console.error(red(`Error parsing query: ${query} (${err})`));
+                    return;
+                }
+            }
+            if (data) {
+                switch (outputType) {
+                    case OutputType.json:
+                    default:
+                        result = `${JSON.stringify(data, null, 2)}`;
+                        breaker = ",";
+                        break;
+                    case OutputType.yml:
+                        result = dump(data);
+                        breaker = "\n";
+                        break;
+                    case OutputType.tsv:
+                    case OutputType.csv:
+                        try {
+                            const json2csvParser = new Parser({
+                                header: isCsv && isHeader && !hasRows,
+                                delimiter: isCsv ? "," : "\t",
+                                quote: isCsv ? "'" : "",
+                            });
+                            result = json2csvParser.parse(data);
+                            breaker = "\n";
+                        } catch {
+                            console.error(red("Error parsing data to tsv format."));
+                        }
+                        break;
+                }
+                this.push(`${hasRows ? breaker : ""}${result}`);
+                hasRows = true;
+            }
+            callback();
+        },
+    });
+    response.on("error", (err) => {
+        verbose(`Error in RowSet result found`);
+        console.error(red(err.message));
+    });
+    response.pipe(outputStream).pipe(outputFile ? createWriteStream(outputFile) : process.stdout);
+}
+
+export function formatAndPrintOutputRawStream(
+    response: Readable,
+    outputType: OutputType = OutputType.json,
+    outputFile?: string,
+    query?: string
+): void {
     let hasResult = false,
         hasRows = false,
         breaker = "";

@@ -36,8 +36,10 @@ import { TokenType } from "./auth";
 import { getConsts } from "./consts";
 
 export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
+export const accessRightsPipeline = ["Admin"];
+export const accessRightsDataset = ["Read", "ReadExplore", "ReadReshare", "ReadReshareExplore"];
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];
-export const principalTypes = ["App", "User", "Group"];
+export const principalTypes = ["App", "User", "Group", "None"];
 export const pbiExports = ["PDF", "PPTX"];
 export const pbiDownloads = ["PBIX"];
 export const rsExports = ["CSV", "DOCX", "IMAGE", "MHTML", "PNG", "XLSX", "XML"];
@@ -51,11 +53,14 @@ export const datasetNamingConflict = datasetNamingConflictPBIX
     .filter((v, i, s) => s.indexOf(v) === i)
     .sort();
 export const expandAdminGroups = ["dashboards", "datasets", "dataflows", "reports", "users", "workbooks"];
+export const expandAdminPipelines = ["users", "stages"];
 export const expandCapacity = ["tenantKey"];
 export const expandAdminDashboards = ["tiles"];
 export const expandAdminImports = ["datasets", "reports"];
 export const expandRefreshes = ["capacity", "workspace"];
 export const workloadState = ["enabled", "disabled"];
+export const powerBIClouds = ["Public", "GCC", "GCCHigh", "DoD", "Germany", "China"];
+export const refreshNotify = ["always", "failure", "none"];
 
 const { powerBIRestURL } = getConsts();
 
@@ -238,6 +243,52 @@ export function getReportID(groupName: string | undefined, name: string): Promis
     });
 }
 
+export function getScorecardID(groupName: string | undefined, name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        groupName = getGroupUrl(groupName);
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${powerBIRestURL}${groupName}/scorecards`,
+        };
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No scorecard found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getScorecardGoalID(
+    groupName: string | undefined,
+    scorecardName: string | undefined,
+    name: string
+): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        groupName = getGroupUrl(groupName);
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${powerBIRestURL}${groupName}/scorecards/${scorecardName}/goals`,
+        };
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?name=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No scorecard goal found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
 export function getDashboardID(groupName: string | undefined, name: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
         groupName = getGroupUrl(groupName);
@@ -318,6 +369,26 @@ export function getGatewayDatasourceID(gatewayId: string, name: string): Promise
                     resolve(output[0].id);
                 } catch {
                     reject(`No datasource found with name '${name}'`);
+                }
+            })
+            .catch((err) => reject(err));
+    });
+}
+
+export function getPipelineID(name: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        const lookUpRequest: RequestPrepareOptions = {
+            method: "GET",
+            url: `${powerBIRestURL}/pipelines`,
+        };
+        executeRestCall(lookUpRequest, true, TokenType.POWERBI)
+            .then((response: string) => {
+                name = name.replace(/['"]+/g, "");
+                const output = jmespath.search(response, `[?displayName=='${name}'].{id:id}`);
+                try {
+                    resolve(output[0].id);
+                } catch {
+                    reject(`No pipeline found with name '${name}'`);
                 }
             })
             .catch((err) => reject(err));

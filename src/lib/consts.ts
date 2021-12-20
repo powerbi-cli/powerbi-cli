@@ -26,6 +26,8 @@
 
 "use strict";
 
+import { getAzureUrl, getPowerBIUrl } from "./config";
+
 const scopesRequestPBI = ["https://analysis.windows.net/powerbi/api/.default", "offline_access"];
 const scopesRequestAzure = ["https://management.core.windows.net/.default", "offline_access"];
 
@@ -59,11 +61,14 @@ export class consts {
     <p>You can log an issue at <a href="https://github.com/powerbi-cli/powerbi-cli/issues">Power BI CLI GitHub Repository</a> and we will assist you in resolving it.</p>
 </body>
 </html>`;
-    public powerBIRootUrl = "https://api.powerbi.com";
     public get powerBIRestURL(): string {
-        return `${this.powerBIRootUrl}/v1.0/myorg`;
+        const powerBIRootUrl = getPowerBIUrl();
+        return `https://${powerBIRootUrl}/v1.0/myorg`;
     }
-    public azureRestURL = "https://management.azure.com";
+    public get azureRestURL(): string {
+        const azureRootUrl = getAzureUrl();
+        return `https://${azureRootUrl}`;
+    }
     public get azureScope(): string {
         return scopesRequestAzure.join(" ");
     }

@@ -32,7 +32,7 @@ import { getAccessToken } from "../lib/token";
 import { ADOMDConnection } from "../lib/node-adomd/connection";
 import { TokenType } from "../lib/auth";
 import { ADOMDCommand } from "../lib/node-adomd/command";
-import { formatAndPrintOutputStream } from "../lib/output";
+import { formatAndPrintOutputRawStream } from "../lib/output";
 import { ModuleCommand } from "../lib/command";
 import { validateParameter, validateStartValues } from "../lib/parameters";
 import { verbose } from "../lib/logging";
@@ -69,5 +69,5 @@ export async function queryAction(...args: unknown[]): Promise<void> {
     const result = await adomdcmd.executeStream(query);
     await adomdconn.close();
     verbose("Stream to format and output result");
-    formatAndPrintOutputStream(result, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
+    formatAndPrintOutputRawStream(result, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }

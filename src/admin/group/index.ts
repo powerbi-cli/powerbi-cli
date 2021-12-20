@@ -32,9 +32,17 @@ import { listAction } from "./list";
 import { restoreAction } from "./restore";
 import { deleteUserAction } from "./deleteUser";
 import { addUserAction } from "./addUser";
+import { listUserAction } from "./list-user";
+import { unusedAction } from "./unused";
+import { updateAction } from "./update";
+import { modifiedAction } from "./modified";
+import { resultAction } from "./result";
+import { scanAction } from "./scan";
+import { statusAction } from "./status";
 
 export function getCommands(): ModuleCommand {
-    const addUserCommand = new ModuleCommand("add")
+    const addUserCommand = new ModuleCommand("add-user")
+        .alias("add")
         .description("Grants user permissions to the specified workspace")
         .action(addUserAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
@@ -43,7 +51,8 @@ export function getCommands(): ModuleCommand {
         .option("--access-right <right>", `Access right. Allowed values: ${accessRights.join(", ")}`)
         .option("--principal-type <type>", `Type of pricipal. Allowed values: ${principalTypes.join(", ")}`);
     addUserCommand.addGlobalOptions();
-    const deleteUserCommand = new ModuleCommand("delete")
+    const deleteUserCommand = new ModuleCommand("delete-user")
+        .alias("delete")
         .description("Removes user permissions to the specified workspace")
         .action(deleteUserAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
@@ -62,6 +71,17 @@ export function getCommands(): ModuleCommand {
         .option("--top <number>", "Returns only the first <number> results. Default: 5000")
         .option("--skip <number>", "Skips the first <number> results");
     listCommand.addGlobalOptions();
+    const listUserCommand = new ModuleCommand("list-user")
+        .description("Returns a list of users that have access to the specified workspace")
+        .action(listUserAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
+    listUserCommand.addGlobalOptions();
+    const modifiedCommand = new ModuleCommand("modified")
+        .description("Gets a list of workspace IDs in the organization")
+        .action(modifiedAction)
+        .option("--modified <datetime>", "Last modified date (must be in ISO 8601 compliant UTC format)")
+        .option("--personal-workspaces", "Include personal workspaces");
+    modifiedCommand.addGlobalOptions();
     const restoreCommand = new ModuleCommand("restore")
         .description("Restores a deleted workspace")
         .action(restoreAction)
@@ -69,19 +89,52 @@ export function getCommands(): ModuleCommand {
         .option("--owner <email>", "The email address of the owner of the group to be restored")
         .option("--name [name]", "The optional new name of the group to be restored");
     restoreCommand.addGlobalOptions();
-    const updateCommand = new ModuleCommand("update")
+    const resultCommand = new ModuleCommand("result")
+        .description("Gets the scan result for the specified scan")
+        .action(resultAction)
+        .option("--scan-id <scanId>", "The scan ID for the triggered scan");
+    resultCommand.addGlobalOptions();
+    const scanCommand = new ModuleCommand("scan")
+        .description("Initiates a scan to receive metadata for the requested list of workspaces")
+        .action(scanAction)
+        .option("--dataset-expressions", "Whether to return dataset expressions (Dax query and Mashup)")
+        .option("--dataset-schema", "Whether to return dataset schema (Tables, Columns and Measures)")
+        .option("--datasource-details", "Whether to return datasource details")
+        .option("--artifact-users	", "Whether to return artifact user details (Permission level)")
+        .option("--lineage", "Whether to return lineage info (upstream dataflows, tiles, datasource IDs)")
+        .option("--workspace-file <file>", "File with the workspace IDs to add to the scan in JSON format");
+    scanCommand.addGlobalOptions();
+    const statusCommand = new ModuleCommand("status")
+        .description("Gets the scan status for the specified scan")
+        .action(statusAction)
+        .option("--scan-id <scanId>", "The scan ID for the triggered scan");
+    statusCommand.addGlobalOptions();
+    const unusedCommand = new ModuleCommand("unused")
+        .description("Returns a list of artifacts that have not been used within 30 days for the specified workspace")
+        .action(unusedAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
+        .option("--continuation-token <token>", "Token to get the next chunk of the result set");
+    unusedCommand.addGlobalOptions();
+    const updateCommand = new ModuleCommand("update-user")
+        .alias("update")
         .description("Updates the specified workspace properties")
-        .action(restoreAction)
+        .action(updateAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
         .option("--update-details <data>", "String with the update details in JSON format")
         .option("--update-details-file <file>", "File with the update details in JSON format");
     updateCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("workspace")
-        .description("Manage workspaces as admin")
+        .description("Operations for working with workspaces as admin")
         .addCommand(addUserCommand)
         .addCommand(deleteUserCommand)
         .addCommand(listCommand)
+        .addCommand(listUserCommand)
+        .addCommand(modifiedCommand)
         .addCommand(restoreCommand)
+        .addCommand(resultCommand)
+        .addCommand(scanCommand)
+        .addCommand(statusCommand)
+        .addCommand(unusedCommand)
         .addCommand(updateCommand);
     appCommand.addGlobalOptions();
     return appCommand;

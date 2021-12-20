@@ -27,13 +27,17 @@
 "use strict";
 
 import { ModuleCommand } from "../lib/command";
+import { getCommands as getAppCommands } from "./app/index";
 import { getCommands as getCapacityCommands } from "./capacity/index";
 import { getCommands as getDashboardCommands } from "./dashboard/index";
 import { getCommands as getDataflowCommands } from "./dataflow/index";
 import { getCommands as getDatasetCommands } from "./dataset/index";
+import { getCommands as getLabelCommands } from "./label/index";
+import { getCommands as getPipelineCommands } from "./pipeline/index";
 import { getCommands as getReportCommands } from "./report/index";
 import { getCommands as getGroupCommands } from "./group/index";
 import { getCommands as getKeyCommands } from "./key/index";
+import { getCommands as getUserCommands } from "./user/index";
 import { activityAction } from "./activity";
 import { importAction } from "./import";
 import { expandAdminImports, expandRefreshes } from "../lib/helpers";
@@ -75,7 +79,7 @@ export function getCommands(): ModuleCommand {
         .description("Returns a list of imports for the organization")
         .action(refreshAction)
         .option("--capacity -c <name>", "Name or ID of the Power BI capacity")
-        .option("--refreshableId <refreshId>", "The refreshable id")
+        .option("--refreshable-id <refreshId>", "The refreshable id")
         .option(
             "--expand <entity>",
             `Expands related entities inline, receives a comma-separated list of data types. Allowed values: ${expandRefreshes.join(
@@ -91,13 +95,17 @@ export function getCommands(): ModuleCommand {
         .addCommand(activityCommand)
         .addCommand(importCommand)
         .addCommand(refreshCommand)
+        .addCommand(getAppCommands())
         .addCommand(getCapacityCommands())
         .addCommand(getDashboardCommands())
         .addCommand(getDataflowCommands())
         .addCommand(getDatasetCommands())
         .addCommand(getKeyCommands())
+        .addCommand(getLabelCommands())
+        .addCommand(getPipelineCommands())
         .addCommand(getReportCommands())
-        .addCommand(getGroupCommands());
+        .addCommand(getGroupCommands())
+        .addCommand(getUserCommands());
     appCommand.addGlobalOptions();
     return appCommand;
 }

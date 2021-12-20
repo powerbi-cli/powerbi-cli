@@ -27,23 +27,13 @@
 "use strict";
 import { OptionValues } from "commander";
 
-import { ModuleCommand } from "../lib/command";
+import { displayConfig } from "../lib/config";
 import { debug } from "../lib/logging";
-import { APICall, executeAPICall } from "../lib/api";
-import { getGroupUrl } from "../lib/helpers";
-import { validateGroupId, validateReportId } from "../lib/parameters";
 
-export async function datasourceAction(...args: unknown[]): Promise<void> {
-    const cmd = args[args.length - 1] as ModuleCommand;
+export async function listAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
-    const groupId = await validateGroupId(options.W, false);
-    const reportId = await validateReportId(groupId as string, options.R, true);
-    debug(`Retrieves Power BI report datasources of the group (${groupId || "my"})`);
-    const request: APICall = {
-        method: "GET",
-        url: `${getGroupUrl(groupId)}/reports/${reportId}/datasources`,
-        containsValue: true,
-    };
-    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
+
+    debug("Display current stored config values");
+    displayConfig("defaults");
 }

@@ -34,5 +34,12 @@
     "ts-node": {
         "files": true,
         "ignore": []
+    },
+    "watchOptions": {
+        "watchFile": "useFsEvents",
+        "watchDirectory": "useFsEvents",
+        "fallbackPolling": "dynamicPriority",
+        "synchronousWatchDirectory": true,
+        "excludeDirectories": ["**/node_modules", "bin"]
     }
 }

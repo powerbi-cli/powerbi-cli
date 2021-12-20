@@ -40,13 +40,14 @@ export function getCommands(): ModuleCommand {
     const listCommand = new ModuleCommand("list")
         .description("List Power BI dataflow storage accounts")
         .action(listAction);
+    listCommand.addGlobalOptions();
     const unassignCommand = new ModuleCommand("unassign")
         .description("Unassign a Power BI group to a dataflow storage account")
         .action(assignAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace");
     unassignCommand.addGlobalOptions();
     const refreshCommand = new ModuleCommand("storage")
-        .description("Manage Power BI dataflow storage accounts")
+        .description("Operations for working with dataflow storage accounts")
         .addCommand(assignCommand)
         .addCommand(listCommand)
         .addCommand(unassignCommand);

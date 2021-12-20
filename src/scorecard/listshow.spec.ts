@@ -35,14 +35,14 @@ import { ModuleCommand } from "../lib/command";
 import * as parameters from "../lib/parameters";
 import * as api from "../lib/api";
 
-import { datasourceAction } from "./datasource";
+import { listshowAction } from "./listshow";
 
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
-describe("report/datasource.ts", () => {
+describe("scorecard/listshow.ts", () => {
     let validateGroupIdMock: SinonStub<unknown[], unknown>;
-    let validateReportIdMock: SinonStub<unknown[], unknown>;
+    let validatescorecardIdMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
@@ -50,76 +50,121 @@ describe("report/datasource.ts", () => {
     };
     const allOptions = {
         W: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
-        R: "c2a995d2-cd03-4b32-be5b-3bf93d211a56",
+        S: "scorecardName",
     };
     const helpOptions = { H: true };
     beforeEach(() => {
         validateGroupIdMock = ImportMock.mockFunction(parameters, "validateGroupId");
-        validateReportIdMock = ImportMock.mockFunction(parameters, "validateReportId");
+        validatescorecardIdMock = ImportMock.mockFunction(parameters, "validateScorecardId");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
         validateGroupIdMock.restore();
-        validateReportIdMock.restore();
+        validatescorecardIdMock.restore();
         executeAPICallMock.restore();
     });
-    describe("datasourceAction()", () => {
-        it("datasource with --help", (done) => {
+    describe("listshowAction()", () => {
+        it("list with --help", (done) => {
             validateGroupIdMock.resolves(undefined);
-            validateReportIdMock.resolves(undefined);
+            validatescorecardIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "datasource",
+                name: () => "list",
                 opts: () => helpOptions,
             };
-            datasourceAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
+            listshowAction(helpOptions, cmdOptsMock as ModuleCommand).finally(() => {
                 expect(validateGroupIdMock.callCount).to.equal(0);
-                expect(validateReportIdMock.callCount).to.equal(0);
+                expect(validatescorecardIdMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(0);
                 done();
             });
         });
-        it("datasource with no options", (done) => {
+        it("list with no options", (done) => {
             validateGroupIdMock.resolves(undefined);
-            validateReportIdMock.resolves(undefined);
+            validatescorecardIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "datasource",
+                name: () => "list",
                 opts: () => emptyOptions,
             };
-            datasourceAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateReportIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("datasource with one options", (done) => {
+        it("list with one options", (done) => {
             validateGroupIdMock.resolves(oneOptions.W);
-            validateReportIdMock.resolves(undefined);
+            validatescorecardIdMock.resolves(undefined);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "datasource",
+                name: () => "list",
                 opts: () => oneOptions,
             };
-            datasourceAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateReportIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
-        it("datasource with all options", (done) => {
+        it("list with all options", (done) => {
             validateGroupIdMock.resolves(allOptions.W);
-            validateReportIdMock.resolves(allOptions.R);
+            validatescorecardIdMock.resolves(allOptions.S);
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
-                name: () => "datasource",
+                name: () => "list",
                 opts: () => allOptions,
             };
-            datasourceAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+            listshowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGroupIdMock.callCount).to.equal(1);
-                expect(validateReportIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(1);
+                done();
+            });
+        });
+        it("show with no options", (done) => {
+            validateGroupIdMock.rejects();
+            validatescorecardIdMock.rejects();
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "show",
+                opts: () => emptyOptions,
+            };
+            listshowAction(emptyOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(0);
+                expect(executeAPICallMock.callCount).to.equal(0);
+                done();
+            });
+        });
+        it("show with one options", (done) => {
+            validateGroupIdMock.resolves(oneOptions.W);
+            validatescorecardIdMock.rejects();
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "show",
+                opts: () => oneOptions,
+            };
+            listshowAction(oneOptions, cmdOptsMock as ModuleCommand).catch(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
+                expect(executeAPICallMock.callCount).to.equal(0);
+                done();
+            });
+        });
+        it("show with all options", (done) => {
+            validateGroupIdMock.resolves(allOptions.W);
+            validatescorecardIdMock.resolves(allOptions.S);
+            executeAPICallMock.resolves(true);
+            const cmdOptsMock: unknown = {
+                name: () => "show",
+                opts: () => allOptions,
+            };
+            listshowAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
+                expect(validateGroupIdMock.callCount).to.equal(1);
+                expect(validatescorecardIdMock.callCount).to.equal(1);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });

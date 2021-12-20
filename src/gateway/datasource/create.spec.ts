@@ -52,7 +52,7 @@ describe("gateway/datasource/create.ts", () => {
     };
     const allOptions = {
         G: "gatewayName",
-        datasource: "",
+        datasource: "{}",
     };
     const allOptionsFile = {
         G: "gatewayName",
@@ -111,7 +111,6 @@ describe("gateway/datasource/create.ts", () => {
         });
         it("create with all options", (done) => {
             validateGatewayIdMock.resolves(allOptions.G);
-            readFileSyncMock.returns("");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "create",
@@ -119,14 +118,14 @@ describe("gateway/datasource/create.ts", () => {
             };
             createAction(allOptions, cmdOptsMock as ModuleCommand).then(() => {
                 expect(validateGatewayIdMock.callCount).to.equal(1);
-                expect(readFileSyncMock.callCount).to.equal(1);
+                expect(readFileSyncMock.callCount).to.equal(0);
                 expect(executeAPICallMock.callCount).to.equal(1);
                 done();
             });
         });
         it("create with all options (file)", (done) => {
             validateGatewayIdMock.resolves(allOptions.G);
-            readFileSyncMock.returns("");
+            readFileSyncMock.returns("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "create",

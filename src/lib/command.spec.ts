@@ -65,7 +65,7 @@ describe("command.ts", () => {
             expect(cmd.isInteractive).to.equal(false);
             expect(cmd.jmsePath).to.equal(undefined);
             expect(cmd.outputFormat).to.equal(undefined);
-            expect(cmd.args).to.equal(undefined);
+            expect(cmd.args).to.deep.equal([]);
             expect(cmd.commands).to.deep.equal([]);
         });
         it("Set helpPrompt", () => {
@@ -209,7 +209,7 @@ describe("command.ts", () => {
             expect(drawHeaderMock.callCount).to.equal(0);
             expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(0);
-            expect(errorMock.callCount).to.equal(0);
+            expect(errorMock.callCount).to.equal(1);
         });
         it("unknown command", () => {
             const cmd = new ModuleCommand("new");

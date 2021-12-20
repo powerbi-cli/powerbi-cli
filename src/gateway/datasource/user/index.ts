@@ -58,7 +58,7 @@ export function getCommands(): ModuleCommand {
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway");
     listCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("user")
-        .description("Manage datasources users of a Power BI gateway")
+        .description("Operations for working with datasources users of a Power BI gateway")
         .addCommand(addCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand);

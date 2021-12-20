@@ -28,30 +28,35 @@
 
 import { ModuleCommand } from "./command";
 
-export const programModules: string[] = [
-    "admin",
-    "app",
-    "capacity",
-    "dashboard",
-    "dataflow",
-    "dataset",
-    "embedded",
-    "feature",
-    "gateway",
-    "import",
-    "report",
-    "group",
-    "xmla",
-    "login",
-    "logout",
+export const programModules: [string, boolean][] = [
+    ["admin", false],
+    ["app", false],
+    ["capacity", false],
+    ["cloud", false],
+    ["configure", false],
+    ["dashboard", false],
+    ["dataflow", false],
+    ["dataset", false],
+    ["embedded", false],
+    ["feature", false],
+    ["gateway", false],
+    ["import", false],
+    ["report", false],
+    ["pipeline", false],
+    ["scorecard", false],
+    ["group", false], // workspace
+    ["user", false],
+    ["xmla", true],
+    ["login", false],
+    ["logout", false],
 ];
 
-export function initializeProgram(modules: string[]): ModuleCommand {
+export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
     const program = new ModuleCommand("pbicli");
 
-    modules.forEach((module: string) => {
+    modules.forEach((module: [string, boolean]) => {
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        program.addCommand(require(`../${module}/index`).getCommands());
+        program.addCommand(require(`../${module[0]}/index`).getCommands(), { hidden: module[1] });
     });
 
     program.addGlobalOptions();
