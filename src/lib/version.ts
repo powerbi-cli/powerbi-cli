@@ -32,7 +32,7 @@ import { yellow } from "chalk";
 
 import { verbose } from "./logging";
 
-export const currentVersion = "1.2.0-preview.3";
+export const currentVersion = "1.2.0";
 const versionUrl = "https://powerbicli.azureedge.net/version.json";
 
 interface version {
