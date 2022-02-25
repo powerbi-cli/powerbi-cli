@@ -30,7 +30,7 @@ import { Command, OptionValues } from "commander";
 import { createWriteStream, existsSync } from "fs";
 import { format } from "path";
 
-import { GlobalCommandOptions } from "./command";
+import { GlobalCommands, GlobalOptions } from "./command";
 
 export function addDocumenter(program: Command): void {
     program
@@ -52,7 +52,7 @@ export function addDocumenter(program: Command): void {
 
             const commands = helper
                 .visibleCommands(program)
-                .filter((cmd) => !GlobalCommandOptions.some((cmdOption) => cmd.name() === cmdOption));
+                .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption));
 
             const processMarkdown = (commands: Command[], parent: string[], level: number, index: boolean) => {
                 if ((index && level === 0) || (!index && level === 1 && commands.length > 0)) {
@@ -66,7 +66,7 @@ export function addDocumenter(program: Command): void {
                     commands.forEach((cmd) => {
                         const childCommands = helper
                             .visibleCommands(cmd)
-                            .filter((cmd) => !GlobalCommandOptions.some((cmdOption) => cmd.name() === cmdOption))
+                            .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
                             .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
                         if (childCommands.length === 0 || level === 0) {
                             console.log(
@@ -89,10 +89,10 @@ export function addDocumenter(program: Command): void {
                 commands.forEach((cmd) => {
                     const options = helper
                         .visibleOptions(cmd)
-                        .filter((option) => !GlobalCommandOptions.some((cmdOption) => option.name() === cmdOption));
+                        .filter((option) => !GlobalOptions.some((cmdOption) => option.name() === cmdOption));
                     const childCommands = helper
                         .visibleCommands(cmd)
-                        .filter((cmd) => !GlobalCommandOptions.some((cmdOption) => cmd.name() === cmdOption))
+                        .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
                         .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
                     if (childCommands.length === 0) {
                         console.log(`## ${parent.join(" ")} ${cmd.name()}`);
@@ -144,7 +144,7 @@ export function addDocumenter(program: Command): void {
                 commands.forEach((cmd) => {
                     const childCommands = helper
                         .visibleCommands(cmd)
-                        .filter((cmd) => !GlobalCommandOptions.some((cmdOption) => cmd.name() === cmdOption))
+                        .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
                         .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
                     const indent = "    ".repeat(level);
                     console.log(`${indent}- name: ${cmd.name()}`);

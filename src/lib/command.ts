@@ -35,7 +35,8 @@ import { drawHeader } from "./header";
 import { OutputType } from "./output";
 import { currentVersion } from "./version";
 
-export const GlobalCommandOptions = ["version", "help", "-o", "output-file", "query", "debug", "verbose", "-h"];
+export const GlobalCommands = ["version", "help"];
+export const GlobalOptions = ["-o", "output-file", "query", "debug", "verbose", "-h"];
 
 export class ModuleCommand extends Command {
     private errorMsg: string | undefined;
