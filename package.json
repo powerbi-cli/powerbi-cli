@@ -1,6 +1,6 @@
 {
     "name": "@powerbi-cli/powerbi-cli",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "Power BI CLI",
     "main": "./bin/pbicli.js",
     "scripts": {
