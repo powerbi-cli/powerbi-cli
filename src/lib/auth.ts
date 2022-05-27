@@ -31,7 +31,7 @@ import open from "open";
 import express from "express";
 import { stringify } from "querystring";
 import { exec } from "child_process";
-import { yellow } from "chalk";
+import yellow from "chalk";
 
 import { consts } from "./consts";
 

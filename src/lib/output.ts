@@ -31,7 +31,7 @@ import { Parser } from "json2csv";
 import jmespath from "jmespath";
 import { createWriteStream, writeFileSync } from "fs";
 import { Readable, Transform, TransformCallback } from "stream";
-import { red } from "chalk";
+import red from "chalk";
 import { verbose } from "./logging";
 
 export enum OutputType {

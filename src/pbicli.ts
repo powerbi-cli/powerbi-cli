@@ -34,7 +34,7 @@ import inquirer from "inquirer";
 import inquirerCommandPrompt from "inquirer-command-prompt";
 
 import { drawHeader } from "./lib/header";
-import { green } from "chalk";
+import green from "chalk";
 import { checkVersion } from "./lib/version";
 import { initializeProgram, programModules } from "./lib/program";
 

@@ -28,7 +28,7 @@
 
 import fetch from "node-fetch";
 import { gt } from "semver";
-import { yellow } from "chalk";
+import yellow from "chalk";
 
 import { verbose } from "./logging";
 

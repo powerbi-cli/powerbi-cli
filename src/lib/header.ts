@@ -26,7 +26,7 @@
 
 "use strict";
 
-import { bold } from "chalk";
+import bold from "chalk";
 import figlet from "figlet";
 
 export function drawHeader(interactive: boolean): void {

@@ -27,7 +27,7 @@
 "use strict";
 
 import { Command, CommanderError } from "commander";
-import { red } from "chalk";
+import red from "chalk";
 
 import { drawFooter } from "./footer";
 import { drawHeader } from "./header";
