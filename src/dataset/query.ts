@@ -48,8 +48,14 @@ export async function queryAction(...args: unknown[]): Promise<void> {
         options.scriptFile === undefined
     )
         throw "error: missing option '--dax', '--dax-file', '--script' or '--script-file'";
-    const script = options.script || options.scriptFile ? readFileSync(options.scriptFile) : undefined;
-    const query = options.dax || options.daxFile ? readFileSync(options.daxFile) : undefined;
+    const script =
+        options.script || options.scriptFile
+            ? options.scriptFile
+                ? readFileSync(options.scriptFile)
+                : options.script
+            : undefined;
+    const query =
+        options.dax || options.daxFile ? (options.daxFile ? readFileSync(options.daxFile) : options.dax) : undefined;
 
     debug(`Execute query against Power BI dataset (${datasetId})`);
 
