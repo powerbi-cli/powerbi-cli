@@ -41,7 +41,7 @@ For more information see [documentation](https://powerbi-cli.github.io/)
 
 ## Power BI Rest API coverage
 
-_Last update: May 26, 2022_
+_Last update: July 19, 2022_
 
 | PBICLI Command    | Coverage report                |
 | ----------------- | ------------------------------ |
