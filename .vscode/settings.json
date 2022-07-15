@@ -2,11 +2,14 @@
     "editor.tabSize": 4,
     "editor.insertSpaces": true,
     "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+        "source.fixAll": true
+    },
     "[yaml]": {
         "editor.tabSize": 2,
         "editor.defaultFormatter": "redhat.vscode-yaml"
     },
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "files.eol": "\n",
     "files.watcherExclude": {
         "**/.git/objects/**": true,
