@@ -129,7 +129,7 @@ export function removeAccessToken(): void {
 
 async function validateToken(tokenType: TokenType, token?: Token): Promise<Token | undefined> {
     if (!token) return;
-    if (token.expiresOn - new Date().getTime() > 0) return token;
+    if (token.expiresOn - Math.floor(new Date().getTime() / 1000) > 0) return token;
     if (token.refreshToken) {
         verbose("Trying to get new token...");
         return await loginSilent({} as OptionValues, getConsts(), {

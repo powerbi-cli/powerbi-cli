@@ -81,7 +81,7 @@ describe("token.ts", () => {
     });
     describe("getAccessToken()", () => {
         it("valid stored token", (done) => {
-            const expiresOn = new Date().getTime() + 3599;
+            const expiresOn = Math.floor(new Date().getTime() / 1000) + 3599;
             existsSyncMock.returns(true);
             readFileSyncMock.returns(
                 JSON.stringify({
@@ -99,7 +99,7 @@ describe("token.ts", () => {
             });
         });
         it("expired stored token", (done) => {
-            const expiresOn = new Date().getTime() - 60;
+            const expiresOn = Math.floor(new Date().getTime() / 1000) - 60;
             existsSyncMock.returns(true);
             readFileSyncMock.returns(
                 JSON.stringify({
