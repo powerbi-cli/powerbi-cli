@@ -27,7 +27,8 @@
 "use strict";
 
 import { Command, CommanderError } from "commander";
-import red from "chalk";
+import chalk from "chalk";
+import jmespath from "jmespath";
 
 import { drawFooter } from "./footer";
 import { drawHeader } from "./header";
@@ -85,7 +86,8 @@ export class ModuleCommand extends Command {
 
     public showHelpOrError(skipHelp = true): void {
         if (this.isInteractive || skipHelp) {
-            console.error(red(this.errorMsg));
+            const errors = this.errorMsg?.split("\n");
+            errors?.forEach((error: string, index: number) => console.error(index === 0 ? chalk.red(error) : error));
         } else {
             this.outputHelp();
         }
@@ -110,13 +112,24 @@ export class ModuleCommand extends Command {
     }
 
     public async showVersion(): Promise<void> {
-        console.info(`pbicli      ${currentVersion}\n`);
-        drawFooter(this.isInteractive);
+        const versions = {
+            "powerbi-cli": currentVersion,
+        };
+        if (this.jmsePath) {
+            try {
+                const output = jmespath.search(versions, this.jmsePath);
+                console.info(output);
+            } catch (err) {
+                console.error(chalk.red(`pbicli version: error: argument --query: ${err}`));
+            }
+        } else {
+            console.info(JSON.stringify(versions, null, " "));
+        }
         this.exit(new CommanderError(0, "pbicli.version", currentVersion));
     }
 
     public showCurrentError(): void {
-        if (this.errorMsg) console.error(red(this.errorMsg));
+        if (this.errorMsg) console.error(chalk.red(this.errorMsg));
     }
 
     // Stil need to override _exit() as the base version allways exits the process
@@ -143,7 +156,7 @@ export class ModuleCommand extends Command {
     private showUnknownOption(operand: string): void {
         const args = this.getAllArgs(this as ModuleCommand);
         const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
-        this.errorMsg = `error: unknown option '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
+        this.errorMsg = `error: unknown option '${operand}'.\n\nTry run 'pbicli ${extraCmd} --help' for more information`;
         this.showHelpOrError(true);
         this.exit(new CommanderError(1, "pbicli.unknownOption", this.errorMsg));
     }
@@ -151,7 +164,7 @@ export class ModuleCommand extends Command {
     private showUnknownCommand(operand: string): void {
         const args = this.getAllArgs(this as ModuleCommand);
         const extraCmd = args.slice(0, args.indexOf(operand)).join(" ");
-        this.errorMsg = `error: unknown command '${operand}'. Try run 'pbicli ${extraCmd} --help for more information'`;
+        this.errorMsg = `error: unknown command '${operand}'.\n\nTry run 'pbicli ${extraCmd} --help' for more information`;
         this.showHelpOrError(true);
         this.exit(new CommanderError(1, "pbicli.unknownCommand", this.errorMsg));
     }
