@@ -39,8 +39,8 @@ export async function updateGatewayAction(...args: unknown[]): Promise<void> {
     const groupId = await validateGroupId(options.W, false);
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     const gatewayId = await validateParameter({
-        name: options.watewayId,
-        isName: () => getGatewayID(options.watewayId),
+        name: options.gatewayId,
+        isName: () => getGatewayID(options.gatewayId),
         missing: "error: missing option '--gateway'",
         isRequired: true,
     });
