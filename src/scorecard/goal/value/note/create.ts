@@ -43,6 +43,7 @@ export async function createAction(...args: unknown[]): Promise<void> {
     const timestamp = options.timestamp;
     if (options.text === undefined) throw "error: missing option '--text'";
     const text = getOptionContent(options.text);
+    const body = JSON.parse(options.text.startsWith("@") ? (text as string) : `{ "body": "${text}" }`);
     debug(
         `Creates a goal check-in note in a Power BI scorecard (${scorecardId}) in workspace (${
             groupId || "my"
@@ -51,7 +52,7 @@ export async function createAction(...args: unknown[]): Promise<void> {
     const request: APICall = {
         method: "POST",
         url: `${getGroupUrl(groupId)}/scorecards(${scorecardId})/goals(${goalId})/goalValues(${timestamp})/notes`,
-        body: JSON.parse(`{ "body": "${text}" }`),
+        body,
     };
     await executeAPICall(request);
 }

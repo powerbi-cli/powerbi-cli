@@ -45,6 +45,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const noteId = options.note;
     if (options.text === undefined) throw "error: missing option '--text'";
     const text = getOptionContent(options.text);
+    const body = JSON.parse(options.text.startsWith("@") ? (text as string) : `{ "body": "${text}" }`);
     debug(
         `Updates a goal check-in in a Power BI scorecard (${scorecardId}) in workspace (${
             groupId || "my"
@@ -55,7 +56,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
         url: `${getGroupUrl(
             groupId
         )}/scorecards(${scorecardId})/goals(${goalId})/goalValues(${timestamp})/notes(${noteId})`,
-        body: JSON.parse(`{ "body": "${text}" }`),
+        body,
     };
     await executeAPICall(request);
 }
