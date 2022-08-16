@@ -26,11 +26,11 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { readFileSync } from "fs";
 
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
 import { validatePipelineId } from "../lib/parameters";
+import { getOptionContent } from "../lib/options";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -39,9 +39,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const pipelineId = await validatePipelineId(options.W, true);
     if (options.update === undefined && options.updateFile === undefined)
         throw "error: missing option '--update' or '--update-file'";
-    const updateSettings = options.update
-        ? JSON.parse(options.update)
-        : JSON.parse(readFileSync(options.updateFile, "utf8"));
+    const updateSettings = JSON.parse(getOptionContent(options.update || `@${options.updateFile}`) as string);
 
     debug(`Updates a Power BI pipeline (${pipelineId})`);
     const request: APICall = {

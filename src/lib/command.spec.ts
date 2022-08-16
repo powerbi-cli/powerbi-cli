@@ -119,7 +119,7 @@ describe("command.ts", () => {
             cmd.addGlobalOptions();
             process.env.PBICLI_interactive = "true";
             expect(cmd.parse(["version"], { from: "user" })).to.not.throw;
-            expect(drawFooterMock.callCount).to.equal(1);
+            expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(1);
         });
         it("-o, --output", () => {
@@ -209,7 +209,7 @@ describe("command.ts", () => {
             expect(drawHeaderMock.callCount).to.equal(0);
             expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(0);
-            expect(errorMock.callCount).to.equal(1);
+            expect(errorMock.callCount).to.equal(3); // 3 lines of error
         });
         it("unknown command", () => {
             const cmd = new ModuleCommand("new");
@@ -219,7 +219,7 @@ describe("command.ts", () => {
             expect(drawHeaderMock.callCount).to.equal(0);
             expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(0);
-            expect(errorMock.callCount).to.equal(1);
+            expect(errorMock.callCount).to.equal(3); // 3 lines of error
         });
         it("unknown command (internal)", () => {
             const cmd = new ModuleCommand("new");
@@ -239,7 +239,7 @@ describe("command.ts", () => {
             expect(drawHeaderMock.callCount).to.equal(0);
             expect(drawFooterMock.callCount).to.equal(0);
             expect(infoMock.callCount).to.equal(0);
-            expect(errorMock.callCount).to.equal(1);
+            expect(errorMock.callCount).to.equal(3); // 3 lines of error
         });
     });
 });

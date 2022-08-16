@@ -86,7 +86,7 @@ export class ModuleCommand extends Command {
 
     public showHelpOrError(skipHelp = true): void {
         if (this.isInteractive || skipHelp) {
-            const errors = this.errorMsg?.split("\n");
+            const errors = this.errorMsg?.toString().split("\n");
             errors?.forEach((error: string, index: number) => console.error(index === 0 ? chalk.red(error) : error));
         } else {
             this.outputHelp();

@@ -30,7 +30,7 @@ import { OptionValues } from "commander";
 import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
-import { validateGroupId, validateScorecardId } from "../lib/parameters";
+import { validateGroupId, validateReportId, validateScorecardId } from "../lib/parameters";
 import { getGroupUrl } from "../lib/helpers";
 
 export async function listshowAction(...args: unknown[]): Promise<void> {
@@ -38,19 +38,17 @@ export async function listshowAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
 
-    const groupId = await validateGroupId(options.W, false);
-    const scorecardId = await validateScorecardId(groupId as string, options.S, cmd.name() === "show");
+    const groupId = await validateGroupId(options.W, true);
+    const scorecardId = await validateScorecardId(groupId as string, options.S, cmd.name() === "show" && !options.R);
+    const reportId = await validateReportId(groupId as string, options.R, cmd.name() === "show" && !options.S);
     debug(`Retrieves Power BI scorecards of the group (${groupId})`);
 
     const request: APICall = {
         method: "GET",
-        url: `${getGroupUrl(groupId)}/scorecards${scorecardId ? `/${scorecardId}` : ""}`,
-        containsValue: scorecardId ? false : true,
+        url: `${getGroupUrl(groupId)}/scorecards${
+            scorecardId ? `(${scorecardId})` : reportId ? `/GetScorecardByReportId(reportId=${reportId})` : ""
+        }`,
+        containsValue: scorecardId || reportId ? false : true,
     };
-    await executeAPICall(
-        request,
-        cmd.outputFormat,
-        cmd.outputFile,
-        `[?groupId=='${groupId}']` + (cmd.jmsePath ? `.${cmd.jmsePath}` : "")
-    );
+    await executeAPICall(request, cmd.outputFormat, cmd.outputFile, cmd.jmsePath);
 }

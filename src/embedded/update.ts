@@ -31,8 +31,8 @@ import { ModuleCommand } from "../lib/command";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
 import { validateSubscriptionId, validateResourceGroupId } from "../lib/parameters";
-import { readFileSync } from "fs";
 import { TokenType } from "../lib/auth";
+import { getOptionContent } from "../lib/options";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
     const cmd = args[args.length - 1] as ModuleCommand;
@@ -44,9 +44,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     if (!capacity) throw "error: missing option '--capacity'";
     if (options.parameter === undefined && options.parameterFile === undefined)
         throw "error: missing option '--parameter' or '--parameter-file'";
-    const parameters = options.parameter
-        ? JSON.parse(options.parameter)
-        : JSON.parse(readFileSync(options.parameterFile, "utf8"));
+    const parameters = JSON.parse(getOptionContent(options.parameter || `@${options.parameterFile}`) as string);
     debug(`Lists all the Dedicated capacities for the given subscription`);
     const request: APICall = {
         method: "PATCH",

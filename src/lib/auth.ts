@@ -137,7 +137,7 @@ export function getToken(response: AccessTokenResponse, tenant?: string): Token 
     return {
         accessToken: response.access_token,
         tenant,
-        expiresOn: Math.floor(new Date().getTime() / 1000) + response.expires_in * 1000,
+        expiresOn: Math.floor(new Date().getTime() / 1000) + response.expires_in,
         refreshToken: response.refresh_token,
     };
 }

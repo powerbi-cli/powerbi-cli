@@ -40,6 +40,7 @@ import { getCommands as getKeyCommands } from "./key/index";
 import { getCommands as getUserCommands } from "./user/index";
 import { activityAction } from "./activity";
 import { importAction } from "./import";
+import { sharedAction } from "./shared";
 import { expandAdminImports, expandRefreshes } from "../lib/helpers";
 import { refreshAction } from "./refresh";
 
@@ -90,11 +91,18 @@ export function getCommands(): ModuleCommand {
         .option("--top <number>", "Returns only the first <number> results. Default: 5000")
         .option("--skip <number>", "Skips the first <number> results");
     refreshCommand.addGlobalOptions();
+    const sharedCommand = new ModuleCommand("shared")
+        .description("Returns a list of Power BI items that are shared")
+        .action(sharedAction)
+        .option("--public", "Returns only items that are shared via 'published to the web'")
+        .option("--continuation-token <token>", "Token required to get the next chunk of the result set");
+    sharedCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("admin").description("Operations for working with administrative tasks");
     appCommand
         .addCommand(activityCommand)
         .addCommand(importCommand)
         .addCommand(refreshCommand)
+        .addCommand(sharedCommand)
         .addCommand(getAppCommands())
         .addCommand(getCapacityCommands())
         .addCommand(getDashboardCommands())

@@ -51,6 +51,7 @@ export const programModules: [string, boolean][] = [
     ["xmla", true],
     ["login", false],
     ["logout", false],
+    ["rest", false],
 ];
 
 export function initializeProgram(modules: [string, boolean][]): ModuleCommand {

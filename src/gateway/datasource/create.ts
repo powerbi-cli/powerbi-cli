@@ -30,7 +30,7 @@ import { OptionValues } from "commander";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { validateGatewayId } from "../../lib/parameters";
-import { readFileSync } from "fs";
+import { getOptionContent } from "../../lib/options";
 
 export async function createAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -38,9 +38,7 @@ export async function createAction(...args: unknown[]): Promise<void> {
     const gatewayId = await validateGatewayId(options.G, true);
     if (options.datasource === undefined && options.datasourceFile === undefined)
         throw "error: missing option '--datasource' or '--datasource-file'";
-    const datasource = options.datasource
-        ? JSON.parse(options.datasource)
-        : JSON.parse(readFileSync(options.datasourceFile, "utf8"));
+    const datasource = JSON.parse(getOptionContent(options.datasource || `@${options.datasourceFile}`) as string);
     debug(`Create Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "POST",

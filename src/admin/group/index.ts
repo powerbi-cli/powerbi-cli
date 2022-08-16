@@ -120,8 +120,14 @@ export function getCommands(): ModuleCommand {
         .description("Updates the specified workspace properties")
         .action(updateAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace")
-        .option("--update-details <data>", "String with the update details in JSON format")
-        .option("--update-details-file <file>", "File with the update details in JSON format");
+        .option(
+            "--update-details <data>",
+            "String with the update details in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--update-details-file <file>",
+            "File with the update details in JSON format. Deprecated: use --update-details @{file}"
+        );
     updateCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("workspace")
         .description("Operations for working with workspaces as admin")

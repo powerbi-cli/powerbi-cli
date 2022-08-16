@@ -30,8 +30,8 @@ import { OptionValues } from "commander";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { getGroupUrl } from "../../lib/helpers";
-import { readFileSync } from "fs";
 import { validateGroupId, validateDatasetId } from "../../lib/parameters";
+import { getOptionContent } from "../../lib/options";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -41,9 +41,9 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.refreshSchedule === undefined && options.refreshScheduleFile === undefined)
         throw "error: missing option '--refresh-schedule' or '--refresh-schedule-file'";
-    const refreshSchedule = options.refreshSchedule
-        ? JSON.parse(options.refreshSchedule)
-        : JSON.parse(readFileSync(options.refreshScheduleFile, "utf8"));
+    const refreshSchedule = JSON.parse(
+        getOptionContent(options.refreshSchedule || `@${options.refreshScheduleFile}`) as string
+    );
     debug(`Update the refresch schedule of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const connectionType = options.directQuery ? "directQueryRefreshSchedule" : "refreshSchedule";
     const request: APICall = {

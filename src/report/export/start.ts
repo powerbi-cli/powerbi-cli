@@ -32,24 +32,21 @@ import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { getGroupUrl, allowedExportFormat, pbiDownloads, pbiExports } from "../../lib/helpers";
 import { validateGroupId, validateReportId, validateAllowedValues } from "../../lib/parameters";
-import { readFileSync } from "fs";
 import { OutputType } from "../../lib/output";
+import { getOptionContent } from "../../lib/options";
 
 export async function startExportAction(...args: unknown[]): Promise<void> {
     const cmd = args[args.length - 1] as ModuleCommand;
     const options = args[args.length - 2] as OptionValues;
     if (options.H) return;
+
     const groupId = await validateGroupId(options.W, false);
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.format === undefined) throw "error: missing option '--format'";
     const format = await validateAllowedValues((options.format as string).toUpperCase(), allowedExportFormat);
     const isPbix = pbiDownloads.some((f) => f === format);
     const isPbiExport = pbiExports.some((f) => f === format);
-    const config = options.config
-        ? JSON.parse(options.config)
-        : options.configFile
-        ? JSON.parse(readFileSync(options.configFile, "utf8"))
-        : undefined;
+    const config = getOptionContent(options.config || (options.configFile ? `@${options.configFile}` : undefined));
     debug(
         `Start the export of a Power BI report (${reportId}) in workspace (${groupId || "my"}) to format (${format})`
     );
@@ -60,8 +57,8 @@ export async function startExportAction(...args: unknown[]): Promise<void> {
             ? undefined
             : {
                   format,
-                  paginatedReportConfiguration: isPbiExport ? undefined : config,
-                  powerBIReportConfiguration: isPbiExport ? config : undefined,
+                  paginatedReportConfiguration: isPbiExport ? undefined : config ? JSON.parse(config) : undefined,
+                  powerBIReportConfiguration: isPbiExport ? (config ? JSON.parse(config) : undefined) : undefined,
               },
     };
     await executeAPICall(request, isPbix ? OutputType.raw : cmd.outputFormat, cmd.outputFile, cmd.jmsePath);

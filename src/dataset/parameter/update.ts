@@ -30,8 +30,8 @@ import { OptionValues } from "commander";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { getGroupUrl } from "../../lib/helpers";
-import { readFileSync } from "fs";
 import { validateGroupId, validateDatasetId } from "../../lib/parameters";
+import { getOptionContent } from "../../lib/options";
 
 export async function updateParameterAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -41,9 +41,7 @@ export async function updateParameterAction(...args: unknown[]): Promise<void> {
     const datasetId = await validateDatasetId(groupId as string, options.D, true);
     if (options.parameter === undefined && options.parameterFile === undefined)
         throw "error: missing option '--parameter' or '--parameter-file'";
-    const parameters = options.parameter
-        ? JSON.parse(options.parameter)
-        : JSON.parse(readFileSync(options.parameterFile, "utf8"));
+    const parameters = JSON.parse(getOptionContent(options.parameter || `@${options.parameterFile}`) as string);
     debug(`Update the parameters of a Power BI dataset (${datasetId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",

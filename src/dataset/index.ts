@@ -31,6 +31,7 @@ import { listshowAction } from "./listshow";
 import { dataflowAction } from "./dataflow";
 import { deleteAction } from "./delete";
 import { setOwnerAction } from "./set-owner";
+import { updateAction } from "./update";
 import { queryAction } from "./query";
 import { getCommands as getParameterCommands } from "./parameter/index";
 import { getCommands as getGatewayCommands } from "./gateway/index";
@@ -76,11 +77,24 @@ export function getCommands(): ModuleCommand {
         .action(queryAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. Optional if dataset is provided as ID.")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
-        .option("--dax <query>", "String with the DAX query to be executed")
-        .option("--dax-file <file>", "File with the DAX query to be executed")
-        .option("--script <script>", "String with the raw query statement in JSON format")
-        .option("--script-file <file>", "File with the raw query statement in JSON format");
+        .option("--dax <query>", "String with the DAX query to be executed. Use @{file} to load from a file")
+        .option("--dax-file <file>", "File with the DAX query to be executed. Deprecated: use --dax @{file}")
+        .option(
+            "--script <script>",
+            "String with the raw query statement in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--script-file <file>",
+            "File with the raw query statement in JSON format. Deprecated: use --script @{file}"
+        );
     queryCommand.addGlobalOptions();
+    const updateCommand = new ModuleCommand("update")
+        .description("Updates the properties for the specified dataset")
+        .action(updateAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
+        .option("--large", "Set dataset storage mode to support large datasets");
+    updateCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("dataset")
         .description("Operations for working with datasets")
         .addCommand(deleteCommand)
@@ -89,6 +103,7 @@ export function getCommands(): ModuleCommand {
         .addCommand(showCommand)
         .addCommand(dataflowCommand)
         .addCommand(queryCommand)
+        .addCommand(updateCommand)
         .addCommand(getDatasourceCommands())
         .addCommand(getGatewayCommands())
         .addCommand(getParameterCommands())

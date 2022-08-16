@@ -39,8 +39,14 @@ export function getCommands(): ModuleCommand {
         .description("Create a datasource at a Power BI gateway")
         .action(createAction)
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway")
-        .option("--datasource <datasource>", "String with the datasource definition in JSON format")
-        .option("--datasource-file <file>", "File with the datasource definition in JSON format");
+        .option(
+            "--datasource <datasource>",
+            "String with the datasource definition in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--datasource-file <file>",
+            "File with the datasource definition in JSON format. Deprecated: use --datasource @{file}"
+        );
     createCommand.addGlobalOptions();
     const deleteCommand = new ModuleCommand("delete")
         .description("Deletes a datasource at a Power BI gateway")
@@ -70,8 +76,14 @@ export function getCommands(): ModuleCommand {
         .action(updateAction)
         .option("--gateway -g <gateway>", "Name or ID of the Power BI gateway")
         .option("--datasource -d <datasource>", "Name or ID of the datasource of the Power BI gateway")
-        .option("--credential <credential>", "String with the datasource credential definition in JSON format")
-        .option("--credential-file <file>", "File with the datasource credential definition in JSON format");
+        .option(
+            "--credential <credential>",
+            "String with the datasource credential definition in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--credential-file <file>",
+            "File with the datasource credential definition in JSON format. Deprecated: use --credential @{file}"
+        );
     updateCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("datasource")
         .description("Operations for working with datasources of a Power BI gateway")

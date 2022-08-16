@@ -26,12 +26,12 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { readFileSync } from "fs";
 
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { validateGroupId, validateScorecardId } from "../../lib/parameters";
 import { getGroupUrl } from "../../lib/helpers";
+import { getOptionContent } from "../../lib/options";
 
 export async function createAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -40,11 +40,11 @@ export async function createAction(...args: unknown[]): Promise<void> {
     const scorecardId = await validateScorecardId(groupId as string, options.S, true);
     if (options.G === undefined && options.definition === undefined && options.definitionFile === undefined)
         throw "error: missing option '--goal', '--definition' or '--definition-file'";
-    const definition = options.definition
-        ? JSON.parse(options.definition)
-        : options.definitionFile
-        ? JSON.parse(readFileSync(options.definitionFile, "utf8"))
-        : {};
+    const definition = JSON.parse(
+        (getOptionContent(
+            options.definition || (options.definitionFile ? `@${options.definitionFile}` : undefined)
+        ) as string) || "{}"
+    );
     if (options.G) definition["name"] = options.G;
     debug(
         `Creates a goal in a Power BI scorecard (${scorecardId}) in workspace (${groupId || "my"}) with name (${

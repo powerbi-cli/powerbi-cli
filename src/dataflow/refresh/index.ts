@@ -44,8 +44,14 @@ export function getCommands(): ModuleCommand {
         .action(updateAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow")
-        .option("--refresh-schedule <data>", "String with the refresh schedule in JSON format")
-        .option("--refresh-schedule-file <file>", "File with the refresh schedule in JSON format");
+        .option(
+            "--refresh-schedule <data>",
+            "String with the refresh schedule in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--refresh-schedule-file <file>",
+            "File with the refresh schedule in JSON format. Deprecated: use --refresh-schedule @{file}"
+        );
     updateCommand.addGlobalOptions();
     const refreshCommand = new ModuleCommand("refresh")
         .description("Operations for working with refresh schedule")

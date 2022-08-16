@@ -37,8 +37,6 @@ import * as api from "../../lib/api";
 
 import { startExportAction } from "./start";
 
-import fs from "fs";
-
 chai.use(chaiAsPromise);
 const expect = chai.expect;
 
@@ -46,7 +44,6 @@ describe("report/export/start.ts", () => {
     let validateGroupIdMock: SinonStub<unknown[], unknown>;
     let validateReportIdMock: SinonStub<unknown[], unknown>;
     let validateAllowedValues: SinonStub<unknown[], unknown>;
-    let readFileSyncMock: SinonStub<unknown[], unknown>;
     let executeAPICallMock: SinonStub<unknown[], unknown>;
     const emptyOptions = {};
     const oneOptions = {
@@ -88,14 +85,12 @@ describe("report/export/start.ts", () => {
         validateGroupIdMock = ImportMock.mockFunction(parameters, "validateGroupId");
         validateReportIdMock = ImportMock.mockFunction(parameters, "validateReportId");
         validateAllowedValues = ImportMock.mockFunction(parameters, "validateAllowedValues");
-        readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
         executeAPICallMock = ImportMock.mockFunction(api, "executeAPICall");
     });
     afterEach(() => {
         validateGroupIdMock.restore();
         validateReportIdMock.restore();
         validateAllowedValues.restore();
-        readFileSyncMock.restore();
         executeAPICallMock.restore();
     });
     describe("startExportAction()", () => {
@@ -222,7 +217,6 @@ describe("report/export/start.ts", () => {
             validateGroupIdMock.resolves(xlsxOptionsFile.W);
             validateReportIdMock.resolves(xlsxOptionsFile.R);
             validateAllowedValues.resolves("XLSX");
-            readFileSyncMock.returns("{}");
             executeAPICallMock.resolves(true);
             const cmdOptsMock: unknown = {
                 name: () => "start",

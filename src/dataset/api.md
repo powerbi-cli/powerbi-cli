@@ -1,13 +1,13 @@
 # Power BI Rest API coverage
 
-_Last update: July 19, 2022_
+_Last update: August 16, 2022_
 
 | API                                           | PBI CLI Command    | PBICLI Version |
 | --------------------------------------------- | ------------------ | -------------- |
 | Bind To Gateway                               | gateway update     | v1.0           |
 | Bind To Gateway In Group                      | gateway update     | v1.0           |
-| Cancel Refresh                                | -                  | -              |
-| Cancel Refresh In Group                       | -                  | -              |
+| Cancel Refresh                                | refresh cancel     | v1.3           |
+| Cancel Refresh In Group                       | refresh cancel     | v1.3           |
 | Delete Dataset                                | delete             | v1.0           |
 | Delete Dataset In Group                       | delete             | v1.0           |
 | Discover Gateways                             | gateway list       | v1.0           |
@@ -26,8 +26,8 @@ _Last update: July 19, 2022_
 | Get Gateway Datasources In Group              | datasource gateway | v1.0           |
 | Get Parameters                                | parameter list     | v1.0           |
 | Get Parameters In Group                       | parameter list     | v1.0           |
-| Get Refresh Execution Details                 | -                  | -              |
-| Get Refresh Execution Details In Group        | -                  | -              |
+| Get Refresh Execution Details                 | refresh detail     | v1.3           |
+| Get Refresh Execution Details In Group        | refresh detail     | v1.3           |
 | Get Refresh History                           | refresh history    | v1.0           |
 | Get Refresh History In Group                  | refresh history    | v1.0           |
 | Get Refresh Schedule                          | refresh show       | v1.0           |
@@ -41,8 +41,8 @@ _Last update: July 19, 2022_
 | Set All Dataset Connections                   | -                  | deprecated     |
 | Set All Dataset Connections In Group          | -                  | deprecated     |
 | Take Over In Group                            | set-owner          | v1.0           |
-| Update Dataset                                | -                  | -              |
-| Update Dataset In Group                       | -                  | -              |
+| Update Dataset                                | update             | v1.3           |
+| Update Dataset In Group                       | update             | v1.3           |
 | Update Datasources                            | datasource update  | v1.0           |
 | Update Datasources In Group                   | datasource update  | v1.0           |
 | Update Direct Query Refresh Schedule          | refresh update     | v1.0           |
