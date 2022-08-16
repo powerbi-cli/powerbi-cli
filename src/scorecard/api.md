@@ -29,6 +29,14 @@ _Last update: August 16, 2022_
 | Refresh Goal Current Value           | goal refresh    | v1.3           |
 | Refresh Goal Target Value            | goal refresh    | v1.3           |
 
+## Goal status rules
+
+| API    | PBI CLI Command  | PBICLI Version |
+| ------ | ---------------- | -------------- |
+| Delete | goal rule delete | v1.3           |
+| Get    | goal rule show   | v1.3           |
+| Post   | goal rule create | v1.3           |
+
 ## Goal values
 
 | API          | PBI CLI Command   | PBICLI Version |

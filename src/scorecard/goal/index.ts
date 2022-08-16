@@ -33,6 +33,7 @@ import { disconnectAction } from "./disconnect";
 import { listshowAction } from "./listshow";
 import { refreshAction } from "./refresh";
 import { updateAction } from "./update";
+import { getCommands as getRuleCommands } from "./rule/index";
 import { getCommands as getValueCommands } from "./value/index";
 
 export function getCommands(): ModuleCommand {
@@ -116,6 +117,7 @@ export function getCommands(): ModuleCommand {
         .addCommand(listCommand)
         .addCommand(refreshCommand)
         .addCommand(showCommand)
+        .addCommand(getRuleCommands())
         .addCommand(getValueCommands());
     appCommand.addGlobalOptions();
     return appCommand;
