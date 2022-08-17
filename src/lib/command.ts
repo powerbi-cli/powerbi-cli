@@ -26,17 +26,18 @@
 
 "use strict";
 
-import { Command, CommanderError } from "commander";
+import { Command, CommanderError, Help } from "commander";
 import chalk from "chalk";
 import jmespath from "jmespath";
 
-import { drawFooter } from "./footer";
-import { drawHeader } from "./header";
+import { getFooter } from "./footer";
+import { getHeader } from "./header";
 
 import { OutputType } from "./output";
-import { currentVersion } from "./version";
+import { currentVersion, getVersions } from "./version";
 
-export const GlobalCommands = ["version", "help"];
+export const GlobalCommands = ["interactive", "version", "help"];
+export const AllGlobalCommands = GlobalCommands.concat(["configure", "login", "logout", "rest"]);
 export const GlobalOptions = ["-o", "output-file", "query", "debug", "verbose", "-h"];
 
 export class ModuleCommand extends Command {
@@ -47,7 +48,83 @@ export class ModuleCommand extends Command {
 
         this.exitOverride(this.exit);
         this.addHelpCommand("help [command]", "Show help message for [command] and exit");
-        //this.addHelpCommand(false);
+
+        this.addCommand(new Command("interactive").description("Start interactive mode"));
+        this.configureHelp({
+            formatHelp: (helpCommand: Command, helper: Help) => {
+                if (this.helpPrompt == "false" || this.errorMsg === "") return "";
+                this.helpPrompt = "false";
+                const output = [getHeader(this.isInteractive)];
+                const isParent = !helpCommand.parent;
+                const termWidth = helper.padWidth(helpCommand, helper);
+                const helpWidth = helper.helpWidth || 80;
+                const itemIndentWidth = 2;
+                const itemSeparatorWidth = 2; // between term and description
+                function formatItem(term: string, description?: string) {
+                    if (description) {
+                        const fullText = `${term.padEnd(termWidth + itemSeparatorWidth)}${description}`;
+                        return helper.wrap(fullText, helpWidth - itemIndentWidth, termWidth + itemSeparatorWidth);
+                    }
+                    return term;
+                }
+                function formatList(textArray: string[]) {
+                    return textArray.join("\n").replace(/^/gm, " ".repeat(itemIndentWidth));
+                }
+                const allCommands = helper
+                    .visibleCommands(helpCommand)
+                    .filter(
+                        (cmd) => !((this.isInteractive || !isParent) && GlobalCommands.some((c) => c === cmd.name()))
+                    );
+                // Usage
+                const usage = helper.commandUsage(helpCommand).split(" ").reverse();
+                if (allCommands.length === 0) usage[0] = ""; // No commands, remove command
+                if (usage[0] === "command" && usage[1] === "options") [usage[0], usage[1]] = [usage[1], usage[0]]; //Flip last two elements
+                output.push(`Usage: ${usage.reverse().join(" ")}`, "");
+                // Description
+                const commandDescription = helper.commandDescription(helpCommand);
+                if (commandDescription.length > 0) {
+                    output.push(commandDescription, "");
+                }
+                // Arguments
+                const argumentList = helper.visibleArguments(helpCommand).map((argument) => {
+                    return formatItem(helper.argumentTerm(argument), helper.argumentDescription(argument));
+                });
+                if (argumentList.length > 0) {
+                    output.push("Arguments:", formatList(argumentList), "");
+                }
+                // Commands
+                const subGroupList = allCommands
+                    .filter((cmd) => !AllGlobalCommands.some((c) => c === cmd.name()))
+                    .map((cmd) => {
+                        return formatItem(helper.subcommandTerm(cmd), helper.subcommandDescription(cmd));
+                    });
+                if (subGroupList.length > 0) {
+                    output.push(isParent ? "Subgroups:" : "Commands:", formatList(subGroupList), "");
+                }
+                const commandList = allCommands
+                    .filter((cmd) => AllGlobalCommands.some((c) => c === cmd.name()))
+                    .map((cmd) => {
+                        return formatItem(helper.subcommandTerm(cmd), helper.subcommandDescription(cmd));
+                    });
+                if (commandList.length > 0) {
+                    output.push("Commands:", formatList(commandList), "");
+                }
+                // Options
+                const optionList = helper
+                    .visibleOptions(helpCommand)
+                    .filter((option) => !(this.isInteractive && ["-h"].some((o) => o === option.long)))
+                    .map((option) => {
+                        return formatItem(helper.optionTerm(option), helper.optionDescription(option));
+                    });
+                if (optionList.length > 0) {
+                    output.push("Options:", formatList(optionList), "");
+                }
+                // Footer
+                output.push(getFooter(this.isInteractive));
+                return output.join("\n");
+            },
+        });
+        this.exitOverride(this.exit);
     }
 
     public addGlobalOptions(): void {
@@ -94,27 +171,8 @@ export class ModuleCommand extends Command {
         this.errorMsg = undefined;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    public outputHelp(contextOptions?: unknown): void {
-        if (this.helpPrompt == "false" || this.errorMsg === "") return;
-        this.helpPrompt = "false";
-        drawHeader(this.isInteractive);
-        this.showCurrentError();
-        let helpLines = this.helpInformation().split("\n");
-        if (this.isInteractive) {
-            helpLines = helpLines.filter((helpLine: string) => !/help/g.test(helpLine));
-            helpLines = helpLines.filter((helpLine: string) => !/version/g.test(helpLine));
-            if (!helpLines.some((helpLine: string) => /-/g.test(helpLine)))
-                helpLines = helpLines.filter((helpLine: string) => !/Options/g.test(helpLine));
-        }
-        console.info(helpLines.join("\n"));
-        drawFooter(this.isInteractive);
-    }
-
     public async showVersion(): Promise<void> {
-        const versions = {
-            "powerbi-cli": currentVersion,
-        };
+        const versions = await getVersions();
         if (this.jmsePath) {
             try {
                 const output = jmespath.search(versions, this.jmsePath);
@@ -132,25 +190,13 @@ export class ModuleCommand extends Command {
         if (this.errorMsg) console.error(chalk.red(this.errorMsg));
     }
 
-    // Stil need to override _exit() as the base version allways exits the process
-    public _exit(exitCode: number, code: string, message: string): void {
-        this.exit(new CommanderError(exitCode, code, message));
-    }
-
     public exit(error: CommanderError): void {
         if (!this.isInteractive) process.exit(error.exitCode);
-    }
-
-    public unknownOption(flag: string): void {
-        //if (super._allowUnknownOption) return;
-        if (flag === "--help" || flag === "-h") return;
-        this.showUnknownOption(flag);
     }
 
     public unknownCommand(): void {
         const operand = this.args[0];
         if (operand === "") return;
-        this.showUnknownCommand(operand);
     }
 
     private showUnknownOption(operand: string): void {

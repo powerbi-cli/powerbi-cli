@@ -49,7 +49,7 @@ describe("footer.ts", () => {
         });
         it("non-interactive mode", () => {
             drawHeader(false);
-            expect(consoleInfoMock.callCount).equal(3);
+            expect(consoleInfoMock.callCount).equal(1);
         });
     });
 });

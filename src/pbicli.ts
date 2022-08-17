@@ -35,7 +35,6 @@ import inquirerCommandPrompt from "inquirer-command-prompt";
 
 import { drawHeader } from "./lib/header";
 import green from "chalk";
-import { checkVersion } from "./lib/version";
 import { initializeProgram, programModules } from "./lib/program";
 
 const questions = [
@@ -62,7 +61,7 @@ inquirerCommandPrompt.setConfig({
 
 let args: string[] = process.argv;
 
-if (args?.length === 2) {
+if (args?.length === 2 || args.some((arg) => arg === "interactive")) {
     // Interactive mode
     drawHeader(false);
     process.env.PBICLI_interactive = "true";
@@ -108,7 +107,6 @@ if (args?.length === 2) {
 } else {
     // Commandline mode
     const process = async () => {
-        await checkVersion(args);
         args = fixHelpOptions(args, false);
         await program.parseAsync(args).catch((err) => {
             program.errorMessage = err;

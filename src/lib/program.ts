@@ -68,3 +68,7 @@ export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
 
     return program;
 }
+
+export function isSubgroup(commandName: string): boolean {
+    return programModules.some((module) => module[0] === commandName);
+}
