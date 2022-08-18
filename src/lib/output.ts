@@ -27,11 +27,12 @@
 "use strict";
 
 import { dump } from "js-yaml";
-import { Parser } from "json2csv";
+import { Parser, transforms } from "json2csv";
 import jmespath from "jmespath";
 import { createWriteStream, writeFileSync } from "fs";
 import { Readable, Transform, TransformCallback } from "stream";
-import { red } from "chalk";
+import chalk from "chalk";
+
 import { verbose } from "./logging";
 
 export enum OutputType {
@@ -48,7 +49,8 @@ export function formatAndPrintOutput(
     response: unknown,
     outputType: OutputType = OutputType.json,
     outputFile?: string,
-    query?: string
+    query?: string,
+    command = "pbicli"
 ): void {
     if (!response) return;
     if (outputType === OutputType.raw || outputType === OutputType.none) {
@@ -59,7 +61,7 @@ export function formatAndPrintOutput(
         try {
             output = jmespath.search(output, query);
         } catch (err) {
-            console.error(red(`Error parsing query: ${query} (${err})`));
+            console.error(chalk.red(`${command}: error: argument --query: ${err}`));
             return;
         }
     }
@@ -80,8 +82,21 @@ export function formatAndPrintOutput(
                 if (output === null) return;
                 const json2csvParser = new Parser({ header: false, delimiter: "\t", quote: "" });
                 console.info(json2csvParser.parse(output));
-            } catch {
-                console.error(red("Error parsing data to tsv format."));
+            } catch (err) {
+                try {
+                    // try parsing the output as a single JSON array and unwind it to rows
+                    const unwind = [transforms.unwind({ paths: ["col"] })];
+                    const json2csvParser = new Parser({
+                        header: false,
+                        delimiter: "\t",
+                        quote: "",
+                        fields: ["col"],
+                        transforms: unwind,
+                    });
+                    console.info(json2csvParser.parse({ col: output }));
+                } catch {
+                    console.error(chalk.red("Error parsing data to tsv format."));
+                }
             }
             break;
     }
@@ -115,7 +130,7 @@ export function formatAndPrintOutputStream(
                 try {
                     data = jmespath.search(data, query)[0];
                 } catch (err) {
-                    console.error(red(`Error parsing query: ${query} (${err})`));
+                    console.error(chalk.red(`Error parsing query: ${query} (${err})`));
                     return;
                 }
             }
@@ -141,7 +156,7 @@ export function formatAndPrintOutputStream(
                             result = json2csvParser.parse(data);
                             breaker = "\n";
                         } catch {
-                            console.error(red("Error parsing data to tsv format."));
+                            console.error(chalk.red("Error parsing data to tsv format."));
                         }
                         break;
                 }
@@ -153,7 +168,7 @@ export function formatAndPrintOutputStream(
     });
     response.on("error", (err) => {
         verbose(`Error in RowSet result found`);
-        console.error(red(err.message));
+        console.error(chalk.red(err.message));
     });
     response.pipe(outputStream).pipe(outputFile ? createWriteStream(outputFile) : process.stdout);
 }
@@ -197,7 +212,7 @@ export function formatAndPrintOutputRawStream(
                     try {
                         data = jmespath.search([data], query)[0];
                     } catch (err) {
-                        console.error(red(`Error parsing query: ${query} (${err})`));
+                        console.error(chalk.red(`Error parsing query: ${query} (${err})`));
                         return;
                     }
                 }
@@ -223,7 +238,7 @@ export function formatAndPrintOutputRawStream(
                                 result = json2csvParser.parse(data);
                                 breaker = "\n";
                             } catch {
-                                console.error(red("Error parsing data to tsv format."));
+                                console.error(chalk.red("Error parsing data to tsv format."));
                             }
                             break;
                     }
@@ -236,7 +251,7 @@ export function formatAndPrintOutputRawStream(
     });
     response.on("error", (err) => {
         verbose(`Error in RowSet result found`);
-        console.error(red(err.message));
+        console.error(chalk.red(err.message));
     });
     response.pipe(outputStream).pipe(outputFile ? createWriteStream(outputFile) : process.stdout);
 }

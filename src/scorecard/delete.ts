@@ -29,6 +29,7 @@ import { OptionValues } from "commander";
 
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
+import { getGroupUrl } from "../lib/helpers";
 import { validateGroupId, validateScorecardId } from "../lib/parameters";
 
 export async function deleteAction(...args: unknown[]): Promise<void> {
@@ -39,7 +40,7 @@ export async function deleteAction(...args: unknown[]): Promise<void> {
     debug(`Delete Power BI scorecard (${scorecardId})`);
     const request: APICall = {
         method: "DELETE",
-        url: `/scorecards(${scorecardId})`,
+        url: `${getGroupUrl(groupId)}/scorecards(${scorecardId})`,
     };
     await executeAPICall(request);
 }

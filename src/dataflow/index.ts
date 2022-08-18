@@ -65,8 +65,14 @@ export function getCommands(): ModuleCommand {
         .action(updateAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataflow -f <dataflow>", "Name or ID of the Power BI dataflow")
-        .option("--update <data>", "String with the update dataflow settings in JSON format")
-        .option("--update-file <file>", "File with the update dataflow settings in JSON format");
+        .option(
+            "--update <data>",
+            "String with the update dataflow settings in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--update-file <file>",
+            "File with the update dataflow settings in JSON format. Deprecated: use --update @{file}"
+        );
     updateCommand.addGlobalOptions();
     const upstreamCommand = new ModuleCommand("upstream")
         .description("Get the upstream dataflows of a Power BI dataflow")

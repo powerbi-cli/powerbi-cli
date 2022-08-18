@@ -27,7 +27,8 @@
 "use strict";
 
 import { existsSync, readFileSync, writeFileSync } from "fs";
-import { homedir } from "os";
+
+import { HomeLocation } from "./consts";
 
 type Scopes = "defaults" | "core";
 type ConfigFile = {
@@ -45,7 +46,6 @@ export const DefaultConfig: ConfigFile = {
     },
 };
 
-const location = homedir() + "/.powerbi-cli";
 const file = "config.json";
 
 const cloudPowerBIUrls = {
@@ -141,5 +141,5 @@ function getConfigFromFile(): ConfigFile {
 }
 
 function getConfigFile(): string {
-    return `${location}/${file}`;
+    return `${HomeLocation}/${file}`;
 }

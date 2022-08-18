@@ -44,7 +44,7 @@ export function getCommands(): ModuleCommand {
         .option("--abort", "If set the clone action will be arborted if the row/column position is not available");
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
-        .description("List Power BI dashboard tiles in a workplace")
+        .description("List Power BI dashboard tiles in a workspace")
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name or ID of the Power BI dashboard");
     listCommand.addGlobalOptions();

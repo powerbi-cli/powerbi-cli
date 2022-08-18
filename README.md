@@ -41,6 +41,8 @@ For more information see [documentation](https://powerbi-cli.github.io/)
 
 ## Power BI Rest API coverage
 
+_Last update: August 16, 2022_
+
 | PBICLI Command    | Coverage report                |
 | ----------------- | ------------------------------ |
 | admin             | [link](./src/admin/api.md)     |
@@ -53,8 +55,11 @@ For more information see [documentation](https://powerbi-cli.github.io/)
 | gateway           | [link](./src/gateway/api.md)   |
 | import            | [link](./src/import/api.md)    |
 | pipeline          | [link](./src/pipeline/api.md)  |
+| profile           | -                              |
+| push              | -                              |
 | report            | [link](./src/report/api.md)    |
 | scorecard         | [link](./src/scorecard/api.md) |
+| template          | -                              |
 | workspace (group) | [link](./src/group/api.md)     |
 | user              | [link](./src/user/api.md)      |
 

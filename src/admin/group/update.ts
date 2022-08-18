@@ -26,13 +26,13 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { readFileSync } from "fs";
 
 import { ModuleCommand } from "../../lib/command";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { validateAdminGroupId } from "../../lib/parameters";
 import { checkUUID } from "../../lib/validate";
+import { getOptionContent } from "../../lib/options";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
     const cmd = args[args.length - 1] as ModuleCommand;
@@ -47,9 +47,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     }
     if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
-    const body = options.updateDetails
-        ? JSON.parse(options.updateDetails)
-        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
+    const body = JSON.parse(getOptionContent(options.updateDetails || `@${options.updateDetailsFile}`) as string);
     debug(`Updates the specified workspace properties`);
     const request: APICall = {
         method: "PATCH",

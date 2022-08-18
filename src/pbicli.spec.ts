@@ -89,7 +89,7 @@ describe("pbicli.ts:", () => {
     const jsmeQuery = `[?name=='Test'].{id:id}`;
     const token = {
         accessToken: "token",
-        expiresOn: 1612707018034,
+        expiresOn: 1612707018,
     };
     const tokenResponse = {
         token_type: "Bearer",
@@ -120,7 +120,7 @@ describe("pbicli.ts:", () => {
                 return JSON.stringify({
                     powerbi: {
                         accessToken: "token",
-                        expiresOn: new Date().getTime() + 3599,
+                        expiresOn: Math.floor(new Date().getTime() / 1000) + 3599,
                     },
                 });
             } else {

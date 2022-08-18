@@ -28,10 +28,16 @@
 
 const footer = `Created by the Power BI Community
 
-Need help, visit the Power BI CLI site: https://powerbi-cli.github.io/`;
+Need help, visit the Power BI CLI site: https://powerbi-cli.github.io/
+
+`;
 
 export function drawFooter(interactive: boolean): void {
     if (interactive) return;
     console.info(footer);
-    console.info("");
+}
+
+export function getFooter(interactive: boolean): string {
+    if (interactive) return "";
+    return footer;
 }

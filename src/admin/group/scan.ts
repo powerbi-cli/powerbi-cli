@@ -43,7 +43,7 @@ export async function scanAction(...args: unknown[]): Promise<void> {
     query["datasourceDetails"] = options.datasourceDetails || false;
     query["getArtifactUsers"] = options.artifactUsers || false;
     query["lineage"] = options.lineage || false;
-    if (options.workspaceFile === undefined) throw "error: missing option '--workspace-fle'";
+    if (options.workspaceFile === undefined) throw "error: missing option '--workspace-file'";
     const workspaceIds = JSON.parse(readFileSync(options.workspaceFile, "utf8"));
     debug(`Returns a list of audit activity events for a tenant`);
     const request: APICall = {

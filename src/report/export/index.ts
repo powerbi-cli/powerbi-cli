@@ -51,8 +51,14 @@ export function getCommands(): ModuleCommand {
                                  PBIX (Power BI reports)
                                  CSV, DOCX, IMAGE, MHTML,  PNG, XLSX, XML (Paginated reports)`
         )
-        .option("--config <data>", "String with additional export config in JSON format")
-        .option("--config-file <file>", "File with additional export config in JSON format");
+        .option(
+            "--config <data>",
+            "String with additional export config in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--config-file <file>",
+            "File with additional export config in JSON format. Deprecated: use --config @{file}"
+        );
     startCommand.addGlobalOptions();
     const statusCommand = new ModuleCommand("status")
         .description("Get the status of a Power BI report export")

@@ -26,10 +26,11 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { readFileSync } from "fs";
+
 import { debug } from "../lib/logging";
 import { APICall, executeAPICall } from "../lib/api";
 import { validatePipelineId } from "../lib/parameters";
+import { getOptionContent } from "../lib/options";
 
 export async function deployAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -39,10 +40,7 @@ export async function deployAction(...args: unknown[]): Promise<void> {
 
     if (options.options === undefined && options.optionsFile === undefined)
         throw "error: missing option '--options' or '--options-file'";
-    const deployOptions = options.options
-        ? JSON.parse(options.options)
-        : JSON.parse(readFileSync(options.optionsFile, "utf8"));
-
+    const deployOptions = JSON.parse(getOptionContent(options.options || `@${options.optionsFile}`) as string);
     debug(`Deploy from a specific stage in a Power BI pipeline (${pipelineId})`);
 
     const request: APICall = {

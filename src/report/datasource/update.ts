@@ -30,8 +30,8 @@ import { OptionValues } from "commander";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { getGroupUrl } from "../../lib/helpers";
-import { readFileSync } from "fs";
 import { validateGroupId, validateReportId } from "../../lib/parameters";
+import { getOptionContent } from "../../lib/options";
 
 export async function updateDatasourceAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -41,9 +41,9 @@ export async function updateDatasourceAction(...args: unknown[]): Promise<void> 
     const reportId = await validateReportId(groupId as string, options.R, true);
     if (options.updateDetails === undefined && options.updateDetailsFile === undefined)
         throw "error: missing option '--update-details' or '--update-details-file'";
-    const updateDetails = options.updateDetails
-        ? JSON.parse(options.updateDetails)
-        : JSON.parse(readFileSync(options.updateDetailsFile, "utf8"));
+    const updateDetails = JSON.parse(
+        getOptionContent(options.updateDetails || `@${options.updateDetailsFile}`) as string
+    );
     debug(`Update the parameters of a Power BI report (${reportId}) in workspace (${groupId || "my"})`);
     const request: APICall = {
         method: "POST",

@@ -30,7 +30,7 @@ import { OptionValues } from "commander";
 import { debug } from "../../lib/logging";
 import { APICall, executeAPICall } from "../../lib/api";
 import { validateGatewayId, validateGatewayDatasourceId } from "../../lib/parameters";
-import { readFileSync } from "fs";
+import { getOptionContent } from "../../lib/options";
 
 export async function updateAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -39,9 +39,7 @@ export async function updateAction(...args: unknown[]): Promise<void> {
     const datasourceId = await validateGatewayDatasourceId(gatewayId as string, options.D, true);
     if (options.credential === undefined && options.credentialFile === undefined)
         throw "error: missing option '--credential' or '--credential-file'";
-    const credential = options.credential
-        ? JSON.parse(options.credential)
-        : JSON.parse(readFileSync(options.credentialFile, "utf8"));
+    const credential = JSON.parse(getOptionContent(options.credential || `@${options.credentialFile}`) as string);
     debug(`Update the credentials of a Power BI datasource from gateway (${gatewayId})`);
     const request: APICall = {
         method: "PATCH",

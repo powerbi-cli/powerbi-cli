@@ -28,36 +28,97 @@
 
 import { ModuleCommand } from "../../lib/command";
 import { createAction } from "./create";
+import { deleteAction } from "./delete";
+import { disconnectAction } from "./disconnect";
 import { listshowAction } from "./listshow";
+import { refreshAction } from "./refresh";
+import { updateAction } from "./update";
+import { getCommands as getRuleCommands } from "./rule/index";
+import { getCommands as getValueCommands } from "./value/index";
 
 export function getCommands(): ModuleCommand {
     const createCommand = new ModuleCommand("create")
-        .description("Clone a Power BI dashboard tile")
+        .description("Adds a new goal to a scorecard")
         .action(createAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
-        .option("--goal -g <goal>", "Name of the Power BI scorecard goel")
-        .option("--definition <definition>", "String with the goal definition in JSON format")
-        .option("--definition-file <file>", "File with the goal definition in JSON format");
+        .option("--goal -g <goal>", "Name of the Power BI scorecard goal")
+        .option(
+            "--definition <definition>",
+            "String with the goal definition in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--definition-file <file>",
+            "File with the goal definition in JSON format. Deprecated: use --definition @{file}"
+        );
     createCommand.addGlobalOptions();
+    const deleteCommand = new ModuleCommand("delete")
+        .description("Deletes a goal from a Power BI scorecard")
+        .action(deleteAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
+        .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goal");
+    deleteCommand.addGlobalOptions();
+    const disconnectCommand = new ModuleCommand("disconnect")
+        .description("Disconnects the current value or target of a connected goal")
+        .action(disconnectAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
+        .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goal")
+        .option("--current", "Disconnect the current value of the goal")
+        .option("--target", "Disconnect the target value of the goal");
+    disconnectCommand.addGlobalOptions();
+    const historyCommand = new ModuleCommand("history")
+        .description("Gets the refresh history of a connected goal")
+        .action(deleteAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
+        .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goal");
+    historyCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
         .description("List Power BI scorecard goals in a workplace")
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard");
     listCommand.addGlobalOptions();
+    const refreshCommand = new ModuleCommand("refresh")
+        .description("Schedules a refresh of the current value or target of a connected goal")
+        .action(refreshAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
+        .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goal")
+        .option("--current", "Schedules a refresh of the current value of the goal")
+        .option("--target", "Schedules a refresh of the target value of the goal");
+    refreshCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
-        .description("Get the details of a Power BI scorecard goal")
+        .description("Get the details of a Power BI scorecard connected goal")
         .action(listshowAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
-        .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goel");
+        .option("--goal -g <goal>", "Name or ID of the Power BI scorecard goal");
     showCommand.addGlobalOptions();
+    const updateCommand = new ModuleCommand("update")
+        .description("Update a goal of a Power BI scorecard")
+        .action(updateAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <scorecard>", "Name of the Power BI scorecard")
+        .option("--goal -g <goal>", "Name of the Power BI scorecard goal")
+        .option(
+            "--definition <definition>",
+            "String with the goal definition in JSON format. Use @{file} to load from a file"
+        );
+    updateCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("goal")
         .description("Operations for working with scorecard goals")
         .addCommand(createCommand)
+        .addCommand(deleteCommand)
+        .addCommand(disconnectCommand)
+        .addCommand(historyCommand)
         .addCommand(listCommand)
-        .addCommand(showCommand);
+        .addCommand(refreshCommand)
+        .addCommand(showCommand)
+        .addCommand(getRuleCommands())
+        .addCommand(getValueCommands());
     appCommand.addGlobalOptions();
     return appCommand;
 }

@@ -28,6 +28,8 @@
 
 import { ModuleCommand } from "./command";
 
+import { addDocumenter } from "./document";
+
 export const programModules: [string, boolean][] = [
     ["admin", false],
     ["app", false],
@@ -44,11 +46,12 @@ export const programModules: [string, boolean][] = [
     ["report", false],
     ["pipeline", false],
     ["scorecard", false],
-    ["group", false], // workspace
     ["user", false],
+    ["group", false], // workspace
     ["xmla", true],
     ["login", false],
     ["logout", false],
+    ["rest", false],
 ];
 
 export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
@@ -60,5 +63,12 @@ export function initializeProgram(modules: [string, boolean][]): ModuleCommand {
     });
 
     program.addGlobalOptions();
+
+    addDocumenter(program);
+
     return program;
+}
+
+export function isSubgroup(commandName: string): boolean {
+    return programModules.some((module) => module[0] === commandName);
 }

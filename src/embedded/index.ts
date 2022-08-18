@@ -65,8 +65,14 @@ export function getCommands(): ModuleCommand {
         .option("--subscription -s <subscription>", "Name or ID of the Azure subscription")
         .option("--resource -r <resource>", "Name or ID of the Azure Resource group")
         .option("--capacity -c <name>", "Name of the Azure dedicated capacity")
-        .option("--parameter <data>", "String with the capacity parameters in JSON format")
-        .option("--parameter-file <file>", "File with the capacity parameters in JSON format");
+        .option(
+            "--parameter <data>",
+            "String with the capacity parameters in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--parameter-file <file>",
+            "File with the capacity parameters in JSON format. Deprecated: use --parameter @{file}"
+        );
     updateCommand.addGlobalOptions();
     const embeddedCommand = new ModuleCommand("embedded")
         .description("Operations for working with Embedded capacity")

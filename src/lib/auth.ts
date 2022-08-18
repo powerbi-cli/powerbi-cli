@@ -31,7 +31,7 @@ import open from "open";
 import express from "express";
 import { stringify } from "querystring";
 import { exec } from "child_process";
-import { yellow } from "chalk";
+import yellow from "chalk";
 
 import { consts } from "./consts";
 
@@ -137,7 +137,7 @@ export function getToken(response: AccessTokenResponse, tenant?: string): Token 
     return {
         accessToken: response.access_token,
         tenant,
-        expiresOn: new Date().getTime() + response.expires_in * 1000,
+        expiresOn: Math.floor(new Date().getTime() / 1000) + response.expires_in,
         refreshToken: response.refresh_token,
     };
 }
@@ -397,7 +397,7 @@ export async function getAzureCLIToken(consts: consts, config: AuthConfig): Prom
                         JSON.parse(responseData);
                     const returnValue = {
                         accessToken: response.accessToken,
-                        expiresOn: new Date(response.expiresOn).getTime(),
+                        expiresOn: Math.floor(new Date(response.expiresOn).getTime() / 1000),
                         tenant: response.tenant,
                     };
                     resolve(returnValue);

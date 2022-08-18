@@ -30,23 +30,21 @@
 
 "use strict";
 import { existsSync, writeFileSync, readFileSync, unlinkSync, mkdirSync } from "fs";
-import { homedir } from "os";
 import { verbose } from "./logging";
 import { AuthFlow, Token, TokenStore, TokenType } from "./auth";
 import { loginSilent } from "../login/login";
 import { OptionValues } from "commander";
-import { getConsts } from "./consts";
+import { getConsts, HomeLocation } from "./consts";
 
-const location = homedir() + "/.powerbi-cli";
 const file = "accessTokens.json";
 
 function getKeyTempFile(): string {
-    return `${location}/${file}`;
+    return `${HomeLocation}/${file}`;
 }
 
 function writeToken(accessToken: TokenStore) {
-    if (!existsSync(location)) {
-        mkdirSync(location);
+    if (!existsSync(HomeLocation)) {
+        mkdirSync(HomeLocation);
     }
     writeFileSync(getKeyTempFile(), JSON.stringify(accessToken));
 }
@@ -129,7 +127,7 @@ export function removeAccessToken(): void {
 
 async function validateToken(tokenType: TokenType, token?: Token): Promise<Token | undefined> {
     if (!token) return;
-    if (token.expiresOn - new Date().getTime() > 0) return token;
+    if (token.expiresOn - Math.floor(new Date().getTime() / 1000) > 0) return token;
     if (token.refreshToken) {
         verbose("Trying to get new token...");
         return await loginSilent({} as OptionValues, getConsts(), {

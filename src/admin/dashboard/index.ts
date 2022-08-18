@@ -30,6 +30,7 @@ import { ModuleCommand } from "../../lib/command";
 import { expandAdminDashboards } from "../../lib/helpers";
 import { listAction } from "./list";
 import { listUserAction } from "./list-user";
+import { subscriptionAction } from "./subscription";
 import { tileAction } from "./tile";
 
 export function getCommands(): ModuleCommand {
@@ -52,6 +53,11 @@ export function getCommands(): ModuleCommand {
         .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
     listUserCommand.addGlobalOptions();
     listCommand.addGlobalOptions();
+    const subscriptionCommand = new ModuleCommand("subscription")
+        .description("Returns a list of subscriptions within the specified dashboard")
+        .action(subscriptionAction)
+        .option("--dashboard -d <name>", "Name or ID of the Power BI dashboard");
+    subscriptionCommand.addGlobalOptions();
     const tileCommand = new ModuleCommand("tile")
         .description("Returns a list of tiles within the specified dashboard")
         .action(tileAction)
@@ -61,6 +67,7 @@ export function getCommands(): ModuleCommand {
         .description("Operations for working with dashboards as admin")
         .addCommand(listCommand)
         .addCommand(listUserCommand)
+        .addCommand(subscriptionCommand)
         .addCommand(tileCommand);
     appCommand.addGlobalOptions();
     return appCommand;

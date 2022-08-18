@@ -42,8 +42,11 @@ export function getCommands(): ModuleCommand {
         .action(updateParameterAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
-        .option("--parameter <data>", "String with the parameters in JSON format")
-        .option("--parameter-file <file>", "File with the parameters in JSON format");
+        .option("--parameter <data>", "String with the parameters in JSON format. Use @{file} to load from a file")
+        .option(
+            "--parameter-file <file>",
+            "File with the parameters in JSON format. Deprecated: use --parameter @{file}"
+        );
     updateCommand.addGlobalOptions();
     const parameterCommand = new ModuleCommand("parameter")
         .description("Manages the parameters of a Power BI dataset")

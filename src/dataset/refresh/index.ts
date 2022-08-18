@@ -27,6 +27,8 @@
 "use strict";
 
 import { ModuleCommand } from "../../lib/command";
+import { cancelAction } from "./cancel";
+import { detailAction } from "./detail";
 import { showAction } from "./show";
 import { historyAction } from "./listhistory";
 import { updateAction } from "./update";
@@ -34,6 +36,20 @@ import { startAction } from "./start";
 import { refreshNotify } from "../../lib/helpers";
 
 export function getCommands(): ModuleCommand {
+    const cancelCommand = new ModuleCommand("cancel")
+        .description("Cancels the refresh operation for the specified Power BI dataset")
+        .action(cancelAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
+        .option("--refresh -r <refresh>", "ID of the refresh id");
+    cancelCommand.addGlobalOptions();
+    const detailCommand = new ModuleCommand("detail")
+        .description("Returns execution details of the refresh operation for the specified Power BI dataset")
+        .action(detailAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
+        .option("--refresh -r <refresh>", "ID of the refresh id");
+    detailCommand.addGlobalOptions();
     const historyCommand = new ModuleCommand("history")
         .description("Get the history of a Power BI refresh schedule")
         .action(historyAction)
@@ -45,8 +61,14 @@ export function getCommands(): ModuleCommand {
         .action(updateAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
-        .option("--refresh-schedule <data>", "String with the refresh schedule in JSON format")
-        .option("--refresh-schedule-file <file>", "File with the refresh schedule in JSON format")
+        .option(
+            "--refresh-schedule <data>",
+            "String with the refresh schedule in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--refresh-schedule-file <file>",
+            "File with the refresh schedule in JSON format. Deprecated: use --refresh-schedule @{file}"
+        )
         .option("--direct-query", "Dataset is a direct query or live connection");
     updateCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
@@ -65,6 +87,8 @@ export function getCommands(): ModuleCommand {
     startCommand.addGlobalOptions();
     const datassetCommand = new ModuleCommand("refresh")
         .description("Operations for working with refresh schedule")
+        .addCommand(cancelCommand)
+        .addCommand(detailCommand)
         .addCommand(historyCommand)
         .addCommand(updateCommand)
         .addCommand(showCommand)

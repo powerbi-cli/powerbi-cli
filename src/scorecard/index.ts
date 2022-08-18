@@ -28,9 +28,11 @@
 
 import { ModuleCommand } from "../lib/command";
 import { createAction } from "./create";
-import { listshowAction } from "./listshow";
-import { getCommands as getGoalCommands } from "./goal/index";
 import { deleteAction } from "./delete";
+import { listshowAction } from "./listshow";
+import { moveAction } from "./move";
+import { updateAction } from "./update";
+import { getCommands as getGoalCommands } from "./goal/index";
 
 export function getCommands(): ModuleCommand {
     const createCommand = new ModuleCommand("create")
@@ -55,18 +57,49 @@ export function getCommands(): ModuleCommand {
             "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'"
         );
     listCommand.addGlobalOptions();
+    const moveCommand = new ModuleCommand("move")
+        .description("Moves goals within the scorecard")
+        .action(moveAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <name>", "Name or ID of the Power BI scorecard")
+        .option(
+            "--definition <definition>",
+            "String with the 'goal move' definition in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--definition-file <file>",
+            "File with the 'goal move' definition in JSON format. Deprecated: use --definition @{file}"
+        );
+    moveCommand.addGlobalOptions();
     const showCommand = new ModuleCommand("show")
         .description("Get the details of a Power BI scorecard")
         .action(listshowAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--report -r <name>", "Name or ID of the linked Power BI report")
         .option("--scorecard -s <name>", "Name or ID of the Power BI scorecard");
     showCommand.addGlobalOptions();
+    const updateCommand = new ModuleCommand("update")
+        .description("Update a Power BI scorecard")
+        .action(updateAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--scorecard -s <name>", "Name or ID of the Power BI scorecard")
+        .option(
+            "--definition <definition>",
+            "String with the scorecard definition in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--definition-file <file>",
+            "File with the scorecard definition in JSON format. Deprecated: use --definition @{file}"
+        );
+    updateCommand.addGlobalOptions();
     const gatewayCommand = new ModuleCommand("scorecard")
         .description("Operations for working with scorecards (goals)")
         .addCommand(createCommand)
         .addCommand(deleteCommand)
         .addCommand(listCommand)
+        .addCommand(moveCommand)
         .addCommand(showCommand)
+        .addCommand(updateCommand)
         .addCommand(getGoalCommands());
     gatewayCommand.addGlobalOptions();
     return gatewayCommand;

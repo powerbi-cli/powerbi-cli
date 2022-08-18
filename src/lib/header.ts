@@ -26,12 +26,19 @@
 
 "use strict";
 
-import { bold } from "chalk";
+import bold from "chalk";
 import figlet from "figlet";
+
+const header = `${bold.yellow(figlet.textSync("Power BI"))}
+Welcome to the Power BI CLI
+`;
 
 export function drawHeader(interactive: boolean): void {
     if (interactive) return;
-    console.info(bold.yellow(figlet.textSync("Power BI")));
-    console.info("Welcome to the Power BI CLI");
-    console.info();
+    console.info(header);
+}
+
+export function getHeader(interactive: boolean): string {
+    if (interactive) return "";
+    return header;
 }

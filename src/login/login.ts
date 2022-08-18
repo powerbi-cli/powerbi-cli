@@ -26,7 +26,7 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { yellow } from "chalk";
+import yellow from "chalk";
 import { decode } from "jsonwebtoken";
 
 import { getConfig } from "../lib/config";

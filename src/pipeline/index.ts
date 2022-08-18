@@ -60,8 +60,11 @@ export function getCommands(): ModuleCommand {
         .action(deployAction)
         .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
         .option("--partial", "")
-        .option("--options <data>", "String with the deploy options in JSON format")
-        .option("--options-file <file>", "File with the deploy options in JSON format");
+        .option("--options <data>", "String with the deploy options in JSON format. Use @{file} to load from a file")
+        .option(
+            "--options-file <file>",
+            "File with the deploy options in JSON format. Deprecated: use --options @{file}"
+        );
     deployCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list").description("List Power BI pipelines").action(listshowAction);
     listCommand.addGlobalOptions();
@@ -80,8 +83,14 @@ export function getCommands(): ModuleCommand {
         .description("Update pipeline properties")
         .action(updateAction)
         .option("--pipeline -p <name>", "Name or ID of the Power BI pipeline")
-        .option("--update <data>", "String with the update pipeline settings in JSON format")
-        .option("--update-file <file>", "File with the update pipeline settings in JSON format");
+        .option(
+            "--update <data>",
+            "String with the update pipeline settings in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--update-file <file>",
+            "File with the update pipeline settings in JSON format. Deprecated: use --update @{file}"
+        );
     updateCommand.addGlobalOptions();
     const pipelineCommand = new ModuleCommand("pipeline")
         .description("Operations for working with pipelines")

@@ -51,11 +51,15 @@ export function executeAPICall(
         const { azureRestURL, powerBIRestURL } = getConsts();
         switch (apiRequest.tokenType) {
             case TokenType.AZURE:
-                url = `${azureRestURL}${apiRequest.url}`;
+                url = apiRequest.url?.startsWith("https://management.")
+                    ? apiRequest.url
+                    : `${azureRestURL}${apiRequest.url}`;
                 break;
             case TokenType.POWERBI:
             default:
-                url = `${powerBIRestURL}${apiRequest.url}`;
+                url = apiRequest.url?.startsWith("https://api.")
+                    ? apiRequest.url
+                    : `${powerBIRestURL}${apiRequest.url}`;
         }
         const request: RequestPrepareOptions = {
             method: apiRequest.method,

@@ -47,9 +47,8 @@ describe("version.ts", () => {
         consoleInfoMock.restore();
     });
     describe("checkVersion", () => {
-        it("normal check with '-v' argument", (done) => {
-            const args = ["-v"];
-            checkVersion(args).then(() => {
+        it("normal check", (done) => {
+            checkVersion().then(() => {
                 expect(consoleInfoMock.callCount).equal(0);
                 done();
             });

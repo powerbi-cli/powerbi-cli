@@ -49,8 +49,14 @@ export function getCommands(): ModuleCommand {
         .action(updateDatasourceAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dataset -d <dataset>", "Name or ID of the Power BI dataset")
-        .option("--update-details <data>", "String with the connection server details in JSON format")
-        .option("--update-details-file <file>", "File with the connection server details in JSON format");
+        .option(
+            "--update-details <data>",
+            "String with the connection server details in JSON format. Use @{file} to load from a file"
+        )
+        .option(
+            "--update-details-file <file>",
+            "File with the connection server details in JSON format. Deprecated: use --update-details @{file}"
+        );
     updateCommand.addGlobalOptions();
     const parameterCommand = new ModuleCommand("datasource")
         .description("Manages the datasources of a Power BI dataset")

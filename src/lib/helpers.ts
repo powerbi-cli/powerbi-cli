@@ -35,7 +35,7 @@ import { checkUUID } from "./validate";
 import { TokenType } from "./auth";
 import { getConsts } from "./consts";
 
-export const accessRights = ["Admin", "Contributor", "Member"]; // 'None' is not supported
+export const accessRights = ["Admin", "Contributor", "Member", "Viewer"]; // 'None' is not supported
 export const accessRightsPipeline = ["Admin"];
 export const accessRightsDataset = ["Read", "ReadExplore", "ReadReshare", "ReadReshareExplore"];
 export const accessRightsDataSource = ["None", "Read", "ReadOverrideEffectiveIdentity"];

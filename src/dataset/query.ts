@@ -26,12 +26,12 @@
 
 "use strict";
 import { OptionValues } from "commander";
-import { readFileSync } from "fs";
 
 import { ModuleCommand } from "../lib/command";
 import { validateDatasetId, validateGroupId } from "../lib/parameters";
 import { debug } from "../lib/logging";
 import { APICall, executeAPICallStream } from "../lib/api";
+import { getOptionContent } from "../lib/options";
 
 export async function queryAction(...args: unknown[]): Promise<void> {
     const cmd = args[args.length - 1] as ModuleCommand;
@@ -48,8 +48,8 @@ export async function queryAction(...args: unknown[]): Promise<void> {
         options.scriptFile === undefined
     )
         throw "error: missing option '--dax', '--dax-file', '--script' or '--script-file'";
-    const script = options.script || options.scriptFile ? readFileSync(options.scriptFile) : undefined;
-    const query = options.dax || options.daxFile ? readFileSync(options.daxFile) : undefined;
+    const script = getOptionContent(options.script || `@${options.scriptFile}`);
+    const query = getOptionContent(options.dax || `@${options.daxFile}`);
 
     debug(`Execute query against Power BI dataset (${datasetId})`);
 

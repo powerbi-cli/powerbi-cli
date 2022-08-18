@@ -26,7 +26,11 @@
 
 "use strict";
 
+import { homedir } from "os";
+
 import { getAzureUrl, getPowerBIUrl } from "./config";
+
+export const HomeLocation = homedir() + "/.powerbi-cli";
 
 const scopesRequestPBI = ["https://analysis.windows.net/powerbi/api/.default", "offline_access"];
 const scopesRequestAzure = ["https://management.core.windows.net/.default", "offline_access"];

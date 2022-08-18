@@ -29,6 +29,7 @@
 import { ModuleCommand } from "../lib/command";
 import { listshowAction } from "./listshow";
 import { createAction } from "./create";
+import { deleteAction } from "./delete";
 import { getCommands as getTileCommands } from "./tile/index";
 
 export function getCommands(): ModuleCommand {
@@ -37,6 +38,13 @@ export function getCommands(): ModuleCommand {
         .action(createAction)
         .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
         .option("--dashboard -d <dashboard>", "Name of the Power BI dashboard");
+    createCommand.addGlobalOptions();
+    const deleteCommand = new ModuleCommand("delete")
+        .description("Delete a Power BI dashboard")
+        .action(deleteAction)
+        .option("--workspace -w <name>", "Name or ID of the Power BI workspace. If not provided it uses 'My workspace'")
+        .option("--dashboard -d <dashboard>", "Name or ID of the Power BI dashboard");
+    deleteCommand.addGlobalOptions();
     const listCommand = new ModuleCommand("list")
         .action(listshowAction)
         .description("List Power BI dashboards in a workspace")
@@ -54,6 +62,7 @@ export function getCommands(): ModuleCommand {
     const appCommand = new ModuleCommand("dashboard")
         .description("Operations for working with dashboards")
         .addCommand(createCommand)
+        .addCommand(deleteCommand)
         .addCommand(listCommand)
         .addCommand(showCommand)
         .addCommand(getTileCommands());
