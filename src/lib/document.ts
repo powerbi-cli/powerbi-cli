@@ -30,7 +30,10 @@ import { Command, OptionValues } from "commander";
 import { createWriteStream, existsSync } from "fs";
 import { format } from "path";
 
-import { GlobalCommands, GlobalOptions } from "./command";
+import { AllGlobalCommands, GlobalCommands, GlobalOptions } from "./command";
+
+const IgnoreCommands = ["help"];
+const IgnoreSyntax = ["interactive"];
 
 export function addDocumenter(program: Command): void {
     program
@@ -52,38 +55,52 @@ export function addDocumenter(program: Command): void {
 
             const commands = helper
                 .visibleCommands(program)
-                .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption));
+                .filter((cmd) => !IgnoreCommands.some((cmdOption) => cmd.name() === cmdOption))
+                .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
 
             const processMarkdown = (commands: Command[], parent: string[], level: number, index: boolean) => {
                 if ((index && level === 0) || (!index && level === 1 && commands.length > 0)) {
                     setStoreFile(`reference-${parent[parent.length - 1]}.md`);
+                    console.log(`---`);
+                    console.log(`uid: reference/${parent[parent.length - 1]}`);
+                    console.log(`title: ${parent.join(" ")}`);
+                    console.log(`documentId: `);
+                    console.log(`---`);
+                    console.log();
                     console.log(`# ${parent.join(" ")}`);
                     console.log();
                     console.log("## Commands");
                     console.log();
                     console.log("| | |");
                     console.log("|-|-|");
-                    commands.forEach((cmd) => {
-                        const childCommands = helper
-                            .visibleCommands(cmd)
-                            .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
-                            .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
-                        if (childCommands.length === 0 || level === 0) {
-                            console.log(
-                                `| [${parent.join(" ")} ${cmd.name()}](${
-                                    level === 0 ? "xref:reference/" : `#${parent.join("-")}-${cmd.name()}`
-                                }) | ${helper.subcommandDescription(cmd)} |`
-                            );
-                        } else {
-                            childCommands.forEach((childCmd) => {
+
+                    const processTable = (commands: Command[], parent: string[]) => {
+                        commands.forEach((cmd) => {
+                            const childCommands = helper
+                                .visibleCommands(cmd)
+                                .filter((cmd) => !AllGlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
+                                .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
+                            if (childCommands.length === 0) {
                                 console.log(
-                                    `| [${parent.join(" ")} ${cmd.name()} ${childCmd.name()}](#${parent.join(
+                                    `| [${parent.join(" ")} ${cmd.name()}](#${parent.join(
                                         "-"
-                                    )}-${cmd.name()}-${childCmd.name()}) | ${helper.subcommandDescription(childCmd)} |`
+                                    )}-${cmd.name()}) | ${helper.subcommandDescription(cmd)} |`
                                 );
-                            });
-                        }
-                    });
+                            } else if (level === 0) {
+                                console.log(
+                                    `| [${parent.join(" ")} ${cmd.name()}](${
+                                        level === 0
+                                            ? `xref:reference/${cmd.name()}`
+                                            : `#${parent.join("-")}-${cmd.name()}`
+                                    }) | ${helper.subcommandDescription(cmd)} |`
+                                );
+                            }
+                            if (!index) processTable(childCommands, [...parent, cmd.name()]);
+                        });
+                    };
+
+                    processTable(commands, parent);
+
                     console.log();
                 }
                 commands.forEach((cmd) => {
@@ -92,7 +109,7 @@ export function addDocumenter(program: Command): void {
                         .filter((option) => !GlobalOptions.some((cmdOption) => option.name() === cmdOption));
                     const childCommands = helper
                         .visibleCommands(cmd)
-                        .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
+                        .filter((cmd) => !AllGlobalCommands.some((c) => cmd.name() === c))
                         .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
                     if (childCommands.length === 0) {
                         console.log(`## ${parent.join(" ")} ${cmd.name()}`);
@@ -138,18 +155,23 @@ export function addDocumenter(program: Command): void {
                         if (childCommands) processMarkdown(childCommands, parent.concat(cmd.name()), level + 1, false);
                     }
                 });
+                if ((index && level === 0) || (!index && level === 1 && commands.length > 0)) {
+                    console.log(`## Feedback`);
+                }
             };
 
             const processToc = (commands: Command[], parent: string[], level: number) => {
                 commands.forEach((cmd) => {
                     const childCommands = helper
                         .visibleCommands(cmd)
-                        .filter((cmd) => !GlobalCommands.some((cmdOption) => cmd.name() === cmdOption))
+                        .filter((cmd) => !AllGlobalCommands.some((c) => cmd.name() === c))
                         .sort((cmd1, cmd2) => (cmd1.name() > cmd2.name() ? 1 : -1));
                     const indent = "    ".repeat(level);
                     console.log(`${indent}- name: ${cmd.name()}`);
-                    if (level > 0 && childCommands.length === 0) {
-                        console.log(`${indent}  href: reference-${parent[1]}.md#${parent.join("-")}-${cmd.name()}`);
+                    if (childCommands.length === 0) {
+                        console.log(
+                            `${indent}  href: reference-${parent[1] || "index"}.md#${parent.join("-")}-${cmd.name()}`
+                        );
                     }
                     if (childCommands.length > 0) {
                         console.log(`${indent}  items:`);
@@ -163,8 +185,17 @@ export function addDocumenter(program: Command): void {
             };
 
             processMarkdown(commands, ["pbicli"], 0, true);
-            processMarkdown(commands, ["pbicli"], 0, false);
+            processMarkdown(
+                commands.filter((cmd) => !IgnoreSyntax.some((c) => cmd.name() === c)),
+                ["pbicli"],
+                0,
+                false
+            );
             setStoreFile("toc.yml");
-            processToc(commands, ["pbicli"], 0);
+            processToc(
+                commands.filter((cmd) => !AllGlobalCommands.some((c) => cmd.name() === c)),
+                ["pbicli"],
+                0
+            );
         });
 }
