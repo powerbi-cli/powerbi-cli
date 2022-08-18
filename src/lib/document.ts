@@ -30,7 +30,7 @@ import { Command, OptionValues } from "commander";
 import { createWriteStream, existsSync } from "fs";
 import { format } from "path";
 
-import { AllGlobalCommands, GlobalCommands, GlobalOptions } from "./command";
+import { AllGlobalCommands, GlobalOptions } from "./command";
 
 const IgnoreCommands = ["help"];
 const IgnoreSyntax = ["interactive"];
