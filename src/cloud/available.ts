@@ -27,7 +27,7 @@
 "use strict";
 import { OptionValues } from "commander";
 
-import { powerBIClouds } from "../lib/helpers";
+import { powerBIClouds } from "./set";
 import { debug } from "../lib/logging";
 
 export async function availableAction(...args: unknown[]): Promise<void> {

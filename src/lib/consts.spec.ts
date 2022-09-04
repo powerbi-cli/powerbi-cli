@@ -26,8 +26,12 @@
 
 "use strict";
 import chai from "chai";
+import { SinonStub } from "sinon";
+import { ImportMock } from "ts-mock-imports";
 
 import { getConsts } from "./consts";
+
+import fs from "fs";
 
 const expect = chai.expect;
 
@@ -41,7 +45,43 @@ describe("consts.ts", () => {
             expect(testConsts.pbiCLIScope).equal("https://analysis.windows.net/powerbi/api");
         });
         it("authorityHost", () => {
-            expect(testConsts.authorityHost).equal("https://login.microsoftonline.com");
+            expect(testConsts.authorityHostUrl).equal("https://login.microsoftonline.com");
+        });
+        it("powerBIRestURL", () => {
+            expect(testConsts.powerBIRestURL).equal("https://api.powerbi.com/v1.0/myorg");
+        });
+        it("azureRestURL", () => {
+            expect(testConsts.azureRestURL).equal("https://management.azure.com");
+        });
+    });
+    describe("getConsts(), cloud set to China", () => {
+        let readFileSyncMock: SinonStub<unknown[], unknown>;
+        let existsSyncMock: SinonStub<unknown[], unknown>;
+        beforeEach(() => {
+            readFileSyncMock = ImportMock.mockFunction(fs, "readFileSync");
+            existsSyncMock = ImportMock.mockFunction(fs, "existsSync");
+            readFileSyncMock.returns('{ "defaults": {}, "core": { "cloud": "China" } }');
+            existsSyncMock.returns(true);
+        });
+        afterEach(() => {
+            readFileSyncMock.restore();
+            existsSyncMock.restore();
+        });
+        const testConsts = getConsts();
+        it("PBI scope", () => {
+            expect(testConsts.pbiScope).equal("https://analysis.windows.net/powerbi/api/.default offline_access");
+        });
+        it("PBI scope for AzureCLI", () => {
+            expect(testConsts.pbiCLIScope).equal("https://analysis.windows.net/powerbi/api");
+        });
+        it("authorityHost", () => {
+            expect(testConsts.authorityHostUrl).equal("https://login.chinacloudapi.cn");
+        });
+        it("powerBIRestURL", () => {
+            expect(testConsts.powerBIRestURL).equal("https://app.powerbi.cn/v1.0/myorg");
+        });
+        it("azureRestURL", () => {
+            expect(testConsts.azureRestURL).equal("https://management.chinacloudapi.cn");
         });
     });
 });

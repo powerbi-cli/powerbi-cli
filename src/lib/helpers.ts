@@ -59,7 +59,6 @@ export const expandAdminDashboards = ["tiles"];
 export const expandAdminImports = ["datasets", "reports"];
 export const expandRefreshes = ["capacity", "workspace"];
 export const workloadState = ["enabled", "disabled"];
-export const powerBIClouds = ["Public", "GCC", "GCCHigh", "DoD", "Germany", "China"];
 export const refreshNotify = ["always", "failure", "none"];
 
 const { powerBIRestURL } = getConsts();
