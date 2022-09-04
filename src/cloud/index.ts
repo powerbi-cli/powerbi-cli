@@ -29,7 +29,7 @@
 import { ModuleCommand } from "../lib/command";
 import { availableAction } from "./available";
 import { listAction } from "./list";
-import { setAction } from "./set";
+import { powerBIClouds, setAction } from "./set";
 
 export function getCommands(): ModuleCommand {
     const availableCommand = new ModuleCommand("available")
@@ -41,7 +41,7 @@ export function getCommands(): ModuleCommand {
     const setCommand = new ModuleCommand("set")
         .action(setAction)
         .description("Set the active Power BI cloud")
-        .option("--name <name>", "Name of a registered cloud");
+        .option("--name <name>", `Name of a registered cloud. ${powerBIClouds.join(", ")}`);
     setCommand.addGlobalOptions();
     const appCommand = new ModuleCommand("cloud")
         .description("Operations for working with clouds")

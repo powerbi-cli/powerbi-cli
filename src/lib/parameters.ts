@@ -335,7 +335,15 @@ export function validateAllowedValues(value: string, allowedValues: string[], mu
     return new Promise((resolve, reject) => {
         if (multiSelect) {
             const values = value.split(",");
-            if (values.length === values.filter((value: string) => allowedValues.indexOf(value.trim()) > -1).length) {
+            if (
+                values.length ===
+                values.filter(
+                    (value: string) =>
+                        allowedValues
+                            .map((allowedValue) => allowedValue.toLocaleLowerCase())
+                            .indexOf(value.trim().toLocaleLowerCase()) > -1
+                ).length
+            ) {
                 resolve(value);
             } else {
                 reject(
@@ -343,7 +351,11 @@ export function validateAllowedValues(value: string, allowedValues: string[], mu
                 );
             }
         } else {
-            if (allowedValues.some((allowedValue: string) => allowedValue === value)) {
+            if (
+                allowedValues.some(
+                    (allowedValue: string) => allowedValue.toLocaleLowerCase() === value.toLocaleLowerCase()
+                )
+            ) {
                 resolve(value);
             } else {
                 reject(`error: incorrect option '${value}'. Allowed values: ${allowedValues.join(", ")}`);

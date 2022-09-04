@@ -111,11 +111,11 @@ export interface DeviceCodeTokenResponse {
 }
 
 export function getDeviceCodeUrl(tenantId = "common", consts: consts): URL {
-    return new URL(`${consts.authorityHost}/${tenantId}/oauth2/v2.0/devicecode`);
+    return new URL(`${consts.authorityHostUrl}/${tenantId}/oauth2/v2.0/devicecode`);
 }
 
 export function getTokenUrl(tenantId = "common", consts: consts): URL {
-    return new URL(`${consts.authorityHost}/${tenantId}/oauth2/v2.0/token`);
+    return new URL(`${consts.authorityHostUrl}/${tenantId}/oauth2/v2.0/token`);
 }
 
 // Code from: https://github.com/Azure/azure-sdk-for-js/blob/master/sdk/identity/identity/samples/manual/authorizationCodeSample.ts
@@ -130,7 +130,7 @@ function getAuthorizeUrl(tenantId = "common", consts: consts): string {
         code_challenge_method: "S256",
     });
 
-    return `${consts.authorityHost}/${tenantId}/oauth2/v2.0/authorize?${queryParams}`;
+    return `${consts.authorityHostUrl}/${tenantId}/oauth2/v2.0/authorize?${queryParams}`;
 }
 
 export function getToken(response: AccessTokenResponse, tenant?: string): Token {

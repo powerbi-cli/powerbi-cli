@@ -48,7 +48,16 @@ export const DefaultConfig: ConfigFile = {
 
 const file = "config.json";
 
-const cloudPowerBIUrls = {
+const AuthorityHosts = {
+    public: "login.microsoftonline.com",
+    gcc: "login.microsoftonline.us",
+    gcchigh: "login.microsoftonline.us",
+    dod: "login.microsoftonline.us",
+    germany: "login.microsoftonline.de",
+    china: "login.chinacloudapi.cn",
+};
+
+const CloudPowerBIUrls = {
     public: "api.powerbi.com",
     gcc: "api.powerbigov.us",
     gcchigh: "api.high.powerbigov.us",
@@ -57,14 +66,14 @@ const cloudPowerBIUrls = {
     china: "app.powerbi.cn",
 };
 
-export enum cloudAzureUrls {
-    public = "management.azure.com",
-    gcc = "management.usgovcloudapi.net",
-    gcchigh = "management.usgovcloudapi.net",
-    dod = "management.usgovcloudapi.net",
-    germany = "management.microsoftazure.de",
-    china = "management.chinacloudapi.cn",
-}
+const CloudAzureUrls = {
+    public: "management.azure.com",
+    gcc: "management.usgovcloudapi.net",
+    gcchigh: "management.usgovcloudapi.net",
+    dod: "management.usgovcloudapi.net",
+    germany: "management.microsoftazure.de",
+    china: "management.chinacloudapi.cn",
+};
 
 export interface config {
     principal: string;
@@ -98,13 +107,13 @@ export function displayConfig(scope: Scopes, key?: string): void {
     }
 }
 
-export function storeConfig(defs: string[]): void {
+export function storeConfig(defs: string[], section: keyof ConfigFile = "defaults"): void {
     const config = getConfigFromFile();
 
     defs.forEach((def: string) => {
         const values = def.split("=");
-        if (values[1] === "") delete config.defaults[values[0].toLowerCase()];
-        else config.defaults[values[0].toLowerCase()] = values[1];
+        if (values[1] === "") delete config[section][values[0].toLowerCase()];
+        else config[section][values[0].toLowerCase()] = values[1];
     });
 
     writeFileSync(getConfigFile(), JSON.stringify(config));
@@ -115,12 +124,16 @@ export function getDefault(value: string): string | undefined {
     return (config.defaults && config.defaults[value]) || undefined;
 }
 
+export function getAuthorityHostUrl(): string {
+    return getUrl(AuthorityHosts as never);
+}
+
 export function getPowerBIUrl(): string {
-    return getUrl(cloudPowerBIUrls as never);
+    return getUrl(CloudPowerBIUrls as never);
 }
 
 export function getAzureUrl(): string {
-    return getUrl(cloudAzureUrls as never);
+    return getUrl(CloudAzureUrls as never);
 }
 
 function getUrl(urls: never): string {

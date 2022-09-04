@@ -28,7 +28,7 @@
 
 import { homedir } from "os";
 
-import { getAzureUrl, getPowerBIUrl } from "./config";
+import { getAuthorityHostUrl, getAzureUrl, getPowerBIUrl } from "./config";
 
 export const HomeLocation = homedir() + "/.powerbi-cli";
 
@@ -40,7 +40,6 @@ export class consts {
     redirectUriPath = `/`;
     adal_client_id = "04b07795-8ddb-461a-bbee-02f9e1bf7b46";
     adomd_client_id = "cf710c6e-dfcc-4fa8-a093-d47294e44c66";
-    authorityHost = "https://login.microsoftonline.com";
 
     okResult = `<!DOCTYPE html>
 <html lang="en">
@@ -65,6 +64,10 @@ export class consts {
     <p>You can log an issue at <a href="https://github.com/powerbi-cli/powerbi-cli/issues">Power BI CLI GitHub Repository</a> and we will assist you in resolving it.</p>
 </body>
 </html>`;
+    public get authorityHostUrl(): string {
+        const authorityHost = getAuthorityHostUrl();
+        return `https://${authorityHost}`;
+    }
     public get powerBIRestURL(): string {
         const powerBIRootUrl = getPowerBIUrl();
         return `https://${powerBIRootUrl}/v1.0/myorg`;

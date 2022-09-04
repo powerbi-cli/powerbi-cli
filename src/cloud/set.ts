@@ -30,7 +30,8 @@ import { OptionValues } from "commander";
 import { validateAllowedValues } from "../lib/parameters";
 import { storeConfig } from "../lib/config";
 import { debug } from "../lib/logging";
-import { powerBIClouds } from "../lib/helpers";
+
+export const powerBIClouds = ["Public", "GCC", "GCCHigh", "DoD", "Germany", "China"];
 
 export async function setAction(...args: unknown[]): Promise<void> {
     const options = args[args.length - 2] as OptionValues;
@@ -39,5 +40,5 @@ export async function setAction(...args: unknown[]): Promise<void> {
     const cloud = await validateAllowedValues(options.name, powerBIClouds);
     debug(`Set configured cloud to ${cloud}`);
 
-    storeConfig([`cloud=${cloud}`]);
+    storeConfig([`cloud=${cloud}`], "core");
 }
