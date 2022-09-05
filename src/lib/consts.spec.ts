@@ -44,6 +44,12 @@ describe("consts.ts", () => {
         it("PBI scope for AzureCLI", () => {
             expect(testConsts.pbiCLIScope).equal("https://analysis.windows.net/powerbi/api");
         });
+        it("Azure scope", () => {
+            expect(testConsts.azureScope).equal("https://management.core.windows.net/.default offline_access");
+        });
+        it("Azure scope for AzureCLI", () => {
+            expect(testConsts.azureCLIScope).equal("https://management.core.windows.net");
+        });
         it("authorityHost", () => {
             expect(testConsts.authorityHostUrl).equal("https://login.microsoftonline.com");
         });
@@ -69,10 +75,16 @@ describe("consts.ts", () => {
         });
         const testConsts = getConsts();
         it("PBI scope", () => {
-            expect(testConsts.pbiScope).equal("https://analysis.windows.net/powerbi/api/.default offline_access");
+            expect(testConsts.pbiScope).equal("https://analysis.chinacloudapi.cn/powerbi/api/.default offline_access");
         });
         it("PBI scope for AzureCLI", () => {
-            expect(testConsts.pbiCLIScope).equal("https://analysis.windows.net/powerbi/api");
+            expect(testConsts.pbiCLIScope).equal("https://analysis.chinacloudapi.cn/powerbi/api");
+        });
+        it("Azure scope", () => {
+            expect(testConsts.azureScope).equal("https://management.core.chinacloudapi.cn/.default offline_access");
+        });
+        it("Azure scope for AzureCLI", () => {
+            expect(testConsts.azureCLIScope).equal("https://management.core.chinacloudapi.cn");
         });
         it("authorityHost", () => {
             expect(testConsts.authorityHostUrl).equal("https://login.chinacloudapi.cn");

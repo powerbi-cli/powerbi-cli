@@ -57,6 +57,24 @@ const AuthorityHosts = {
     china: "login.chinacloudapi.cn",
 };
 
+const PowerBIScopes = {
+    public: "analysis.windows.net",
+    gcc: "analysis.usgovcloudapi.net",
+    gcchigh: "high.analysis.usgovcloudapi.net",
+    dod: "mil.analysis.usgovcloudapi.net",
+    germany: "analysis.windows.net",
+    china: "analysis.chinacloudapi.cn",
+};
+
+const AzureScopes = {
+    public: "management.core.windows.net",
+    gcc: "management.core.usgovcloudapi.net",
+    gcchigh: "management.core.usgovcloudapi.net",
+    dod: "management.core.usgovcloudapi.net",
+    germany: "management.core.cloudapi.de",
+    china: "management.core.chinacloudapi.cn",
+};
+
 const CloudPowerBIUrls = {
     public: "api.powerbi.com",
     gcc: "api.powerbigov.us",
@@ -134,6 +152,14 @@ export function getPowerBIUrl(): string {
 
 export function getAzureUrl(): string {
     return getUrl(CloudAzureUrls as never);
+}
+
+export function getPowerBIScopeUrl(): string {
+    return getUrl(PowerBIScopes as never);
+}
+
+export function getAzureScopeUrl(): string {
+    return getUrl(AzureScopes as never);
 }
 
 function getUrl(urls: never): string {
