@@ -34,7 +34,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { verbose } from "./logging";
 import { HomeLocation } from "./consts";
 
-export const currentVersion = "1.3.1";
+export const currentVersion = "1.3.2";
 const versionUrl = "https://powerbicli.azureedge.net/version.json";
 const file = "versionCheck.json";
 const checkInterval = 1000 * 60 * 60 * 24; // 1 day
