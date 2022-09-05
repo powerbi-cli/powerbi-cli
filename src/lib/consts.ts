@@ -28,12 +28,9 @@
 
 import { homedir } from "os";
 
-import { getAuthorityHostUrl, getAzureUrl, getPowerBIUrl } from "./config";
+import { getAuthorityHostUrl, getAzureScopeUrl, getAzureUrl, getPowerBIScopeUrl, getPowerBIUrl } from "./config";
 
 export const HomeLocation = homedir() + "/.powerbi-cli";
-
-const scopesRequestPBI = ["https://analysis.windows.net/powerbi/api/.default", "offline_access"];
-const scopesRequestAzure = ["https://management.core.windows.net/.default", "offline_access"];
 
 export class consts {
     port: number = Number.parseInt(process.env.PORT as string) || 8080;
@@ -77,25 +74,32 @@ export class consts {
         return `https://${azureRootUrl}`;
     }
     public get azureScope(): string {
-        return scopesRequestAzure.join(" ");
+        return this.scopesRequestAzure.join(" ");
     }
     public get azureCLIScope(): string {
-        return scopesRequestAzure
+        return this.scopesRequestAzure
             .filter((scope) => scope !== "offline_access")
             .map((scope) => scope.replace(/\/.default$/, ""))
             .join(" ");
     }
     public get pbiScope(): string {
-        return scopesRequestPBI.join(" ");
+        return this.scopesRequestPBI.join(" ");
     }
     public get pbiCLIScope(): string {
-        return scopesRequestPBI
+        return this.scopesRequestPBI
             .filter((scope) => scope !== "offline_access")
             .map((scope) => scope.replace(/\/.default$/, ""))
             .join(" ");
     }
     public get redirectUri(): string {
         return `http://localhost:${this.port}${this.redirectUriPath}`;
+    }
+
+    private get scopesRequestPBI(): string[] {
+        return [`https://${getPowerBIScopeUrl()}/powerbi/api/.default`, "offline_access"];
+    }
+    private get scopesRequestAzure(): string[] {
+        return [`https://${getAzureScopeUrl()}/.default`, "offline_access"];
     }
 }
 
