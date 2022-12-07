@@ -98,7 +98,7 @@ export function executeRestCall(
                     })
                     .catch((err) => reject(err));
             } catch (err) {
-                reject(err);
+                reject(`Error while calling the Power BI REST API: ${err}`);
             }
         });
     });
@@ -206,15 +206,31 @@ export function executeUploadCall(executeRequestOptions: RequestPrepareOptions, 
                 const req = request(options);
                 form.pipe(req);
                 req.on("response", (response) => {
-                    if (response.statusCode !== 200 && response.statusCode !== 202) {
-                        debug(response.headers["x-powerbi-error-details"] as string);
-                        reject("Error uploading the report");
-                        return;
-                    }
-                    resolve(undefined);
+                    let responseBody = "";
+                    response.on("data", (chunk) => {
+                        responseBody += chunk.toString();
+                    });
+                    response.on("end", () => {
+                        if (response.statusCode !== 200 && response.statusCode !== 202) {
+                            const errorCallback = response.headers["x-powerbi-error-details"] as string;
+                            if (errorCallback) {
+                                reject(errorCallback);
+                            }
+                            if (responseBody !== "") {
+                                const error = JSON.parse(responseBody);
+                                if (error.error && error.error.message) reject(error.error.message);
+                                else debug(error);
+                            } else {
+                                debug("API return no specific error message");
+                            }
+                            reject(`Error uploading the report: ${response.statusCode} (${response.statusMessage})`);
+                            return;
+                        }
+                        resolve(JSON.parse(responseBody));
+                    });
                 });
             } catch (err) {
-                reject(err);
+                reject(`Error while calling the Power BI REST API: ${err}`);
             }
         });
     });
