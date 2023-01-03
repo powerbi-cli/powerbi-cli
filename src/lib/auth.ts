@@ -34,6 +34,7 @@ import { exec } from "child_process";
 import yellow from "chalk";
 
 import { consts } from "./consts";
+import e from "express";
 
 export enum AuthFlow {
     Unknown = -1,
@@ -193,13 +194,20 @@ export function executeAuthRequest(url: URL, config: AuthConfig, flow: AuthFlow)
                 headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": data.length },
             };
             const req = https.request(options, (res) => {
-                if (res.statusCode === 200 || (res.statusCode === 400 && AuthFlow.DeviceCodeToken)) {
-                    res.on("data", (data) => {
-                        resolve(JSON.parse(data));
-                    });
-                } else {
-                    reject("Unexpected error in authentication");
-                }
+                res.on("data", (data) => {
+                    const body = JSON.parse(data);
+                    if (res.statusCode === 200 || (res.statusCode === 400 && flow === AuthFlow.DeviceCodeToken)) {
+                        resolve(body);
+                    } else {
+                        if (body.error) {
+                            reject(
+                                body.error_description + (body.error_uri ? `\r\n\r\nMore info: ${body.error_uri}` : "")
+                            );
+                        } else {
+                            reject("Unexpected error in authentication");
+                        }
+                    }
+                });
             });
             req.on("error", (err) => {
                 reject(err);
