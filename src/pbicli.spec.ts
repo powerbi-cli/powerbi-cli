@@ -36,7 +36,6 @@ import * as auth from "./lib/auth";
 
 import * as azureserviceclient from "@azure/ms-rest-azure-js";
 import fs from "fs";
-import jsonwebtoken from "jsonwebtoken";
 import { DefaultConfig } from "./lib/config";
 
 const expect = chai.expect;
@@ -54,8 +53,6 @@ describe("pbicli.ts:", () => {
     let mkdirSyncMock: SinonStub<unknown[], unknown>;
     let readFileSyncStub: SinonStub;
     let writeFileSyncMock: SinonStub<unknown[], unknown>;
-
-    let decodeMock: SinonStub<unknown[], unknown>;
 
     let consoleInfoMock: SinonSpy<unknown[], unknown>;
     let consoleErrorMock: SinonSpy<unknown[], unknown>;
@@ -130,9 +127,6 @@ describe("pbicli.ts:", () => {
         writeFileSyncMock = ImportMock.mockFunction(fs, "writeFileSync");
         writeFileSyncMock.returns(true);
 
-        decodeMock = ImportMock.mockFunction(jsonwebtoken, "decode");
-        decodeMock.returns({ exp: Math.floor((new Date() as unknown as number) / 1000) + 3599 });
-
         consoleInfoMock = ImportMock.mockFunction(console, "info", true);
         consoleErrorMock = ImportMock.mockFunction(console, "error", true);
     });
@@ -147,10 +141,7 @@ describe("pbicli.ts:", () => {
         existsSyncMock.restore();
         mkdirSyncMock.restore();
         readFileSyncStub.restore();
-        //readFileSyncMock.restore();
         writeFileSyncMock.restore();
-
-        decodeMock.restore();
 
         consoleInfoMock.restore();
         consoleErrorMock.restore();

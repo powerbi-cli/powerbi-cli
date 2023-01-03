@@ -90,12 +90,11 @@ if (args?.length === 2 || args.some((arg) => arg === "interactive")) {
                         activeModule = [input];
                     } else {
                         args = fixHelpOptions(args, true);
-                        try {
-                            await program.parseAsync(activeModule.concat(args), { from: "user" });
-                        } catch (err: unknown) {
-                            program.errorMessage = err as string;
+                        await program.parseAsync(activeModule.concat(args), { from: "user" }).catch((err) => {
+                            if (err.code) program.errorMessage = err;
+                            else program.errorMessage = { value: err as string, code: 2 };
                             program.showHelpOrError(true);
-                        }
+                        });
                     }
                     break;
             }
@@ -109,7 +108,8 @@ if (args?.length === 2 || args.some((arg) => arg === "interactive")) {
     const process = async () => {
         args = fixHelpOptions(args, false);
         await program.parseAsync(args).catch((err) => {
-            program.errorMessage = err;
+            if (err.code) program.errorMessage = err;
+            else program.errorMessage = { value: err, code: 2 };
             program.showHelpOrError(true);
         });
     };

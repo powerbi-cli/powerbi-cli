@@ -193,13 +193,26 @@ export function executeAuthRequest(url: URL, config: AuthConfig, flow: AuthFlow)
                 headers: { "Content-Type": "application/x-www-form-urlencoded", "Content-Length": data.length },
             };
             const req = https.request(options, (res) => {
-                if (res.statusCode === 200 || (res.statusCode === 400 && AuthFlow.DeviceCodeToken)) {
-                    res.on("data", (data) => {
-                        resolve(JSON.parse(data));
-                    });
-                } else {
-                    reject("Unexpected error in authentication");
-                }
+                res.on("data", (data) => {
+                    const body = JSON.parse(data);
+                    if (res.statusCode === 200 || (res.statusCode === 400 && flow === AuthFlow.DeviceCodeToken)) {
+                        resolve(body);
+                    } else {
+                        if (body.error) {
+                            reject({
+                                value:
+                                    body.error_description +
+                                    (body.error_uri ? `\r\n\r\nMore info: ${body.error_uri}` : ""),
+                                code: 1,
+                            });
+                        } else {
+                            reject({
+                                value: "Unexpected error in authentication",
+                                code: 1,
+                            });
+                        }
+                    }
+                });
             });
             req.on("error", (err) => {
                 reject(err);
@@ -263,17 +276,23 @@ export async function getAuthCode(tenantId: string, consts: consts): Promise<str
                 resolve(authorizationCode.toString());
             } else {
                 res.send(consts.errorResult);
-                reject(new Error(`Authentication Error "${req.query["error"]}":\n\n${req.query["error_description"]}`));
+                reject({
+                    value: new Error(
+                        `Authentication Error "${req.query["error"]}":\n\n${req.query["error_description"]}`
+                    ),
+                    code: 1,
+                });
             }
         });
 
         server = app.listen(consts.port);
         server.on("error", () => {
-            reject(
-                new Error(
+            reject({
+                value: new Error(
                     `Error opening internal webserver: port ${consts.port} already in use. Please use use device code flow with 'pbicli login --use-device-code'`
-                )
-            );
+                ),
+                code: 1,
+            });
             return;
         });
         server.setTimeout(1000);
@@ -380,14 +399,16 @@ export async function getAzureCLIToken(consts: consts, config: AuthConfig): Prom
                     const isNotInstallError =
                         obj.stderr.match("az:(.*)not found") || obj.stderr.startsWith("'az' is not recognized");
                     if (isNotInstallError) {
-                        reject(
-                            "Azure CLI could not be found.  Please visit https://aka.ms/azure-cli for installation instructions and then, once installed, authenticate to your Azure account using 'az login'."
-                        );
+                        reject({
+                            value: "Azure CLI could not be found.  Please visit https://aka.ms/azure-cli for installation instructions and then, once installed, authenticate to your Azure account using 'az login'.",
+                            code: 1,
+                        });
                         return;
                     } else if (isLoginError) {
-                        reject(
-                            "Please run 'az login' from a command prompt to authenticate before using this credential."
-                        );
+                        reject({
+                            value: "Please run 'az login' from a command prompt to authenticate before using this credential.",
+                            code: 1,
+                        });
                     }
                     reject(obj.stderr);
                     return;

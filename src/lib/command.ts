@@ -42,6 +42,7 @@ export const GlobalOptions = ["-o", "output-file", "query", "debug", "verbose", 
 
 export class ModuleCommand extends Command {
     private errorMsg: string | undefined;
+    private errorCode: number | undefined;
 
     constructor(name: string) {
         super(name);
@@ -124,7 +125,6 @@ export class ModuleCommand extends Command {
                 return output.join("\n");
             },
         });
-        this.exitOverride(this.exit);
     }
 
     public addGlobalOptions(): void {
@@ -163,8 +163,13 @@ export class ModuleCommand extends Command {
 
     public showHelpOrError(skipHelp = true): void {
         if (this.isInteractive || skipHelp) {
-            const errors = this.errorMsg?.toString().split("\n");
-            errors?.forEach((error: string, index: number) => console.error(index === 0 ? chalk.red(error) : error));
+            if (this.errorMsg) {
+                const errors = this.errorMsg?.toString().split("\n");
+                errors?.forEach((error: string, index: number) =>
+                    console.error(index === 0 ? chalk.red(error) : error)
+                );
+                this.exit(new CommanderError(this.errorCode || 1, "pbicli.unknownOption", this.errorMsg));
+            }
         } else {
             this.outputHelp();
         }
@@ -191,7 +196,7 @@ export class ModuleCommand extends Command {
     }
 
     public exit(error: CommanderError): void {
-        if (!this.isInteractive) process.exit(error.exitCode);
+        if (!this.isInteractive) process.exit(this.errorCode || error.exitCode);
     }
 
     public unknownCommand(): void {
@@ -259,8 +264,9 @@ export class ModuleCommand extends Command {
         return process.env.PBICLI_interactive === "true";
     }
 
-    public set errorMessage(value: string | undefined) {
-        this.errorMsg = value;
+    public set errorMessage(error: { value: string | undefined; code: number }) {
+        this.errorMsg = error.value;
+        this.errorCode = error.code;
     }
 
     private validateOutput(value: string | null): OutputType {

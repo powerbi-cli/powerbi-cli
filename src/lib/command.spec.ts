@@ -76,7 +76,7 @@ describe("command.ts", () => {
         });
         it("showCurrentError() with errorMsg", () => {
             const cmd = new ModuleCommand("new");
-            cmd.errorMessage = "value";
+            cmd.errorMessage = { value: "value", code: 1 };
             expect(cmd.showCurrentError()).to.not.throw;
             expect(errorMock.callCount).to.equal(1);
         });
@@ -88,7 +88,7 @@ describe("command.ts", () => {
         it("outputHelp() interactive mode, no errorMsg", () => {
             const cmd = new ModuleCommand("new");
             process.env.PBICLI_interactive = "true";
-            cmd.errorMessage = "";
+            cmd.errorMessage = { value: "value", code: 0 };
             expect(cmd.outputHelp()).to.not.throw;
             expect(infoMock.callCount).to.equal(0);
             expect(errorMock.callCount).to.equal(0);

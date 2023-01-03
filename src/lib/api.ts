@@ -80,7 +80,8 @@ export function executeAPICall(
             if (apiRequest.uploadFile) {
                 executeUploadCall(request, apiRequest.uploadFile)
                     .then((response) => {
-                        resolve(response);
+                        formatAndPrintOutput(response, outputFormat, outputFile, jmsePath);
+                        resolve(undefined);
                     })
                     .catch((err) => reject(err));
             } else {
